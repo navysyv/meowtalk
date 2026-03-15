@@ -1,0 +1,394 @@
+export interface Question {
+  id: number;
+  text: string;
+  topic: string;
+}
+
+export const part1Questions: Question[] = [
+  // Hometown
+  { id: 1, text: "Where is your hometown?", topic: "Hometown" },
+  { id: 2, text: "What do you like most about your hometown?", topic: "Hometown" },
+  { id: 3, text: "Has your hometown changed much in recent years?", topic: "Hometown" },
+  { id: 4, text: "Is there anything you dislike about your hometown?", topic: "Hometown" },
+  { id: 5, text: "Do you think you will continue to live in your hometown?", topic: "Hometown" },
+  // Studies / Work
+  { id: 6, text: "Do you work or are you a student?", topic: "Studies" },
+  { id: 7, text: "What subject are you studying?", topic: "Studies" },
+  { id: 8, text: "Why did you choose that subject?", topic: "Studies" },
+  { id: 9, text: "What do you plan to do after you finish your studies?", topic: "Studies" },
+  { id: 10, text: "Do you enjoy your work? Why or why not?", topic: "Work" },
+  // Hobbies
+  { id: 11, text: "What do you enjoy doing in your free time?", topic: "Hobbies" },
+  { id: 12, text: "How did you become interested in that hobby?", topic: "Hobbies" },
+  { id: 13, text: "Do you think hobbies are important? Why?", topic: "Hobbies" },
+  { id: 14, text: "Is there a hobby you would like to take up in the future?", topic: "Hobbies" },
+  { id: 15, text: "Do you prefer indoor or outdoor activities?", topic: "Hobbies" },
+  // Technology
+  { id: 16, text: "How often do you use technology in your daily life?", topic: "Technology" },
+  { id: 17, text: "What is your favorite piece of technology?", topic: "Technology" },
+  { id: 18, text: "Do you think people spend too much time on their phones?", topic: "Technology" },
+  { id: 19, text: "How has technology changed the way people communicate?", topic: "Technology" },
+  { id: 20, text: "Are there any types of technology you find difficult to use?", topic: "Technology" },
+  // Food
+  { id: 21, text: "What kind of food do you like to eat?", topic: "Food" },
+  { id: 22, text: "Do you prefer eating at home or in restaurants?", topic: "Food" },
+  { id: 23, text: "Can you cook? What is your favorite dish to make?", topic: "Food" },
+  { id: 24, text: "Is food an important part of your culture?", topic: "Food" },
+  { id: 25, text: "Have you ever tried food from another country?", topic: "Food" },
+  // Friends
+  { id: 26, text: "Do you have many friends?", topic: "Friends" },
+  { id: 27, text: "How did you meet your best friend?", topic: "Friends" },
+  { id: 28, text: "What do you usually do with your friends?", topic: "Friends" },
+  { id: 29, text: "Do you prefer to have a few close friends or many acquaintances?", topic: "Friends" },
+  { id: 30, text: "Is it easy to make new friends in your country?", topic: "Friends" },
+  // Daily Routine
+  { id: 31, text: "Can you describe your typical day?", topic: "Daily Routine" },
+  { id: 32, text: "What is the busiest part of your day?", topic: "Daily Routine" },
+  { id: 33, text: "Do you prefer mornings or evenings?", topic: "Daily Routine" },
+  { id: 34, text: "Has your daily routine changed recently?", topic: "Daily Routine" },
+  { id: 35, text: "What would you like to change about your daily routine?", topic: "Daily Routine" },
+  // Weather
+  { id: 36, text: "What is the weather like in your country?", topic: "Weather" },
+  { id: 37, text: "Do you prefer hot or cold weather?", topic: "Weather" },
+  { id: 38, text: "Does the weather affect your mood?", topic: "Weather" },
+  { id: 39, text: "What do you usually do on rainy days?", topic: "Weather" },
+  { id: 40, text: "What is your favorite season and why?", topic: "Weather" },
+  // Music
+  { id: 41, text: "Do you like listening to music?", topic: "Music" },
+  { id: 42, text: "What type of music do you enjoy most?", topic: "Music" },
+  { id: 43, text: "Have you ever learned to play a musical instrument?", topic: "Music" },
+  { id: 44, text: "Do you prefer listening to music alone or with others?", topic: "Music" },
+  { id: 45, text: "Has your taste in music changed over the years?", topic: "Music" },
+  // Reading
+  { id: 46, text: "Do you enjoy reading?", topic: "Reading" },
+  { id: 47, text: "What kind of books do you like to read?", topic: "Reading" },
+  { id: 48, text: "Do you prefer reading physical books or e-books?", topic: "Reading" },
+  { id: 49, text: "How much time do you spend reading each day?", topic: "Reading" },
+  { id: 50, text: "Did you read a lot when you were a child?", topic: "Reading" },
+  // Sports
+  { id: 51, text: "Do you play any sports?", topic: "Sports" },
+  { id: 52, text: "What is the most popular sport in your country?", topic: "Sports" },
+  { id: 53, text: "Do you prefer watching sports or playing them?", topic: "Sports" },
+  { id: 54, text: "Did you play sports when you were younger?", topic: "Sports" },
+  { id: 55, text: "Do you think children should be encouraged to play sports?", topic: "Sports" },
+  // Travel
+  { id: 56, text: "Do you like travelling?", topic: "Travel" },
+  { id: 57, text: "What was the last place you visited?", topic: "Travel" },
+  { id: 58, text: "Do you prefer travelling alone or with others?", topic: "Travel" },
+  { id: 59, text: "What is your dream travel destination?", topic: "Travel" },
+  { id: 60, text: "Do you prefer to travel by plane, train, or car?", topic: "Travel" },
+  // Shopping
+  { id: 61, text: "Do you enjoy shopping?", topic: "Shopping" },
+  { id: 62, text: "Do you prefer shopping online or in stores?", topic: "Shopping" },
+  { id: 63, text: "What was the last thing you bought?", topic: "Shopping" },
+  { id: 64, text: "Do you ever buy things you don't really need?", topic: "Shopping" },
+  { id: 65, text: "Are there any popular shopping areas in your city?", topic: "Shopping" },
+  // Movies
+  { id: 66, text: "Do you like watching movies?", topic: "Movies" },
+  { id: 67, text: "What type of movies do you prefer?", topic: "Movies" },
+  { id: 68, text: "How often do you go to the cinema?", topic: "Movies" },
+  { id: 69, text: "Do you prefer watching movies at home or at the cinema?", topic: "Movies" },
+  { id: 70, text: "Who is your favorite actor or actress?", topic: "Movies" },
+  // Family
+  { id: 71, text: "How many people are there in your family?", topic: "Family" },
+  { id: 72, text: "Do you spend a lot of time with your family?", topic: "Family" },
+  { id: 73, text: "What do you enjoy doing together as a family?", topic: "Family" },
+  { id: 74, text: "Are family relationships important in your culture?", topic: "Family" },
+  { id: 75, text: "Who are you closest to in your family?", topic: "Family" },
+  // Environment
+  { id: 76, text: "Are you concerned about the environment?", topic: "Environment" },
+  { id: 77, text: "What do you do to help protect the environment?", topic: "Environment" },
+  { id: 78, text: "Is recycling common in your country?", topic: "Environment" },
+  { id: 79, text: "Do you think individuals can make a difference for the environment?", topic: "Environment" },
+  { id: 80, text: "Has your area become more polluted in recent years?", topic: "Environment" },
+  // Accommodation
+  { id: 81, text: "Do you live in a house or an apartment?", topic: "Accommodation" },
+  { id: 82, text: "What is your favorite room in your home?", topic: "Accommodation" },
+  { id: 83, text: "Would you like to move to a different place?", topic: "Accommodation" },
+  { id: 84, text: "What changes would you make to your home?", topic: "Accommodation" },
+  { id: 85, text: "Is it expensive to rent a home in your area?", topic: "Accommodation" },
+  // Learning Languages
+  { id: 86, text: "How long have you been learning English?", topic: "Languages" },
+  { id: 87, text: "Do you find English difficult to learn?", topic: "Languages" },
+  { id: 88, text: "Would you like to learn any other languages?", topic: "Languages" },
+  { id: 89, text: "What methods do you use to practice English?", topic: "Languages" },
+  { id: 90, text: "Do you think learning languages is important?", topic: "Languages" },
+  // Social Media
+  { id: 91, text: "Do you use social media?", topic: "Social Media" },
+  { id: 92, text: "Which social media platform do you use most?", topic: "Social Media" },
+  { id: 93, text: "Do you think social media is a good way to stay in touch?", topic: "Social Media" },
+  { id: 94, text: "How much time do you spend on social media each day?", topic: "Social Media" },
+  { id: 95, text: "Do you think social media has more advantages or disadvantages?", topic: "Social Media" },
+  // Health
+  { id: 96, text: "What do you do to stay healthy?", topic: "Health" },
+  { id: 97, text: "Do you think people today are healthier than in the past?", topic: "Health" },
+  { id: 98, text: "How often do you exercise?", topic: "Health" },
+  { id: 99, text: "Do you think diet or exercise is more important for health?", topic: "Health" },
+  { id: 100, text: "Have you ever tried any special diets?", topic: "Health" },
+  // Celebrations
+  { id: 101, text: "What is your favorite celebration or holiday?", topic: "Celebrations" },
+  { id: 102, text: "How do people celebrate birthdays in your country?", topic: "Celebrations" },
+  { id: 103, text: "Do you prefer big celebrations or small gatherings?", topic: "Celebrations" },
+  { id: 104, text: "What was the best celebration you have attended?", topic: "Celebrations" },
+  { id: 105, text: "Are traditional celebrations important in your culture?", topic: "Celebrations" },
+];
+
+export const part2Questions: Question[] = [
+  // People
+  { id: 1, text: "Describe a person who has influenced you. You should say:\n- Who this person is\n- How you know them\n- What they have done that influenced you\n- And explain why they have had such an influence on you", topic: "People" },
+  { id: 2, text: "Describe a friend you have known for a long time. You should say:\n- Who this person is\n- How you met them\n- What you do together\n- And explain why you have stayed friends for so long", topic: "People" },
+  { id: 3, text: "Describe a teacher who has had a positive impact on your life. You should say:\n- Who this teacher is\n- What subject they taught\n- What made them special\n- And explain the impact they had on you", topic: "People" },
+  { id: 4, text: "Describe a famous person you admire. You should say:\n- Who this person is\n- What they are famous for\n- How you learned about them\n- And explain why you admire them", topic: "People" },
+  { id: 5, text: "Describe someone you know who is very talented. You should say:\n- Who this person is\n- What talent they have\n- How they developed this talent\n- And explain how you feel about their talent", topic: "People" },
+  { id: 6, text: "Describe an elderly person you respect. You should say:\n- Who this person is\n- How you know them\n- What they are like\n- And explain why you respect them", topic: "People" },
+  { id: 7, text: "Describe a child you know. You should say:\n- Who this child is\n- How you know them\n- What they are like\n- And explain what makes them special", topic: "People" },
+  { id: 8, text: "Describe a person who is very helpful. You should say:\n- Who this person is\n- How you know them\n- How they help others\n- And explain why you think they are helpful", topic: "People" },
+  // Places
+  { id: 9, text: "Describe a place you have visited that you found interesting. You should say:\n- Where it is\n- When you visited\n- What you did there\n- And explain why you found it interesting", topic: "Places" },
+  { id: 10, text: "Describe a city you would like to visit. You should say:\n- What city it is\n- Where it is located\n- What you know about it\n- And explain why you want to visit it", topic: "Places" },
+  { id: 11, text: "Describe a quiet place you like to go. You should say:\n- Where this place is\n- How often you go there\n- What you do there\n- And explain why you like this quiet place", topic: "Places" },
+  { id: 12, text: "Describe a park or garden you enjoy visiting. You should say:\n- Where it is\n- What it looks like\n- What you do there\n- And explain why you enjoy visiting it", topic: "Places" },
+  { id: 13, text: "Describe a historical building you have visited. You should say:\n- Where it is\n- What it looks like\n- What you learned about it\n- And explain why it was memorable", topic: "Places" },
+  { id: 14, text: "Describe a place where you go to relax. You should say:\n- Where this place is\n- How you discovered it\n- What you do there\n- And explain why it helps you relax", topic: "Places" },
+  { id: 15, text: "Describe a crowded place you have been to. You should say:\n- Where this place is\n- When you went there\n- Why it was crowded\n- And explain how you felt about being there", topic: "Places" },
+  // Events
+  { id: 16, text: "Describe an important event in your life. You should say:\n- What the event was\n- When it happened\n- Who was involved\n- And explain why it was important to you", topic: "Events" },
+  { id: 17, text: "Describe a celebration you attended. You should say:\n- What the celebration was\n- Where it took place\n- What happened during the celebration\n- And explain how you felt about it", topic: "Events" },
+  { id: 18, text: "Describe a sports event you watched. You should say:\n- What the event was\n- Where and when you watched it\n- Who was playing\n- And explain what made it memorable", topic: "Events" },
+  { id: 19, text: "Describe a concert or live performance you attended. You should say:\n- What the performance was\n- Where it took place\n- Who performed\n- And explain how you felt about it", topic: "Events" },
+  { id: 20, text: "Describe a family gathering you remember well. You should say:\n- When it took place\n- Where it was held\n- Who attended\n- And explain why you remember it well", topic: "Events" },
+  // Skills
+  { id: 21, text: "Describe a skill you would like to learn. You should say:\n- What the skill is\n- Why you want to learn it\n- How you would learn it\n- And explain how it would benefit you", topic: "Skills" },
+  { id: 22, text: "Describe something you are good at. You should say:\n- What it is\n- How you learned it\n- How often you do it\n- And explain why you enjoy it", topic: "Skills" },
+  { id: 23, text: "Describe a skill you learned as a child. You should say:\n- What the skill is\n- Who taught you\n- How you learned it\n- And explain how it has helped you", topic: "Skills" },
+  { id: 24, text: "Describe a practical skill you have. You should say:\n- What the skill is\n- When you use it\n- How you developed it\n- And explain why it is useful", topic: "Skills" },
+  // Objects
+  { id: 25, text: "Describe an object you use every day. You should say:\n- What it is\n- When you got it\n- How you use it\n- And explain why it is important to you", topic: "Objects" },
+  { id: 26, text: "Describe a gift you received that made you happy. You should say:\n- What the gift was\n- Who gave it to you\n- When you received it\n- And explain why it made you happy", topic: "Objects" },
+  { id: 27, text: "Describe a piece of technology you find useful. You should say:\n- What it is\n- How you use it\n- When you started using it\n- And explain why you find it useful", topic: "Objects" },
+  { id: 28, text: "Describe a book that has influenced you. You should say:\n- What the book is\n- What it is about\n- When you read it\n- And explain how it influenced you", topic: "Objects" },
+  { id: 29, text: "Describe a photograph you like. You should say:\n- What is in the photograph\n- When it was taken\n- Who took it\n- And explain why you like it", topic: "Objects" },
+  { id: 30, text: "Describe something you bought that you are happy about. You should say:\n- What you bought\n- When you bought it\n- Why you bought it\n- And explain why you are happy about it", topic: "Objects" },
+  // Experiences
+  { id: 31, text: "Describe a trip you took that you enjoyed. You should say:\n- Where you went\n- Who you went with\n- What you did\n- And explain why you enjoyed it", topic: "Experiences" },
+  { id: 32, text: "Describe a time you helped someone. You should say:\n- Who you helped\n- What you did\n- Why they needed help\n- And explain how you felt about helping them", topic: "Experiences" },
+  { id: 33, text: "Describe a difficult decision you made. You should say:\n- What the decision was\n- When you made it\n- What options you had\n- And explain why it was difficult", topic: "Experiences" },
+  { id: 34, text: "Describe a time you learned something new. You should say:\n- What you learned\n- How you learned it\n- Who helped you learn it\n- And explain how you felt about learning it", topic: "Experiences" },
+  { id: 35, text: "Describe an achievement you are proud of. You should say:\n- What you achieved\n- When it happened\n- How you achieved it\n- And explain why you are proud of it", topic: "Experiences" },
+  { id: 36, text: "Describe a time you had to wait for something. You should say:\n- What you were waiting for\n- How long you waited\n- What you did while waiting\n- And explain how you felt about waiting", topic: "Experiences" },
+  { id: 37, text: "Describe a mistake you learned from. You should say:\n- What the mistake was\n- When it happened\n- What happened as a result\n- And explain what you learned from it", topic: "Experiences" },
+  { id: 38, text: "Describe an adventurous experience you had. You should say:\n- What the experience was\n- Where it happened\n- Who was with you\n- And explain how it made you feel", topic: "Experiences" },
+  { id: 39, text: "Describe a time you visited a new place for the first time. You should say:\n- Where you went\n- When you went\n- What you saw and did\n- And explain your first impressions", topic: "Experiences" },
+  { id: 40, text: "Describe a memorable meal you had. You should say:\n- Where you ate\n- Who you were with\n- What you ate\n- And explain why it was memorable", topic: "Experiences" },
+  // Lifestyle & Preferences
+  { id: 41, text: "Describe your favorite way to spend a weekend. You should say:\n- What you do\n- Who you spend it with\n- Where you usually go\n- And explain why you enjoy spending weekends this way", topic: "Lifestyle" },
+  { id: 42, text: "Describe a healthy habit you have. You should say:\n- What the habit is\n- When you started it\n- How often you do it\n- And explain why you think it is healthy", topic: "Lifestyle" },
+  { id: 43, text: "Describe a website you use regularly. You should say:\n- What the website is\n- What you use it for\n- How often you use it\n- And explain why you find it useful", topic: "Lifestyle" },
+  { id: 44, text: "Describe an app on your phone you use most. You should say:\n- What the app is\n- What it does\n- How often you use it\n- And explain why you use it so much", topic: "Lifestyle" },
+  { id: 45, text: "Describe a movie or TV show you enjoyed recently. You should say:\n- What it was\n- What it was about\n- When you watched it\n- And explain why you enjoyed it", topic: "Lifestyle" },
+  // Education & Work
+  { id: 46, text: "Describe a subject you enjoyed studying at school. You should say:\n- What the subject was\n- Who taught it\n- What you learned\n- And explain why you enjoyed it", topic: "Education" },
+  { id: 47, text: "Describe a job you would like to have in the future. You should say:\n- What the job is\n- What skills it requires\n- Why you are interested in it\n- And explain how you plan to get this job", topic: "Education" },
+  { id: 48, text: "Describe a project you worked on. You should say:\n- What the project was\n- When you did it\n- Who you worked with\n- And explain what you learned from it", topic: "Education" },
+  // Nature & Environment
+  { id: 49, text: "Describe a natural place you find beautiful. You should say:\n- Where it is\n- What it looks like\n- When you visited it\n- And explain why you find it beautiful", topic: "Nature" },
+  { id: 50, text: "Describe an animal you find interesting. You should say:\n- What the animal is\n- Where it lives\n- What it looks like\n- And explain why you find it interesting", topic: "Nature" },
+  // Additional topics
+  { id: 51, text: "Describe a piece of advice someone gave you. You should say:\n- Who gave you the advice\n- What the advice was\n- When they gave it to you\n- And explain how it helped you", topic: "Advice" },
+  { id: 52, text: "Describe a time you felt proud of a family member. You should say:\n- Who the family member is\n- What they did\n- When it happened\n- And explain why you felt proud", topic: "Family" },
+  { id: 53, text: "Describe a hobby you enjoyed as a child. You should say:\n- What the hobby was\n- When you started it\n- How often you did it\n- And explain why you enjoyed it", topic: "Childhood" },
+  { id: 54, text: "Describe a song that is special to you. You should say:\n- What the song is\n- When you first heard it\n- What it is about\n- And explain why it is special to you", topic: "Music" },
+  { id: 55, text: "Describe an important letter or email you wrote. You should say:\n- Who you wrote to\n- What you wrote about\n- When you wrote it\n- And explain why it was important", topic: "Communication" },
+  { id: 56, text: "Describe a time when you received good news. You should say:\n- What the news was\n- When you received it\n- How you received it\n- And explain how you felt", topic: "Experiences" },
+  { id: 57, text: "Describe a tradition in your country. You should say:\n- What the tradition is\n- When it takes place\n- What people do\n- And explain why it is important", topic: "Culture" },
+  { id: 58, text: "Describe a game you enjoyed playing as a child. You should say:\n- What the game was\n- Who you played it with\n- How often you played it\n- And explain why you enjoyed it", topic: "Childhood" },
+  { id: 59, text: "Describe a place where you like to study or work. You should say:\n- Where it is\n- What it looks like\n- How often you go there\n- And explain why you like studying or working there", topic: "Study" },
+  { id: 60, text: "Describe a vehicle you would like to own. You should say:\n- What type of vehicle it is\n- What it looks like\n- How you would use it\n- And explain why you would like to own it", topic: "Objects" },
+  { id: 61, text: "Describe a person who dresses well. You should say:\n- Who this person is\n- How you know them\n- What kind of clothes they wear\n- And explain why you think they dress well", topic: "People" },
+  { id: 62, text: "Describe a time you were surprised. You should say:\n- What surprised you\n- When it happened\n- Who was involved\n- And explain how you reacted", topic: "Experiences" },
+  { id: 63, text: "Describe a public facility that has improved in your area. You should say:\n- What the facility is\n- When it was improved\n- What changes were made\n- And explain how it has benefited the community", topic: "Community" },
+  { id: 64, text: "Describe a time you changed your opinion about something. You should say:\n- What your original opinion was\n- What caused you to change your mind\n- When this happened\n- And explain how you feel about changing your opinion", topic: "Experiences" },
+  { id: 65, text: "Describe a piece of art you like. You should say:\n- What the art is\n- Where you saw it\n- What it depicts\n- And explain why you like it", topic: "Art" },
+  { id: 66, text: "Describe a place where you feel most comfortable. You should say:\n- Where the place is\n- What it looks like\n- How often you go there\n- And explain why you feel comfortable there", topic: "Places" },
+  { id: 67, text: "Describe a time you had to be polite. You should say:\n- When it happened\n- Where you were\n- Who you were with\n- And explain why you had to be polite", topic: "Social" },
+  { id: 68, text: "Describe a useful plant you know about. You should say:\n- What the plant is\n- Where it grows\n- What it is used for\n- And explain why it is useful", topic: "Nature" },
+  { id: 69, text: "Describe a sport you would like to try. You should say:\n- What the sport is\n- Where you can do it\n- How you learned about it\n- And explain why you would like to try it", topic: "Sports" },
+  { id: 70, text: "Describe a time you stayed up very late. You should say:\n- When it was\n- Why you stayed up late\n- What you were doing\n- And explain how you felt the next day", topic: "Experiences" },
+  { id: 71, text: "Describe a dream job you had as a child. You should say:\n- What the job was\n- How you learned about it\n- Why you wanted that job\n- And explain if you still want it now", topic: "Childhood" },
+  { id: 72, text: "Describe a law in your country you think is good. You should say:\n- What the law is\n- How you learned about it\n- Who it affects\n- And explain why you think it is good", topic: "Society" },
+  { id: 73, text: "Describe a time you shared something with someone. You should say:\n- What you shared\n- Who you shared it with\n- Why you shared it\n- And explain how you felt about sharing", topic: "Social" },
+  { id: 74, text: "Describe a time you saved money for something. You should say:\n- What you saved for\n- How long it took\n- How you saved the money\n- And explain how you felt when you reached your goal", topic: "Finance" },
+  { id: 75, text: "Describe something you do to keep fit. You should say:\n- What the activity is\n- How often you do it\n- Where you do it\n- And explain how it keeps you fit", topic: "Health" },
+  { id: 76, text: "Describe a time you forgot something important. You should say:\n- What you forgot\n- When it happened\n- Why you forgot it\n- And explain what happened as a result", topic: "Experiences" },
+  { id: 77, text: "Describe a conversation that influenced you. You should say:\n- Who you had the conversation with\n- What you talked about\n- When it happened\n- And explain how it influenced you", topic: "Communication" },
+  { id: 78, text: "Describe a creative person you admire. You should say:\n- Who the person is\n- What they create\n- How you know about them\n- And explain why you admire their creativity", topic: "People" },
+  { id: 79, text: "Describe a time you tried a new type of food. You should say:\n- What the food was\n- Where you tried it\n- Who you were with\n- And explain whether you liked it or not", topic: "Food" },
+  { id: 80, text: "Describe a building with an interesting design. You should say:\n- Where the building is\n- What it looks like\n- What it is used for\n- And explain why you find the design interesting", topic: "Architecture" },
+  { id: 81, text: "Describe a competition you took part in. You should say:\n- What the competition was\n- When it happened\n- Who else participated\n- And explain how you felt about it", topic: "Experiences" },
+  { id: 82, text: "Describe a goal you set for yourself. You should say:\n- What the goal is\n- When you set it\n- What steps you took to achieve it\n- And explain how you felt about achieving or working towards it", topic: "Personal Growth" },
+  { id: 83, text: "Describe a childhood memory you have. You should say:\n- What the memory is about\n- When it happened\n- Who was involved\n- And explain why you remember it", topic: "Childhood" },
+  { id: 84, text: "Describe a time you visited a friend's home. You should say:\n- When you visited\n- Where your friend lives\n- What you did there\n- And explain how you felt about the visit", topic: "Social" },
+  { id: 85, text: "Describe a product from your country you would recommend. You should say:\n- What the product is\n- What it is used for\n- Where you can buy it\n- And explain why you would recommend it", topic: "Culture" },
+  { id: 86, text: "Describe a time you got lost. You should say:\n- When it happened\n- Where you were\n- How you got lost\n- And explain what you did", topic: "Experiences" },
+  { id: 87, text: "Describe an interesting talk or lecture you heard. You should say:\n- What it was about\n- Who gave the talk\n- Where you heard it\n- And explain why it was interesting", topic: "Education" },
+  { id: 88, text: "Describe a time you spent time outdoors. You should say:\n- Where you were\n- What you did\n- Who you were with\n- And explain how you felt", topic: "Outdoors" },
+  { id: 89, text: "Describe a local event you attended. You should say:\n- What the event was\n- When and where it took place\n- What happened\n- And explain whether you enjoyed it", topic: "Events" },
+  { id: 90, text: "Describe something you would like to learn to do well. You should say:\n- What it is\n- Why you want to learn it\n- How you plan to learn it\n- And explain how it would benefit you", topic: "Skills" },
+  { id: 91, text: "Describe a challenge you have faced. You should say:\n- What the challenge was\n- When you faced it\n- How you dealt with it\n- And explain what you learned from the experience", topic: "Challenges" },
+  { id: 92, text: "Describe a time someone did something kind for you. You should say:\n- Who the person was\n- What they did\n- When it happened\n- And explain how it made you feel", topic: "Social" },
+  { id: 93, text: "Describe a time you used a map. You should say:\n- When you used it\n- Where you were going\n- Why you needed a map\n- And explain whether it was helpful", topic: "Travel" },
+  { id: 94, text: "Describe a street market you have visited. You should say:\n- Where the market is\n- What is sold there\n- How often you visit\n- And explain what you like about it", topic: "Places" },
+  { id: 95, text: "Describe something you do that is good for the environment. You should say:\n- What you do\n- When you started doing it\n- How easy or difficult it is\n- And explain why you think it is good for the environment", topic: "Environment" },
+  { id: 96, text: "Describe a skill that takes a long time to learn. You should say:\n- What the skill is\n- How long it takes to learn\n- Why it takes so long\n- And explain whether you think it is worth learning", topic: "Skills" },
+  { id: 97, text: "Describe a piece of clothing you like wearing. You should say:\n- What the clothing is\n- When you bought it\n- When you wear it\n- And explain why you like wearing it", topic: "Fashion" },
+  { id: 98, text: "Describe a time you had to be patient. You should say:\n- When it happened\n- What you were waiting for\n- How you stayed patient\n- And explain what happened in the end", topic: "Experiences" },
+  { id: 99, text: "Describe a toy you liked playing with as a child. You should say:\n- What the toy was\n- Who gave it to you\n- How you played with it\n- And explain why you liked it", topic: "Childhood" },
+  { id: 100, text: "Describe a recent development in your area. You should say:\n- What the development is\n- Where it is\n- How it has affected people\n- And explain how you feel about it", topic: "Community" },
+  { id: 101, text: "Describe a time you used your imagination. You should say:\n- When it happened\n- Why you used your imagination\n- What you imagined\n- And explain how it made you feel", topic: "Creativity" },
+  { id: 102, text: "Describe a long journey you took. You should say:\n- Where you went\n- How you traveled\n- How long it took\n- And explain how you felt during the journey", topic: "Travel" },
+];
+
+export const part3Questions: Question[] = [
+  // Technology & Society
+  { id: 1, text: "How has technology changed the way people work?", topic: "Technology" },
+  { id: 2, text: "Do you think technology makes people's lives easier or more complicated?", topic: "Technology" },
+  { id: 3, text: "What are the advantages and disadvantages of social media?", topic: "Technology" },
+  { id: 4, text: "How do you think artificial intelligence will affect jobs in the future?", topic: "Technology" },
+  { id: 5, text: "Should children be allowed to use smartphones at a young age?", topic: "Technology" },
+  { id: 6, text: "How has the internet changed education?", topic: "Technology" },
+  { id: 7, text: "Do you think online learning is as effective as traditional learning?", topic: "Technology" },
+  // Education
+  { id: 8, text: "What makes a good teacher?", topic: "Education" },
+  { id: 9, text: "Should education focus more on practical skills or academic knowledge?", topic: "Education" },
+  { id: 10, text: "How important is it to learn a second language?", topic: "Education" },
+  { id: 11, text: "Do you think the education system in your country prepares students well for the future?", topic: "Education" },
+  { id: 12, text: "Should university education be free?", topic: "Education" },
+  { id: 13, text: "How has education changed in your country over the past few decades?", topic: "Education" },
+  { id: 14, text: "What role do extracurricular activities play in education?", topic: "Education" },
+  // Environment
+  { id: 15, text: "What can individuals do to protect the environment?", topic: "Environment" },
+  { id: 16, text: "Should governments impose stricter laws to prevent pollution?", topic: "Environment" },
+  { id: 17, text: "How can we encourage more people to recycle?", topic: "Environment" },
+  { id: 18, text: "What are the main environmental problems facing the world today?", topic: "Environment" },
+  { id: 19, text: "Do you think climate change can be reversed?", topic: "Environment" },
+  { id: 20, text: "How important is it to teach children about environmental issues?", topic: "Environment" },
+  { id: 21, text: "Should companies be held responsible for environmental damage?", topic: "Environment" },
+  // Work & Career
+  { id: 22, text: "What qualities make a good leader?", topic: "Work" },
+  { id: 23, text: "Is it better to work for a large company or a small one?", topic: "Work" },
+  { id: 24, text: "Do you think work-life balance is achievable?", topic: "Work" },
+  { id: 25, text: "How has remote work changed the workplace?", topic: "Work" },
+  { id: 26, text: "What motivates people to work hard?", topic: "Work" },
+  { id: 27, text: "Do you think people should follow their passion when choosing a career?", topic: "Work" },
+  { id: 28, text: "How important is job satisfaction compared to salary?", topic: "Work" },
+  // Society & Culture
+  { id: 29, text: "What role does tradition play in modern society?", topic: "Society" },
+  { id: 30, text: "How can we reduce inequality in society?", topic: "Society" },
+  { id: 31, text: "Do you think globalisation is a positive or negative development?", topic: "Society" },
+  { id: 32, text: "How has the role of women changed in your country?", topic: "Society" },
+  { id: 33, text: "What are the benefits of living in a multicultural society?", topic: "Society" },
+  { id: 34, text: "Should governments spend more on public services or lower taxes?", topic: "Society" },
+  { id: 35, text: "How can we encourage young people to be more involved in their communities?", topic: "Society" },
+  // Health
+  { id: 36, text: "What can governments do to improve public health?", topic: "Health" },
+  { id: 37, text: "Do you think people today are healthier or less healthy than in the past?", topic: "Health" },
+  { id: 38, text: "How important is mental health awareness?", topic: "Health" },
+  { id: 39, text: "Should fast food companies be restricted in their advertising?", topic: "Health" },
+  { id: 40, text: "What are the benefits of regular exercise?", topic: "Health" },
+  { id: 41, text: "How has the healthcare system in your country changed?", topic: "Health" },
+  { id: 42, text: "Do you think alternative medicine is effective?", topic: "Health" },
+  // Travel & Tourism
+  { id: 43, text: "What impact does tourism have on local communities?", topic: "Tourism" },
+  { id: 44, text: "Do you think travel broadens the mind?", topic: "Tourism" },
+  { id: 45, text: "How has air travel changed the world?", topic: "Tourism" },
+  { id: 46, text: "Should tourists make an effort to learn the local language?", topic: "Tourism" },
+  { id: 47, text: "What are the environmental impacts of mass tourism?", topic: "Tourism" },
+  { id: 48, text: "Is it important for young people to travel?", topic: "Tourism" },
+  // Media & Communication
+  { id: 49, text: "How has the news media changed in recent years?", topic: "Media" },
+  { id: 50, text: "Do you think the media has too much influence on public opinion?", topic: "Media" },
+  { id: 51, text: "How has communication changed between generations?", topic: "Media" },
+  { id: 52, text: "Is face-to-face communication still important in the digital age?", topic: "Media" },
+  { id: 53, text: "Should there be more regulation of social media platforms?", topic: "Media" },
+  { id: 54, text: "How do advertisements affect consumer behavior?", topic: "Media" },
+  // Family & Relationships
+  { id: 55, text: "How have family structures changed over time?", topic: "Family" },
+  { id: 56, text: "What role do grandparents play in family life?", topic: "Family" },
+  { id: 57, text: "Is it important for families to eat together?", topic: "Family" },
+  { id: 58, text: "How can parents balance work and family life?", topic: "Family" },
+  { id: 59, text: "Do you think the younger generation respects the older generation enough?", topic: "Family" },
+  { id: 60, text: "What are the advantages and disadvantages of being an only child?", topic: "Family" },
+  // Cities & Urban Life
+  { id: 61, text: "What are the advantages of living in a city compared to the countryside?", topic: "Urban" },
+  { id: 62, text: "How can cities become more environmentally friendly?", topic: "Urban" },
+  { id: 63, text: "What problems do cities face with increasing populations?", topic: "Urban" },
+  { id: 64, text: "Should public transport be free?", topic: "Urban" },
+  { id: 65, text: "How can city planning improve quality of life?", topic: "Urban" },
+  // Food & Agriculture
+  { id: 66, text: "How has the food industry changed in your country?", topic: "Food" },
+  { id: 67, text: "Do you think organic food is worth the higher price?", topic: "Food" },
+  { id: 68, text: "Should people eat less meat for environmental reasons?",  topic: "Food" },
+  { id: 69, text: "How important is food safety?", topic: "Food" },
+  { id: 70, text: "What are the advantages and disadvantages of genetically modified food?", topic: "Food" },
+  // Crime & Law
+  { id: 71, text: "What are the main causes of crime in your opinion?", topic: "Crime" },
+  { id: 72, text: "Do you think punishment or rehabilitation is more effective?", topic: "Crime" },
+  { id: 73, text: "How can communities reduce crime?", topic: "Crime" },
+  { id: 74, text: "Should the death penalty be used?", topic: "Crime" },
+  { id: 75, text: "How has cybercrime affected society?", topic: "Crime" },
+  // Arts & Culture
+  { id: 76, text: "Should governments spend money on the arts?", topic: "Arts" },
+  { id: 77, text: "How important is it to preserve cultural heritage?", topic: "Arts" },
+  { id: 78, text: "Do you think art can change society?", topic: "Arts" },
+  { id: 79, text: "What role does music play in people's lives?", topic: "Arts" },
+  { id: 80, text: "Is it important for children to learn art in school?", topic: "Arts" },
+  // Housing
+  { id: 81, text: "Why is housing so expensive in many cities?", topic: "Housing" },
+  { id: 82, text: "What can governments do to make housing more affordable?", topic: "Housing" },
+  { id: 83, text: "Do you think people should buy or rent their homes?", topic: "Housing" },
+  { id: 84, text: "How has architecture changed in your country?", topic: "Housing" },
+  // Economy & Money
+  { id: 85, text: "How important is financial education for young people?", topic: "Economy" },
+  { id: 86, text: "Do you think money can buy happiness?", topic: "Economy" },
+  { id: 87, text: "What are the effects of consumerism on society?", topic: "Economy" },
+  { id: 88, text: "Should people be encouraged to save more or spend more?", topic: "Economy" },
+  // Science & Innovation
+  { id: 89, text: "How has science improved our daily lives?", topic: "Science" },
+  { id: 90, text: "Should governments invest more in scientific research?", topic: "Science" },
+  { id: 91, text: "What are the ethical concerns of genetic engineering?", topic: "Science" },
+  { id: 92, text: "How will space exploration benefit humanity?", topic: "Science" },
+  // Aging & Youth
+  { id: 93, text: "What challenges do elderly people face in modern society?", topic: "Aging" },
+  { id: 94, text: "How can society better support the aging population?", topic: "Aging" },
+  { id: 95, text: "What pressures do young people face today?", topic: "Youth" },
+  { id: 96, text: "How can we prepare young people for the challenges of adult life?", topic: "Youth" },
+  // Sports
+  { id: 97, text: "Should professional athletes be role models?", topic: "Sports" },
+  { id: 98, text: "How important are sports in promoting national unity?", topic: "Sports" },
+  { id: 99, text: "Should governments invest more in sports facilities?", topic: "Sports" },
+  { id: 100, text: "What are the benefits of team sports compared to individual sports?", topic: "Sports" },
+  { id: 101, text: "How can we encourage children to be more physically active?", topic: "Sports" },
+  { id: 102, text: "What role does sportsmanship play in competitive sports?", topic: "Sports" },
+  { id: 103, text: "How has the commercialisation of sport affected its values?", topic: "Sports" },
+  { id: 104, text: "Do you think e-sports should be considered real sports?", topic: "Sports" },
+  { id: 105, text: "What impact does hosting international sporting events have on a country?", topic: "Sports" },
+];
+
+// Shuffle utility that tracks used questions
+export function createQuestionShuffler(questions: Question[]) {
+  let remaining = [...questions];
+  
+  return {
+    next(): Question {
+      if (remaining.length === 0) {
+        remaining = [...questions];
+      }
+      const index = Math.floor(Math.random() * remaining.length);
+      const [question] = remaining.splice(index, 1);
+      return question;
+    },
+    reset() {
+      remaining = [...questions];
+    },
+  };
+}
