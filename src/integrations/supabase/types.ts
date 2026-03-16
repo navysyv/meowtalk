@@ -14,7 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      speaking_attempts: {
+        Row: {
+          band_score: number | null
+          created_at: string
+          fluency_feedback: string | null
+          grammar_feedback: string | null
+          id: string
+          improved_answer: string | null
+          part: number
+          pronunciation_feedback: string | null
+          question_text: string
+          session_id: string
+          suggestions: string[] | null
+          transcript: string | null
+          vocabulary_feedback: string | null
+        }
+        Insert: {
+          band_score?: number | null
+          created_at?: string
+          fluency_feedback?: string | null
+          grammar_feedback?: string | null
+          id?: string
+          improved_answer?: string | null
+          part: number
+          pronunciation_feedback?: string | null
+          question_text: string
+          session_id?: string
+          suggestions?: string[] | null
+          transcript?: string | null
+          vocabulary_feedback?: string | null
+        }
+        Update: {
+          band_score?: number | null
+          created_at?: string
+          fluency_feedback?: string | null
+          grammar_feedback?: string | null
+          id?: string
+          improved_answer?: string | null
+          part?: number
+          pronunciation_feedback?: string | null
+          question_text?: string
+          session_id?: string
+          suggestions?: string[] | null
+          transcript?: string | null
+          vocabulary_feedback?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
