@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { MessageCircle, Clock, BookOpen } from "lucide-react";
+import { MessageCircle, Clock, BookOpen, History } from "lucide-react";
 import TalkieCat from "@/components/TalkieCat";
 import { playClick } from "@/lib/sounds";
 
