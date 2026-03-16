@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { MessageCircle, Clock, BookOpen } from "lucide-react";
+import { MessageCircle, Clock, BookOpen, History } from "lucide-react";
 import TalkieCat from "@/components/TalkieCat";
 import { playClick } from "@/lib/sounds";
 
@@ -43,6 +43,10 @@ const Index = () => {
         <h2 className="text-lg font-semibold font-display text-foreground tracking-tight">
           Talkie IELTS
         </h2>
+        <motion.button whileTap={{ scale: 0.96 }} onClick={() => navigate("/history")} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5">
+          <History size={16} />
+          History
+        </motion.button>
       </header>
 
       {/* Hero */}

@@ -1,16 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { X, Pause, Play, Minus } from "lucide-react";
+import { X, Pause, Play, Minus, Plus, RotateCcw } from "lucide-react";
 
 interface CircularTimerProps {
   totalSeconds: number;
   label: string;
   onComplete: () => void;
   onExit: () => void;
+  onRepeat?: () => void;
   autoStart?: boolean;
 }
 
-const CircularTimer = ({ totalSeconds, label, onComplete, onExit, autoStart = false }: CircularTimerProps) => {
+const CircularTimer = ({ totalSeconds, label, onComplete, onExit, onRepeat, autoStart = false }: CircularTimerProps) => {
   const [remaining, setRemaining] = useState(totalSeconds);
   const [isRunning, setIsRunning] = useState(autoStart);
 
@@ -41,10 +42,13 @@ const CircularTimer = ({ totalSeconds, label, onComplete, onExit, autoStart = fa
     setRemaining((prev) => Math.max(0, prev - 30));
   }, []);
 
+  const add30 = useCallback(() => {
+    setRemaining((prev) => Math.min(totalSeconds + 60, prev + 30));
+  }, [totalSeconds]);
+
   return (
     <div className="flex flex-col items-center gap-6">
       <div className="relative">
-        {/* Exit button */}
         <motion.button
           whileTap={{ scale: 0.96 }}
           onClick={onExit}
@@ -54,14 +58,7 @@ const CircularTimer = ({ totalSeconds, label, onComplete, onExit, autoStart = fa
         </motion.button>
 
         <svg width="140" height="140" viewBox="0 0 120 120">
-          {/* Background circle */}
-          <circle
-            cx="60" cy="60" r="52"
-            fill="none"
-            stroke="hsl(var(--muted))"
-            strokeWidth="6"
-          />
-          {/* Progress circle */}
+          <circle cx="60" cy="60" r="52" fill="none" stroke="hsl(var(--muted))" strokeWidth="6" />
           <circle
             cx="60" cy="60" r="52"
             fill="none"
@@ -75,7 +72,6 @@ const CircularTimer = ({ totalSeconds, label, onComplete, onExit, autoStart = fa
           />
         </svg>
 
-        {/* Time display */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-3xl font-semibold font-display tabular-nums text-foreground">
             {minutes}:{seconds.toString().padStart(2, "0")}
@@ -84,12 +80,11 @@ const CircularTimer = ({ totalSeconds, label, onComplete, onExit, autoStart = fa
         </div>
       </div>
 
-      {/* Controls */}
       <div className="flex items-center gap-3">
         <motion.button
           whileTap={{ scale: 0.96 }}
           onClick={subtract30}
-          className="px-4 py-2 rounded-2xl bg-secondary text-secondary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
+          className="px-3 py-2 rounded-2xl bg-secondary text-secondary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
         >
           <Minus size={14} className="inline mr-1" />
           30s
@@ -104,6 +99,27 @@ const CircularTimer = ({ totalSeconds, label, onComplete, onExit, autoStart = fa
           {isRunning ? <Pause size={20} /> : <Play size={20} className="ml-0.5" />}
         </motion.button>
 
+        <motion.button
+          whileTap={{ scale: 0.96 }}
+          onClick={add30}
+          className="px-3 py-2 rounded-2xl bg-secondary text-secondary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
+        >
+          <Plus size={14} className="inline mr-1" />
+          30s
+        </motion.button>
+      </div>
+
+      <div className="flex items-center gap-3">
+        {onRepeat && (
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            onClick={onRepeat}
+            className="px-4 py-2 rounded-2xl bg-secondary text-secondary-foreground text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-1.5"
+          >
+            <RotateCcw size={14} />
+            Repeat
+          </motion.button>
+        )}
         <motion.button
           whileTap={{ scale: 0.96 }}
           onClick={onExit}

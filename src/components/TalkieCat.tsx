@@ -8,86 +8,160 @@ interface TalkieCatProps {
 const ease: Easing = "easeInOut";
 
 const breatheAnimation = {
-  idle: { y: [0, -8, 0], transition: { repeat: Infinity, duration: 3, ease } },
-  listening: { scale: [1, 1.05, 1], transition: { repeat: Infinity, duration: 2, ease } },
-  feedback: { rotate: [0, 15, 0], transition: { duration: 0.6, ease } },
-  sleeping: { y: [0, -4, 0], transition: { repeat: Infinity, duration: 4, ease } },
+  idle: { y: [0, -6, 0], transition: { repeat: Infinity, duration: 3.5, ease } },
+  listening: { scale: [1, 1.04, 1], transition: { repeat: Infinity, duration: 2, ease } },
+  feedback: { rotate: [0, 8, -8, 0], transition: { duration: 0.8, ease } },
+  sleeping: { y: [0, -3, 0], transition: { repeat: Infinity, duration: 4.5, ease } },
 };
 
 const blinkAnimation = {
-  idle: { scaleY: [1, 0.1, 1], transition: { repeat: Infinity, repeatDelay: 2, duration: 0.3, times: [0, 0.5, 1] } },
-  listening: { scale: [1, 1.1, 1], transition: { repeat: Infinity, duration: 1.5, ease } },
+  idle: { scaleY: [1, 0.05, 1], transition: { repeat: Infinity, repeatDelay: 3, duration: 0.25, times: [0, 0.5, 1] } },
+  listening: { scale: [1, 1.08, 1], transition: { repeat: Infinity, duration: 1.5, ease } },
   feedback: {},
-  sleeping: { scaleY: 0.15 },
+  sleeping: { scaleY: 0.1 },
 };
 
 const tailWag = {
-  idle: { rotate: [0, 10, -10, 0], transition: { repeat: Infinity, duration: 2.5, ease } },
-  listening: { rotate: [0, 15, -15, 0], transition: { repeat: Infinity, duration: 1.5, ease } },
-  feedback: { rotate: [0, 20, -20, 0], transition: { repeat: Infinity, duration: 1, ease } },
-  sleeping: { rotate: 0 },
+  idle: { rotate: [0, 12, -12, 0], transition: { repeat: Infinity, duration: 3, ease } },
+  listening: { rotate: [0, 18, -18, 0], transition: { repeat: Infinity, duration: 1.2, ease } },
+  feedback: { rotate: [0, 25, -25, 0], transition: { repeat: Infinity, duration: 0.8, ease } },
+  sleeping: { rotate: 5 },
 };
 
 const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
+  const s = size;
   return (
     <motion.div
       animate={breatheAnimation[state]}
       className="relative inline-block"
-      style={{ width: size, height: size }}
+      style={{ width: s, height: s }}
     >
-      <svg viewBox="0 0 200 200" width={size} height={size}>
-        <ellipse cx="100" cy="130" rx="55" ry="45" fill="hsl(240, 10%, 15%)" />
-        <circle cx="100" cy="80" r="45" fill="hsl(240, 10%, 15%)" />
-        <polygon points="65,50 55,15 85,45" fill="hsl(240, 10%, 15%)" />
-        <polygon points="68,48 60,22 82,45" fill="hsl(340, 30%, 70%)" />
-        <polygon points="135,50 145,15 115,45" fill="hsl(240, 10%, 15%)" />
-        <polygon points="132,48 140,22 118,45" fill="hsl(340, 30%, 70%)" />
-        <ellipse cx="100" cy="112" rx="40" ry="8" fill="hsl(265, 70%, 70%)" />
-        <circle cx="100" cy="118" r="5" fill="hsl(45, 95%, 60%)" />
-        <ellipse cx="100" cy="140" rx="25" ry="20" fill="hsl(240, 10%, 22%)" />
-        <line x1="60" y1="85" x2="30" y2="80" stroke="hsl(240, 10%, 40%)" strokeWidth="1.5" />
-        <line x1="60" y1="90" x2="28" y2="92" stroke="hsl(240, 10%, 40%)" strokeWidth="1.5" />
-        <line x1="140" y1="85" x2="170" y2="80" stroke="hsl(240, 10%, 40%)" strokeWidth="1.5" />
-        <line x1="140" y1="90" x2="172" y2="92" stroke="hsl(240, 10%, 40%)" strokeWidth="1.5" />
-        <ellipse cx="100" cy="88" rx="5" ry="3.5" fill="hsl(340, 30%, 60%)" />
-        <path d="M 95 92 Q 100 97 105 92" fill="none" stroke="hsl(240, 10%, 35%)" strokeWidth="1.5" />
-        <ellipse cx="75" cy="170" rx="15" ry="8" fill="hsl(240, 10%, 15%)" />
-        <ellipse cx="125" cy="170" rx="15" ry="8" fill="hsl(240, 10%, 15%)" />
+      <svg viewBox="0 0 200 200" width={s} height={s}>
+        {/* Very round chubby body */}
+        <ellipse cx="100" cy="120" rx="72" ry="62" fill="hsl(240, 10%, 12%)" />
+        
+        {/* Round head merged with body */}
+        <circle cx="100" cy="78" r="54" fill="hsl(240, 10%, 12%)" />
+        
+        {/* Tiny ears */}
+        <ellipse cx="68" cy="38" rx="12" ry="16" fill="hsl(240, 10%, 12%)" transform="rotate(-15, 68, 38)" />
+        <ellipse cx="70" cy="40" rx="6" ry="9" fill="hsl(340, 25%, 55%)" transform="rotate(-15, 70, 40)" />
+        <ellipse cx="132" cy="38" rx="12" ry="16" fill="hsl(240, 10%, 12%)" transform="rotate(15, 132, 38)" />
+        <ellipse cx="130" cy="40" rx="6" ry="9" fill="hsl(340, 25%, 55%)" transform="rotate(15, 130, 40)" />
+        
+        {/* Lavender collar */}
+        <ellipse cx="100" cy="108" rx="48" ry="10" fill="hsl(265, 60%, 65%)" />
+        <circle cx="100" cy="116" r="5" fill="hsl(45, 95%, 60%)" />
+
+        {/* Belly highlight */}
+        <ellipse cx="100" cy="138" rx="32" ry="24" fill="hsl(240, 10%, 18%)" />
+        
+        {/* Whiskers */}
+        <line x1="58" y1="82" x2="25" y2="76" stroke="hsl(240, 10%, 35%)" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="58" y1="88" x2="22" y2="90" stroke="hsl(240, 10%, 35%)" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="58" y1="94" x2="25" y2="102" stroke="hsl(240, 10%, 35%)" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="142" y1="82" x2="175" y2="76" stroke="hsl(240, 10%, 35%)" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="142" y1="88" x2="178" y2="90" stroke="hsl(240, 10%, 35%)" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="142" y1="94" x2="175" y2="102" stroke="hsl(240, 10%, 35%)" strokeWidth="1.5" strokeLinecap="round" />
+        
+        {/* Nose */}
+        <ellipse cx="100" cy="88" rx="5" ry="3.5" fill="hsl(340, 25%, 50%)" />
+        
+        {/* Mouth */}
+        <path d="M 93 93 Q 100 99 107 93" fill="none" stroke="hsl(240, 10%, 30%)" strokeWidth="1.5" strokeLinecap="round" />
+        
+        {/* Front paws */}
+        <ellipse cx="72" cy="172" rx="18" ry="10" fill="hsl(240, 10%, 12%)" />
+        <ellipse cx="128" cy="172" rx="18" ry="10" fill="hsl(240, 10%, 12%)" />
       </svg>
 
-      {/* Eyes */}
+      {/* Extremely large yellow eyes */}
       <motion.div
         animate={blinkAnimation[state]}
         className="absolute rounded-full"
-        style={{ width: size * 0.1, height: size * 0.1, backgroundColor: "hsl(45, 95%, 60%)", top: "35%", left: "33%" }}
+        style={{
+          width: s * 0.18,
+          height: s * 0.18,
+          backgroundColor: "hsl(45, 95%, 55%)",
+          top: "30%",
+          left: "26%",
+          boxShadow: "inset 0 -2px 4px rgba(0,0,0,0.15)",
+        }}
       >
-        <div className="absolute rounded-full" style={{ width: "40%", height: "40%", backgroundColor: "hsl(240, 10%, 10%)", top: "30%", left: "30%" }} />
+        <div
+          className="absolute rounded-full"
+          style={{
+            width: "45%",
+            height: "55%",
+            backgroundColor: "hsl(240, 10%, 8%)",
+            top: "22%",
+            left: "28%",
+            borderRadius: "50%",
+          }}
+        />
+        {/* Eye highlight */}
+        <div
+          className="absolute rounded-full"
+          style={{
+            width: "20%",
+            height: "20%",
+            backgroundColor: "white",
+            top: "22%",
+            left: "55%",
+          }}
+        />
       </motion.div>
       <motion.div
         animate={blinkAnimation[state]}
         className="absolute rounded-full"
-        style={{ width: size * 0.1, height: size * 0.1, backgroundColor: "hsl(45, 95%, 60%)", top: "35%", right: "33%" }}
+        style={{
+          width: s * 0.18,
+          height: s * 0.18,
+          backgroundColor: "hsl(45, 95%, 55%)",
+          top: "30%",
+          right: "26%",
+          boxShadow: "inset 0 -2px 4px rgba(0,0,0,0.15)",
+        }}
       >
-        <div className="absolute rounded-full" style={{ width: "40%", height: "40%", backgroundColor: "hsl(240, 10%, 10%)", top: "30%", left: "30%" }} />
+        <div
+          className="absolute rounded-full"
+          style={{
+            width: "45%",
+            height: "55%",
+            backgroundColor: "hsl(240, 10%, 8%)",
+            top: "22%",
+            left: "28%",
+          }}
+        />
+        <div
+          className="absolute rounded-full"
+          style={{
+            width: "20%",
+            height: "20%",
+            backgroundColor: "white",
+            top: "22%",
+            left: "55%",
+          }}
+        />
       </motion.div>
 
       {/* Tail */}
       <motion.div
         animate={tailWag[state]}
         className="absolute"
-        style={{ width: size * 0.15, height: size * 0.35, bottom: "10%", right: "-5%", transformOrigin: "bottom center" }}
+        style={{ width: s * 0.18, height: s * 0.35, bottom: "8%", right: "-8%", transformOrigin: "bottom center" }}
       >
-        <svg viewBox="0 0 30 70" width="100%" height="100%">
-          <path d="M 15 70 Q 25 40 10 10 Q 5 0 15 0" fill="none" stroke="hsl(240, 10%, 15%)" strokeWidth="8" strokeLinecap="round" />
+        <svg viewBox="0 0 36 70" width="100%" height="100%">
+          <path d="M 18 70 Q 30 45 15 20 Q 8 5 18 0" fill="none" stroke="hsl(240, 10%, 12%)" strokeWidth="10" strokeLinecap="round" />
         </svg>
       </motion.div>
 
       {state === "sleeping" && (
         <motion.span
-          animate={{ opacity: [0, 1, 0], y: [0, -10] }}
+          animate={{ opacity: [0, 1, 0], y: [0, -12] }}
           transition={{ repeat: Infinity, duration: 2 }}
           className="absolute text-muted-foreground font-display text-sm"
-          style={{ top: "15%", right: "10%" }}
+          style={{ top: "12%", right: "8%" }}
         >
           zzz
         </motion.span>
