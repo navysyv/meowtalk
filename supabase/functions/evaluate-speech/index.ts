@@ -25,13 +25,17 @@ serve(async (req) => {
 
 You MUST respond by calling the "ielts_evaluation" tool with your assessment.
 
-Be realistic but encouraging. If the response is very short or unclear, give a lower band. If it's well-developed, give a higher band.`;
+Be realistic but encouraging. If the response is very short or unclear, give a lower band. If it's well-developed, give a higher band.
+
+For the improved answers:
+- improved_answer_mid: Write a Band 6-7 level answer that improves upon the student's response while keeping it natural and achievable.
+- improved_answer_high: Write a Band 8-9 level answer that demonstrates sophisticated vocabulary, complex grammar, and excellent coherence.`;
 
     const userPrompt = `IELTS Speaking Part ${part}
 Question: "${questionText}"
 Student's response (transcript): "${transcript}"
 
-Evaluate this response and provide detailed feedback.`;
+Evaluate this response and provide detailed feedback with two improved versions.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -59,7 +63,12 @@ Evaluate this response and provide detailed feedback.`;
                   vocabulary: { type: "string", description: "Feedback on lexical resource (2-3 sentences)" },
                   grammar: { type: "string", description: "Feedback on grammatical range and accuracy (2-3 sentences)" },
                   pronunciation: { type: "string", description: "Feedback on pronunciation (2-3 sentences)" },
-                  improved_answer: { type: "string", description: "A Band 7-8 model answer for the same question (3-5 sentences)" },
+                  fluency_score: { type: "number", description: "Fluency score from 0 to 100" },
+                  vocabulary_score: { type: "number", description: "Vocabulary score from 0 to 100" },
+                  grammar_score: { type: "number", description: "Grammar score from 0 to 100" },
+                  pronunciation_score: { type: "number", description: "Pronunciation score from 0 to 100" },
+                  improved_answer_mid: { type: "string", description: "A Band 6-7 improved version of the answer (3-5 sentences)" },
+                  improved_answer_high: { type: "string", description: "A Band 8-9 advanced version of the answer (3-5 sentences)" },
                   suggestions: {
                     type: "array",
                     items: { type: "string" },
@@ -79,7 +88,7 @@ Evaluate this response and provide detailed feedback.`;
                     description: "Specific mistakes found in the response with corrections",
                   },
                 },
-                required: ["band_score", "fluency", "vocabulary", "grammar", "pronunciation", "improved_answer", "suggestions", "mistakes"],
+                required: ["band_score", "fluency", "vocabulary", "grammar", "pronunciation", "fluency_score", "vocabulary_score", "grammar_score", "pronunciation_score", "improved_answer_mid", "improved_answer_high", "suggestions", "mistakes"],
                 additionalProperties: false,
               },
             },

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 
 interface Mistake {
@@ -14,6 +15,9 @@ interface FeedbackCardProps {
   pronunciation: string;
   suggestions: string[];
   transcript?: string;
+  improvedAnswerMid?: string;
+  improvedAnswerHigh?: string;
+  /** @deprecated use improvedAnswerMid instead */
   improvedAnswer?: string;
   mistakes?: Mistake[];
   onClose: () => void;
@@ -27,14 +31,26 @@ const criteria = [
   { key: "pronunciation", label: "Pronunciation" },
 ] as const;
 
+type VersionTab = "original" | "mid" | "high";
+
 const FeedbackCard = ({
   band, fluency, vocabulary, grammar, pronunciation, suggestions,
-  transcript, improvedAnswer, mistakes,
+  transcript, improvedAnswerMid, improvedAnswerHigh, improvedAnswer, mistakes,
   onClose, onPracticeAgain
 }: FeedbackCardProps) => {
   const feedbackMap = { fluency, vocabulary, grammar, pronunciation };
+  const [activeTab, setActiveTab] = useState<VersionTab>("original");
 
   const bandColor = band >= 7 ? "text-green-600" : band >= 6 ? "text-primary" : "text-orange-500";
+
+  const midAnswer = improvedAnswerMid || improvedAnswer;
+  const highAnswer = improvedAnswerHigh;
+
+  const tabs: { key: VersionTab; label: string; content?: string }[] = [
+    { key: "original", label: "Your Answer", content: transcript },
+    { key: "mid", label: "Band 6–7", content: midAnswer },
+    { key: "high", label: "Band 8–9", content: highAnswer },
+  ];
 
   return (
     <motion.div
@@ -60,11 +76,46 @@ const FeedbackCard = ({
         ))}
       </div>
 
-      {/* Your transcript */}
-      {transcript && (
+      {/* Answer versions tabs */}
+      {(transcript || midAnswer || highAnswer) && (
         <div className="bg-secondary/30 rounded-2xl p-4">
-          <p className="text-sm font-semibold text-foreground mb-2">🎙️ Your Response</p>
-          <p className="text-sm text-muted-foreground leading-relaxed italic">"{transcript}"</p>
+          <div className="flex gap-1 mb-3 bg-muted rounded-xl p-1">
+            {tabs.map(({ key, label, content }) =>
+              content ? (
+                <button
+                  key={key}
+                  onClick={() => setActiveTab(key)}
+                  className={`flex-1 text-xs font-medium py-1.5 px-2 rounded-lg transition-colors ${
+                    activeTab === key
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {label}
+                </button>
+              ) : null
+            )}
+          </div>
+          <motion.div key={activeTab} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+            {activeTab === "original" && transcript && (
+              <div>
+                <p className="text-sm font-semibold text-foreground mb-2">🎙️ Your Response</p>
+                <p className="text-sm text-muted-foreground leading-relaxed italic">"{transcript}"</p>
+              </div>
+            )}
+            {activeTab === "mid" && midAnswer && (
+              <div>
+                <p className="text-sm font-semibold text-foreground mb-2">📝 Band 6–7 Version</p>
+                <p className="text-sm text-foreground leading-relaxed">{midAnswer}</p>
+              </div>
+            )}
+            {activeTab === "high" && highAnswer && (
+              <div>
+                <p className="text-sm font-semibold text-foreground mb-2">✨ Band 8–9 Version</p>
+                <p className="text-sm text-foreground leading-relaxed">{highAnswer}</p>
+              </div>
+            )}
+          </motion.div>
         </div>
       )}
 
@@ -84,14 +135,6 @@ const FeedbackCard = ({
               </div>
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Improved answer */}
-      {improvedAnswer && (
-        <div className="bg-green-50 rounded-2xl p-4">
-          <p className="text-sm font-semibold text-foreground mb-2">✨ Band 7–8 Model Answer</p>
-          <p className="text-sm text-foreground leading-relaxed">{improvedAnswer}</p>
         </div>
       )}
 
