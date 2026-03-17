@@ -37,6 +37,17 @@ const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
       style={{ width: s, height: s }}
     >
       <svg viewBox="0 0 200 200" width={s} height={s}>
+        {/* Tail - attached to body at back-right, curving up */}
+        <motion.g animate={tailWag[state]} style={{ transformOrigin: "155px 130px" }}>
+          <path
+            d="M 155 130 Q 175 110 170 80 Q 165 55 175 40"
+            fill="none"
+            stroke="hsl(240, 10%, 12%)"
+            strokeWidth="10"
+            strokeLinecap="round"
+          />
+        </motion.g>
+
         {/* Very round chubby body */}
         <ellipse cx="100" cy="120" rx="72" ry="62" fill="hsl(240, 10%, 12%)" />
         
@@ -99,7 +110,6 @@ const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
             borderRadius: "50%",
           }}
         />
-        {/* Eye highlight */}
         <div
           className="absolute rounded-full"
           style={{
@@ -143,17 +153,6 @@ const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
             left: "55%",
           }}
         />
-      </motion.div>
-
-      {/* Tail */}
-      <motion.div
-        animate={tailWag[state]}
-        className="absolute"
-        style={{ width: s * 0.18, height: s * 0.35, bottom: "8%", right: "-8%", transformOrigin: "bottom center" }}
-      >
-        <svg viewBox="0 0 36 70" width="100%" height="100%">
-          <path d="M 18 70 Q 30 45 15 20 Q 8 5 18 0" fill="none" stroke="hsl(240, 10%, 12%)" strokeWidth="10" strokeLinecap="round" />
-        </svg>
       </motion.div>
 
       {state === "sleeping" && (
