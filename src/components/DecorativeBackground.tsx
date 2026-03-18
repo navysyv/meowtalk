@@ -26,16 +26,14 @@ const DecorativeBackground = () => (
     </svg>
 
     {/* Subtle paw prints */}
-    <svg className="absolute inset-0 w-full h-full opacity-[0.025]" xmlns="http://www.w3.org/2000/svg">
+    <svg className="absolute inset-0 w-full h-full opacity-[0.025]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" preserveAspectRatio="none">
       {[
-        { x: "12%", y: "25%", r: 0 }, { x: "55%", y: "30%", r: 25 },
-        { x: "82%", y: "45%", r: -15 }, { x: "30%", y: "72%", r: 10 },
-        { x: "68%", y: "85%", r: -20 }, { x: "90%", y: "22%", r: 30 },
+        { x: 120, y: 250, r: 0 }, { x: 550, y: 300, r: 25 },
+        { x: 820, y: 450, r: -15 }, { x: 300, y: 720, r: 10 },
+        { x: 680, y: 850, r: -20 }, { x: 900, y: 220, r: 30 },
       ].map((pos, i) => (
-        <g key={`paw-${i}`} transform={`translate(${parseFloat(pos.x) * 0.01 * 1920}, ${parseFloat(pos.y) * 0.01 * 1080}) rotate(${pos.r}) scale(0.6)`}>
-          {/* Main pad */}
+        <g key={`paw-${i}`} transform={`translate(${pos.x}, ${pos.y}) rotate(${pos.r}) scale(0.8)`}>
           <ellipse cx="15" cy="22" rx="8" ry="10" fill="hsl(265, 70%, 60%)" />
-          {/* Toe pads */}
           <circle cx="5" cy="8" r="4" fill="hsl(265, 70%, 60%)" />
           <circle cx="15" cy="4" r="4" fill="hsl(265, 70%, 60%)" />
           <circle cx="25" cy="8" r="4" fill="hsl(265, 70%, 60%)" />
