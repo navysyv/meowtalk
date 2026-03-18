@@ -1,18 +1,19 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
-import { Mic, MicOff, ArrowRight, Loader2 } from "lucide-react";
+import { MicOff, ArrowRight, Loader2 } from "lucide-react";
 import TalkieCat from "@/components/TalkieCat";
 import CircularTimer from "@/components/CircularTimer";
 import QuestionCard from "@/components/QuestionCard";
 import FeedbackCard from "@/components/FeedbackCard";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import { part1Questions, part2Questions, part3Questions, createQuestionShuffler, type Question } from "@/data/questions";
-import { playClick, playSuccess, playStart, playPurr } from "@/lib/sounds";
+import { playClick, playSuccess, playStart } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useVoiceRecorder } from "@/hooks/useVoiceRecorder";
 
-type Phase = "intro" | "prep" | "speaking" | "analyzing" | "feedback";
+type Phase = "intro" | "prep" | "speaking" | "processing" | "analyzing" | "feedback";
 
 const questionsMap = { 1: part1Questions, 2: part2Questions, 3: part3Questions };
 const timers = {
@@ -61,95 +62,44 @@ const PracticePage = () => {
 
   const [phase, setPhase] = useState<Phase>("intro");
   const [question, setQuestion] = useState<Question | null>(null);
-  const [isRecording, setIsRecording] = useState(false);
   const [feedback, setFeedback] = useState<AIFeedback | null>(null);
   const [transcript, setTranscript] = useState<string>("");
   const [talkieState, setTalkieState] = useState<"idle" | "listening" | "feedback" | "sleeping">("idle");
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
-  const recognitionRef = useRef<any>(null);
-  const transcriptRef = useRef<string>("");
   const autoStartedRef = useRef(false);
+  const questionRef = useRef<Question | null>(null);
 
-  // Improved speech recognition - continuous, restarts on end
-  const startSpeechRecognition = useCallback(() => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      console.warn("Speech recognition not supported");
-      return;
-    }
+  // Keep questionRef in sync
+  useEffect(() => { questionRef.current = question; }, [question]);
 
-    const recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = "en-US";
-    recognition.maxAlternatives = 1;
-
-    let finalParts: string[] = [];
-
-    recognition.onresult = (event: any) => {
-      let interim = "";
-      // Rebuild final parts from results
-      finalParts = [];
-      for (let i = 0; i < event.results.length; i++) {
-        if (event.results[i].isFinal) {
-          finalParts.push(event.results[i][0].transcript);
-        } else {
-          interim += event.results[i][0].transcript;
-        }
-      }
-      const full = finalParts.join(" ") + (interim ? " " + interim : "");
-      transcriptRef.current = full.trim();
-      setTranscript(full.trim());
-    };
-
-    recognition.onerror = (event: any) => {
-      // Ignore no-speech errors, just keep going
-      if (event.error === "no-speech" || event.error === "aborted") return;
-      console.error("Speech recognition error:", event.error);
-    };
-
-    // Auto-restart if it ends unexpectedly (browser timeout)
-    recognition.onend = () => {
-      if (recognitionRef.current === recognition) {
-        try {
-          recognition.start();
-        } catch {
-          // Already stopped intentionally
-        }
-      }
-    };
-
-    recognition.start();
-    recognitionRef.current = recognition;
-  }, []);
-
-  const stopSpeechRecognition = useCallback(() => {
-    const ref = recognitionRef.current;
-    recognitionRef.current = null; // Clear first to prevent auto-restart
-    if (ref) {
-      try { ref.stop(); } catch { /* ignore */ }
-    }
-  }, []);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      stopSpeechRecognition();
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-        mediaRecorderRef.current.stop();
-      }
-    };
-  }, [stopSpeechRecognition]);
-
-  const evaluateWithAI = useCallback(async (spokenText: string, questionText: string) => {
-    if (!spokenText.trim()) {
-      toast({ title: "No speech detected", description: "Please try again and speak clearly.", variant: "destructive" });
-      setPhase("speaking");
+  const handleTranscript = useCallback((text: string) => {
+    setTranscript(text);
+    if (!text) {
+      setPhase("intro");
       setTalkieState("idle");
       return;
     }
+    // Proceed to AI evaluation
+    evaluateWithAI(text, questionRef.current?.text || "");
+  }, []);
 
+  const { isRecording, isProcessing, startRecording, stopAndTranscribe, reset: resetRecorder } = useVoiceRecorder({
+    onTranscript: handleTranscript,
+  });
+
+  // Sync talkie state with recording state
+  useEffect(() => {
+    if (isRecording) setTalkieState("listening");
+    else if (isProcessing) setTalkieState("feedback");
+  }, [isRecording, isProcessing]);
+
+  // Show processing phase
+  useEffect(() => {
+    if (isProcessing && phase === "speaking") {
+      setPhase("processing");
+    }
+  }, [isProcessing, phase]);
+
+  const evaluateWithAI = useCallback(async (spokenText: string, questionText: string) => {
     setPhase("analyzing");
     setTalkieState("feedback");
 
@@ -163,7 +113,6 @@ const PracticePage = () => {
       const aiFeedback = data as AIFeedback;
       setFeedback(aiFeedback);
 
-      // Save to DB
       await supabase.from("speaking_attempts").insert({
         part,
         question_text: questionText,
@@ -182,39 +131,10 @@ const PracticePage = () => {
     } catch (e: any) {
       console.error("AI evaluation error:", e);
       toast({ title: "Evaluation failed", description: e.message || "Please try again.", variant: "destructive" });
-      setPhase("speaking");
+      setPhase("intro");
       setTalkieState("idle");
     }
   }, [part, toast]);
-
-  const startRecording = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
-      audioChunksRef.current = [];
-      mediaRecorderRef.current = recorder;
-      recorder.ondataavailable = (e) => audioChunksRef.current.push(e.data);
-      recorder.start();
-      setIsRecording(true);
-      setTalkieState("listening");
-      playPurr();
-      startSpeechRecognition();
-    } catch {
-      toast({ title: "Microphone access denied", description: "Please allow microphone access.", variant: "destructive" });
-    }
-  }, [startSpeechRecognition, toast]);
-
-  const stopRecordingAndEvaluate = useCallback(() => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach(t => t.stop());
-    }
-    setIsRecording(false);
-    stopSpeechRecognition();
-
-    const spokenText = transcriptRef.current;
-    evaluateWithAI(spokenText, question?.text || "");
-  }, [stopSpeechRecognition, evaluateWithAI, question]);
 
   // Auto-start recording when speaking phase begins
   useEffect(() => {
@@ -232,13 +152,13 @@ const PracticePage = () => {
     const q = getShuffler(part).next();
     setQuestion(q);
     setTranscript("");
-    transcriptRef.current = "";
+    resetRecorder();
     if (config.prep > 0) {
       setPhase("prep");
     } else {
       setPhase("speaking");
     }
-  }, [part, config.prep]);
+  }, [part, config.prep, resetRecorder]);
 
   const onPrepComplete = useCallback(() => {
     playClick();
@@ -246,18 +166,12 @@ const PracticePage = () => {
   }, []);
 
   const onSpeakingComplete = useCallback(() => {
-    stopRecordingAndEvaluate();
-  }, [stopRecordingAndEvaluate]);
+    stopAndTranscribe();
+  }, [stopAndTranscribe]);
 
   const repeatQuestion = useCallback(() => {
-    stopSpeechRecognition();
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach(t => t.stop());
-    }
+    resetRecorder();
     setTranscript("");
-    transcriptRef.current = "";
-    setIsRecording(false);
     setTalkieState("idle");
     setFeedback(null);
     autoStartedRef.current = false;
@@ -266,25 +180,20 @@ const PracticePage = () => {
     } else {
       setPhase("speaking");
     }
-  }, [config.prep, stopSpeechRecognition]);
+  }, [config.prep, resetRecorder]);
 
   const exitToHome = useCallback(() => {
-    stopSpeechRecognition();
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-      mediaRecorderRef.current.stop();
-    }
+    resetRecorder();
     navigate("/");
-  }, [navigate, stopSpeechRecognition]);
+  }, [navigate, resetRecorder]);
 
   const practiceAgain = useCallback(() => {
     setFeedback(null);
     setTranscript("");
-    transcriptRef.current = "";
+    resetRecorder();
     setTalkieState("idle");
-    setIsRecording(false);
-    autoStartedRef.current = false;
     setPhase("intro");
-  }, []);
+  }, [resetRecorder]);
 
   return (
     <div className="min-h-screen relative">
@@ -333,22 +242,24 @@ const PracticePage = () => {
                 <QuestionCard question={question} part={part} />
                 <CircularTimer totalSeconds={config.speak} label="Speaking" onComplete={onSpeakingComplete} onExit={exitToHome} onRepeat={repeatQuestion} autoStart />
 
-                {/* Single mic button to stop early */}
                 <motion.button
                   whileTap={{ scale: 0.96 }}
-                  onClick={stopRecordingAndEvaluate}
+                  onClick={() => stopAndTranscribe()}
                   className="w-16 h-16 rounded-full flex items-center justify-center shadow-glow transition-all bg-destructive text-destructive-foreground hover:shadow-[0_8px_40px_-8px_hsla(25,90%,60%,0.4)]"
                 >
                   <MicOff size={24} />
                 </motion.button>
                 <p className="text-xs text-muted-foreground">Tap to finish early</p>
+              </motion.div>
+            )}
 
-                {transcript && (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full bg-secondary/30 rounded-2xl p-4 max-h-24 overflow-y-auto">
-                    <p className="text-xs text-muted-foreground mb-1">Live transcript:</p>
-                    <p className="text-sm text-foreground">{transcript}</p>
-                  </motion.div>
-                )}
+            {phase === "processing" && (
+              <motion.div key="processing" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col items-center gap-6">
+                <TalkieCat state="feedback" size={120} />
+                <div className="flex items-center gap-3 text-muted-foreground">
+                  <Loader2 className="animate-spin" size={20} />
+                  <p className="text-sm font-medium">Processing speech...</p>
+                </div>
               </motion.div>
             )}
 
@@ -357,7 +268,7 @@ const PracticePage = () => {
                 <TalkieCat state="feedback" size={120} />
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Loader2 className="animate-spin" size={20} />
-                  <p className="text-sm font-medium">Transcribing & analyzing your speech...</p>
+                  <p className="text-sm font-medium">Analyzing your speech...</p>
                 </div>
               </motion.div>
             )}
