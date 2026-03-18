@@ -37,10 +37,10 @@ const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
       style={{ width: s, height: s }}
     >
       <svg viewBox="0 0 200 200" width={s} height={s}>
-        {/* Tail - attached to body at back-right, curving up */}
-        <motion.g animate={tailWag[state]} style={{ transformOrigin: "155px 130px" }}>
+        {/* Tail - attached naturally to body at back-right hip */}
+        <motion.g animate={tailWag[state]} style={{ transformOrigin: "160px 140px" }}>
           <path
-            d="M 155 130 Q 175 110 170 80 Q 165 55 175 40"
+            d="M 160 140 C 175 125, 180 100, 172 75 C 168 60, 172 45, 178 35"
             fill="none"
             stroke="hsl(240, 10%, 12%)"
             strokeWidth="10"
