@@ -60,9 +60,17 @@ const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
         <ellipse cx="132" cy="38" rx="12" ry="16" fill="hsl(240, 10%, 12%)" transform="rotate(15, 132, 38)" />
         <ellipse cx="130" cy="40" rx="6" ry="9" fill="hsl(340, 25%, 55%)" transform="rotate(15, 130, 40)" />
         
-        {/* Lavender collar */}
-        <ellipse cx="100" cy="108" rx="48" ry="10" fill="hsl(265, 60%, 65%)" />
-        <circle cx="100" cy="116" r="5" fill="hsl(45, 95%, 60%)" />
+        {/* Collar - thin band around neck */}
+        <path
+          d="M 56 106 Q 78 114 100 116 Q 122 114 144 106"
+          fill="none"
+          stroke="hsl(265, 60%, 65%)"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        {/* Bell charm */}
+        <circle cx="100" cy="118" r="4" fill="hsl(45, 95%, 60%)" />
+        <circle cx="100" cy="118" r="1.5" fill="hsl(45, 85%, 45%)" />
 
         {/* Belly highlight */}
         <ellipse cx="100" cy="138" rx="32" ry="24" fill="hsl(240, 10%, 18%)" />
