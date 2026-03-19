@@ -1,35 +1,47 @@
 import { motion, type Easing } from "framer-motion";
 
 interface TalkieCatProps {
-  state: "idle" | "listening" | "feedback" | "sleeping";
+  state: "idle" | "listening" | "feedback" | "sleeping" | "thinking" | "happy" | "impressed";
   size?: number;
 }
 
 const ease: Easing = "easeInOut";
 
-const breatheAnimation = {
+const breatheAnimation: Record<TalkieCatProps["state"], any> = {
   idle: { y: [0, -6, 0], transition: { repeat: Infinity, duration: 3.5, ease } },
   listening: { scale: [1, 1.04, 1], transition: { repeat: Infinity, duration: 2, ease } },
   feedback: { rotate: [0, 8, -8, 0], transition: { duration: 0.8, ease } },
   sleeping: { y: [0, -3, 0], transition: { repeat: Infinity, duration: 4.5, ease } },
+  thinking: { rotate: [0, -5, 0], y: [0, -4, 0], transition: { repeat: Infinity, duration: 3, ease } },
+  happy: { y: [0, -10, 0], transition: { repeat: Infinity, duration: 1.2, ease } },
+  impressed: { scale: [1, 1.06, 1], transition: { repeat: Infinity, duration: 1.5, ease } },
 };
 
-const blinkAnimation = {
+const blinkAnimation: Record<TalkieCatProps["state"], any> = {
   idle: { scaleY: [1, 0.05, 1], transition: { repeat: Infinity, repeatDelay: 3, duration: 0.25, times: [0, 0.5, 1] } },
   listening: { scale: [1, 1.08, 1], transition: { repeat: Infinity, duration: 1.5, ease } },
   feedback: {},
   sleeping: { scaleY: 0.1 },
+  thinking: { scaleY: [1, 0.05, 1], transition: { repeat: Infinity, repeatDelay: 5, duration: 0.3, times: [0, 0.5, 1] } },
+  happy: { scaleY: [1, 0.9, 1], transition: { repeat: Infinity, repeatDelay: 2, duration: 0.2, times: [0, 0.5, 1] } },
+  impressed: { scale: [1, 1.12, 1], transition: { repeat: Infinity, duration: 1, ease } },
 };
 
-const tailWag = {
+const tailWag: Record<TalkieCatProps["state"], any> = {
   idle: { rotate: [0, 12, -12, 0], transition: { repeat: Infinity, duration: 3, ease } },
   listening: { rotate: [0, 18, -18, 0], transition: { repeat: Infinity, duration: 1.2, ease } },
   feedback: { rotate: [0, 25, -25, 0], transition: { repeat: Infinity, duration: 0.8, ease } },
   sleeping: { rotate: 5 },
+  thinking: { rotate: [0, 5, -5, 0], transition: { repeat: Infinity, duration: 4, ease } },
+  happy: { rotate: [0, 30, -30, 0], transition: { repeat: Infinity, duration: 0.6, ease } },
+  impressed: { rotate: [0, 20, -20, 0], transition: { repeat: Infinity, duration: 0.9, ease } },
 };
 
 const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
   const s = size;
+  const showStars = state === "impressed" || state === "listening";
+  const showSmile = state === "happy" || state === "impressed";
+
   return (
     <motion.div
       animate={breatheAnimation[state]}
@@ -86,15 +98,19 @@ const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
         {/* Nose */}
         <ellipse cx="100" cy="88" rx="5" ry="3.5" fill="hsl(340, 25%, 50%)" />
         
-        {/* Mouth */}
-        <path d="M 93 93 Q 100 99 107 93" fill="none" stroke="hsl(240, 10%, 30%)" strokeWidth="1.5" strokeLinecap="round" />
+        {/* Mouth - changes based on state */}
+        {showSmile ? (
+          <path d="M 90 93 Q 95 100 100 101 Q 105 100 110 93" fill="none" stroke="hsl(240, 10%, 30%)" strokeWidth="1.5" strokeLinecap="round" />
+        ) : (
+          <path d="M 93 93 Q 100 99 107 93" fill="none" stroke="hsl(240, 10%, 30%)" strokeWidth="1.5" strokeLinecap="round" />
+        )}
         
         {/* Front paws */}
         <ellipse cx="72" cy="172" rx="18" ry="10" fill="hsl(240, 10%, 12%)" />
         <ellipse cx="128" cy="172" rx="18" ry="10" fill="hsl(240, 10%, 12%)" />
       </svg>
 
-      {/* Extremely large yellow eyes */}
+      {/* Left eye */}
       <motion.div
         animate={blinkAnimation[state]}
         className="absolute rounded-full"
@@ -115,7 +131,6 @@ const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
             backgroundColor: "hsl(240, 10%, 8%)",
             top: "22%",
             left: "28%",
-            borderRadius: "50%",
           }}
         />
         <div
@@ -128,7 +143,20 @@ const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
             left: "55%",
           }}
         />
+        {/* Star sparkle in eye */}
+        {showStars && (
+          <motion.div
+            animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
+            transition={{ repeat: Infinity, duration: 1.5, ease }}
+            className="absolute"
+            style={{ top: "10%", right: "10%", fontSize: s * 0.04, color: "white" }}
+          >
+            ✦
+          </motion.div>
+        )}
       </motion.div>
+
+      {/* Right eye */}
       <motion.div
         animate={blinkAnimation[state]}
         className="absolute rounded-full"
@@ -161,6 +189,17 @@ const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
             left: "55%",
           }}
         />
+        {/* Star sparkle in eye */}
+        {showStars && (
+          <motion.div
+            animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
+            transition={{ repeat: Infinity, duration: 1.5, delay: 0.3, ease }}
+            className="absolute"
+            style={{ top: "10%", right: "10%", fontSize: s * 0.04, color: "white" }}
+          >
+            ✦
+          </motion.div>
+        )}
       </motion.div>
 
       {state === "sleeping" && (
