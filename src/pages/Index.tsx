@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { MessageCircle, Clock, BookOpen, History, Zap } from "lucide-react";
+import { MessageCircle, Clock, BookOpen, History, Zap, Flame } from "lucide-react";
 import TalkieCat from "@/components/TalkieCat";
 import ProgressMap from "@/components/ProgressMap";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import { playClick } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
+import { useStreak } from "@/hooks/useStreak";
 
 const parts = [
   {
@@ -34,6 +35,7 @@ const parts = [
 
 const Index = () => {
   const navigate = useNavigate();
+  const { streak, justIncreased } = useStreak();
   const [progressScores, setProgressScores] = useState({ fluency: 0, vocabulary: 0, grammar: 0, pronunciation: 0 });
   const [hasAttempts, setHasAttempts] = useState(false);
 
@@ -47,10 +49,8 @@ const Index = () => {
 
       if (data && data.length > 0) {
         setHasAttempts(true);
-        // Average band score as percentage (band 9 = 100%)
         const avgBand = data.reduce((sum, a) => sum + (a.band_score || 0), 0) / data.length;
         const base = Math.round((avgBand / 9) * 100);
-        // Slight variation per category based on feedback length as a proxy
         setProgressScores({
           fluency: Math.min(100, base + Math.round(Math.random() * 6 - 3)),
           vocabulary: Math.min(100, base + Math.round(Math.random() * 6 - 3)),
@@ -74,9 +74,20 @@ const Index = () => {
         {/* Header */}
         <header className="flex items-center justify-between px-6 py-4 max-w-2xl mx-auto">
           <h2 className="text-lg font-semibold font-display text-foreground tracking-tight">
-            Talkie IELTS
+            MeowTalk
           </h2>
           <div className="flex items-center gap-3">
+            {/* Streak */}
+            {streak > 0 && (
+              <motion.div
+                animate={justIncreased ? { scale: [1, 1.2, 1] } : {}}
+                transition={{ duration: 0.5 }}
+                className="flex items-center gap-1 text-sm font-medium text-accent-foreground bg-accent/20 px-2.5 py-1 rounded-full"
+              >
+                <Flame size={14} className="text-accent" />
+                <span>{streak}</span>
+              </motion.div>
+            )}
             <motion.button whileTap={{ scale: 0.96 }} onClick={() => navigate("/full-test")} className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5">
               <Zap size={16} />
               Full Test
@@ -99,10 +110,10 @@ const Index = () => {
             <TalkieCat state="idle" size={160} />
             <div className="mt-2">
               <h1 className="text-4xl md:text-5xl font-bold font-display tracking-tight text-foreground mb-3 text-balance">
-                Practice Speaking<br />with Talkie
+                Practice Speaking<br />with MeowTalk
               </h1>
               <p className="text-muted-foreground leading-relaxed max-w-md mx-auto">
-                Take a deep breath. Talkie will guide you through your IELTS Speaking practice — one part at a time.
+                Take a deep breath. MeowTalk will guide you through your IELTS Speaking practice — one part at a time.
               </p>
             </div>
           </motion.div>

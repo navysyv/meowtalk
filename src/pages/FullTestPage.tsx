@@ -7,11 +7,13 @@ import CircularTimer from "@/components/CircularTimer";
 import QuestionCard from "@/components/QuestionCard";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import ProgressMap from "@/components/ProgressMap";
+import ShareResultCard from "@/components/ShareResultCard";
 import { part1Questions, part2Questions, part3Questions, createQuestionShuffler, type Question } from "@/data/questions";
 import { playClick, playSuccess, playStart } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useVoiceRecorder } from "@/hooks/useVoiceRecorder";
+import { useStreak } from "@/hooks/useStreak";
 
 const timers = {
   1: { prep: 0, speak: 120 },
@@ -40,12 +42,13 @@ type Phase = "intro" | "prep" | "speaking" | "processing" | "analyzing" | "trans
 const FullTestPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { recordPractice } = useStreak();
 
   const [currentPart, setCurrentPart] = useState(1);
   const [phase, setPhase] = useState<Phase>("intro");
   const [question, setQuestion] = useState<Question | null>(null);
   const [results, setResults] = useState<PartResult[]>([]);
-  const [talkieState, setTalkieState] = useState<"idle" | "listening" | "feedback">("idle");
+  const [talkieState, setTalkieState] = useState<"idle" | "listening" | "feedback" | "thinking" | "happy" | "impressed">("idle");
 
   const autoStartedRef = useRef(false);
   const questionRef = useRef<Question | null>(null);
@@ -74,7 +77,7 @@ const FullTestPage = () => {
     }
 
     setPhase("analyzing");
-    setTalkieState("feedback");
+    setTalkieState("thinking");
 
     try {
       const partNum = currentPartRef.current;
@@ -115,8 +118,11 @@ const FullTestPage = () => {
 
       if (partNum < 3) {
         setPhase("transition");
+        setTalkieState("happy");
       } else {
         setPhase("results");
+        setTalkieState("impressed");
+        await recordPractice();
         playSuccess();
       }
     } catch (e: any) {
@@ -124,7 +130,7 @@ const FullTestPage = () => {
       setPhase("speaking");
       setTalkieState("idle");
     }
-  }, [toast]);
+  }, [toast, recordPractice]);
 
   const { isRecording, isProcessing, startRecording, stopAndTranscribe, reset: resetRecorder } = useVoiceRecorder({
     onTranscript: handleTranscript,
@@ -132,7 +138,7 @@ const FullTestPage = () => {
 
   useEffect(() => {
     if (isRecording) setTalkieState("listening");
-    else if (isProcessing) setTalkieState("feedback");
+    else if (isProcessing) setTalkieState("thinking");
   }, [isRecording, isProcessing]);
 
   useEffect(() => {
@@ -208,7 +214,7 @@ const FullTestPage = () => {
 
             {phase === "prep" && (
               <motion.div key="prep" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col items-center gap-8">
-                <TalkieCat state="idle" size={100} />
+                <TalkieCat state="thinking" size={100} />
                 <span className="text-xs font-medium text-primary bg-lavender-soft px-3 py-1 rounded-full">Part {currentPart} of 3</span>
                 <QuestionCard question={question} part={currentPart} />
                 <p className="text-sm text-muted-foreground">Preparation time</p>
@@ -236,7 +242,7 @@ const FullTestPage = () => {
 
             {phase === "processing" && (
               <motion.div key="processing" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col items-center gap-6">
-                <TalkieCat state="feedback" size={120} />
+                <TalkieCat state="thinking" size={120} />
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Loader2 className="animate-spin" size={20} />
                   <p className="text-sm font-medium">Processing speech...</p>
@@ -246,7 +252,7 @@ const FullTestPage = () => {
 
             {phase === "analyzing" && (
               <motion.div key="analyzing" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col items-center gap-6">
-                <TalkieCat state="feedback" size={120} />
+                <TalkieCat state="thinking" size={120} />
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Loader2 className="animate-spin" size={20} />
                   <p className="text-sm font-medium">Analyzing Part {currentPart}...</p>
@@ -256,7 +262,7 @@ const FullTestPage = () => {
 
             {phase === "transition" && (
               <motion.div key="transition" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col items-center gap-6 text-center">
-                <TalkieCat state="idle" size={120} />
+                <TalkieCat state="happy" size={120} />
                 <div>
                   <p className="text-lg font-semibold font-display text-foreground mb-1">Part {currentPart} Complete!</p>
                   <p className="text-sm text-muted-foreground">Band: {results[results.length - 1]?.band_score.toFixed(1)}</p>
@@ -269,7 +275,7 @@ const FullTestPage = () => {
 
             {phase === "results" && (
               <motion.div key="results" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col items-center gap-6 w-full">
-                <TalkieCat state="feedback" size={100} />
+                <TalkieCat state="impressed" size={100} />
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground mb-1">Overall Band Score</p>
                   <p className={`text-6xl font-bold font-display ${overallBand >= 7 ? "text-green-600" : overallBand >= 6 ? "text-primary" : "text-orange-500"}`}>
@@ -287,6 +293,14 @@ const FullTestPage = () => {
                 </div>
 
                 <ProgressMap {...avgScores} />
+
+                <ShareResultCard
+                  bandScore={overallBand}
+                  fluencyScore={avgScores.fluency}
+                  vocabularyScore={avgScores.vocabulary}
+                  grammarScore={avgScores.grammar}
+                  pronunciationScore={avgScores.pronunciation}
+                />
 
                 <div className="flex gap-3">
                   <motion.button whileTap={{ scale: 0.96 }} onClick={() => navigate("/")} className="px-6 py-3 rounded-2xl bg-secondary text-secondary-foreground font-medium text-sm">

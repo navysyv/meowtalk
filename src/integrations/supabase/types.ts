@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      daily_streaks: {
+        Row: {
+          created_at: string
+          id: string
+          practice_date: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          practice_date?: string
+          session_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          practice_date?: string
+          session_id?: string
+        }
+        Relationships: []
+      }
       speaking_attempts: {
         Row: {
           band_score: number | null

@@ -6,14 +6,16 @@ import TalkieCat from "@/components/TalkieCat";
 import CircularTimer from "@/components/CircularTimer";
 import QuestionCard from "@/components/QuestionCard";
 import FeedbackCard from "@/components/FeedbackCard";
+import ShareResultCard from "@/components/ShareResultCard";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import { part1Questions, part2Questions, part3Questions, createQuestionShuffler, type Question } from "@/data/questions";
 import { playClick, playSuccess, playStart } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useVoiceRecorder } from "@/hooks/useVoiceRecorder";
+import { useStreak } from "@/hooks/useStreak";
 
-type Phase = "intro" | "prep" | "speaking" | "processing" | "analyzing" | "feedback";
+type Phase = "intro" | "prep" | "speaking" | "processing" | "analyzing" | "feedback" | "followup" | "followup-speaking" | "followup-processing" | "followup-analyzing";
 
 const questionsMap = { 1: part1Questions, 2: part2Questions, 3: part3Questions };
 const timers = {
@@ -59,16 +61,21 @@ const PracticePage = () => {
   const { part: partStr } = useParams();
   const part = parseInt(partStr || "1");
   const config = timers[part as keyof typeof timers] || timers[1];
+  const { recordPractice } = useStreak();
 
   const [phase, setPhase] = useState<Phase>("intro");
   const [question, setQuestion] = useState<Question | null>(null);
   const [feedback, setFeedback] = useState<AIFeedback | null>(null);
   const [transcript, setTranscript] = useState<string>("");
-  const [talkieState, setTalkieState] = useState<"idle" | "listening" | "feedback" | "sleeping">("idle");
+  const [talkieState, setTalkieState] = useState<"idle" | "listening" | "feedback" | "sleeping" | "thinking" | "happy" | "impressed">("idle");
   const autoStartedRef = useRef(false);
   const questionRef = useRef<Question | null>(null);
 
-  // Keep questionRef in sync
+  // Follow-up state
+  const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
+  const [currentFollowUp, setCurrentFollowUp] = useState(0);
+  const [followUpTranscript, setFollowUpTranscript] = useState("");
+
   useEffect(() => { questionRef.current = question; }, [question]);
 
   const handleTranscript = useCallback((text: string) => {
@@ -78,30 +85,52 @@ const PracticePage = () => {
       setTalkieState("idle");
       return;
     }
-    // Proceed to AI evaluation
     evaluateWithAI(text, questionRef.current?.text || "");
   }, []);
 
+  const handleFollowUpTranscript = useCallback((text: string) => {
+    setFollowUpTranscript(text);
+    if (!text) {
+      setPhase("feedback");
+      setTalkieState("happy");
+      return;
+    }
+    // Just show they answered, go back to feedback
+    setPhase("feedback");
+    setTalkieState("happy");
+    toast({ title: "Great follow-up answer! 🐱" });
+  }, [toast]);
+
   const { isRecording, isProcessing, startRecording, stopAndTranscribe, reset: resetRecorder } = useVoiceRecorder({
-    onTranscript: handleTranscript,
+    onTranscript: phase.startsWith("followup") ? handleFollowUpTranscript : handleTranscript,
   });
 
-  // Sync talkie state with recording state
   useEffect(() => {
     if (isRecording) setTalkieState("listening");
-    else if (isProcessing) setTalkieState("feedback");
+    else if (isProcessing) setTalkieState("thinking");
   }, [isRecording, isProcessing]);
 
-  // Show processing phase
   useEffect(() => {
-    if (isProcessing && phase === "speaking") {
-      setPhase("processing");
-    }
+    if (isProcessing && phase === "speaking") setPhase("processing");
+    if (isProcessing && phase === "followup-speaking") setPhase("followup-processing");
   }, [isProcessing, phase]);
+
+  const generateFollowUps = useCallback(async (questionText: string, spokenText: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-followup", {
+        body: { questionText, transcript: spokenText, part },
+      });
+      if (!error && data?.questions) {
+        setFollowUpQuestions(data.questions);
+      }
+    } catch {
+      // Follow-ups are optional, don't block
+    }
+  }, [part]);
 
   const evaluateWithAI = useCallback(async (spokenText: string, questionText: string) => {
     setPhase("analyzing");
-    setTalkieState("feedback");
+    setTalkieState("thinking");
 
     try {
       const { data, error } = await supabase.functions.invoke("evaluate-speech", {
@@ -126,7 +155,14 @@ const PracticePage = () => {
         suggestions: aiFeedback.suggestions,
       });
 
+      // Record practice for streak
+      await recordPractice();
+
+      // Generate follow-up questions in parallel
+      generateFollowUps(questionText, spokenText);
+
       setPhase("feedback");
+      setTalkieState(aiFeedback.band_score >= 7 ? "impressed" : aiFeedback.band_score >= 5.5 ? "happy" : "feedback");
       playSuccess();
     } catch (e: any) {
       console.error("AI evaluation error:", e);
@@ -134,15 +170,15 @@ const PracticePage = () => {
       setPhase("intro");
       setTalkieState("idle");
     }
-  }, [part, toast]);
+  }, [part, toast, recordPractice, generateFollowUps]);
 
   // Auto-start recording when speaking phase begins
   useEffect(() => {
-    if (phase === "speaking" && !autoStartedRef.current) {
+    if ((phase === "speaking" || phase === "followup-speaking") && !autoStartedRef.current) {
       autoStartedRef.current = true;
       startRecording();
     }
-    if (phase !== "speaking") {
+    if (phase !== "speaking" && phase !== "followup-speaking") {
       autoStartedRef.current = false;
     }
   }, [phase, startRecording]);
@@ -152,6 +188,8 @@ const PracticePage = () => {
     const q = getShuffler(part).next();
     setQuestion(q);
     setTranscript("");
+    setFollowUpQuestions([]);
+    setCurrentFollowUp(0);
     resetRecorder();
     if (config.prep > 0) {
       setPhase("prep");
@@ -169,11 +207,19 @@ const PracticePage = () => {
     stopAndTranscribe();
   }, [stopAndTranscribe]);
 
+  const startFollowUp = useCallback((index: number) => {
+    setCurrentFollowUp(index);
+    resetRecorder();
+    setFollowUpTranscript("");
+    setPhase("followup-speaking");
+  }, [resetRecorder]);
+
   const repeatQuestion = useCallback(() => {
     resetRecorder();
     setTranscript("");
     setTalkieState("idle");
     setFeedback(null);
+    setFollowUpQuestions([]);
     autoStartedRef.current = false;
     if (config.prep > 0) {
       setPhase("prep");
@@ -190,6 +236,7 @@ const PracticePage = () => {
   const practiceAgain = useCallback(() => {
     setFeedback(null);
     setTranscript("");
+    setFollowUpQuestions([]);
     resetRecorder();
     setTalkieState("idle");
     setPhase("intro");
@@ -223,14 +270,14 @@ const PracticePage = () => {
 
             {phase === "prep" && (
               <motion.div key="prep" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col items-center gap-8">
-                <TalkieCat state="idle" size={100} />
+                <TalkieCat state="thinking" size={100} />
                 <QuestionCard question={question} part={part} />
                 <p className="text-sm text-muted-foreground">Preparation time — organize your ideas</p>
                 <CircularTimer totalSeconds={config.prep} label="Preparation" onComplete={onPrepComplete} onExit={exitToHome} />
               </motion.div>
             )}
 
-            {phase === "speaking" && (
+            {(phase === "speaking" || phase === "followup-speaking") && (
               <motion.div key="speaking" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col items-center gap-8">
                 <TalkieCat state={isRecording ? "listening" : "idle"} size={100} />
                 {isRecording && (
@@ -239,9 +286,21 @@ const PracticePage = () => {
                     <p className="text-sm text-primary font-medium">Listening...</p>
                   </motion.div>
                 )}
-                <QuestionCard question={question} part={part} />
-                <CircularTimer totalSeconds={config.speak} label="Speaking" onComplete={onSpeakingComplete} onExit={exitToHome} onRepeat={repeatQuestion} autoStart />
-
+                {phase === "followup-speaking" && followUpQuestions[currentFollowUp] && (
+                  <div className="bg-card rounded-2xl p-4 shadow-soft text-center max-w-md">
+                    <p className="text-xs text-primary font-medium mb-1">Follow-up Question</p>
+                    <p className="text-sm text-foreground font-medium">{followUpQuestions[currentFollowUp]}</p>
+                  </div>
+                )}
+                {phase === "speaking" && <QuestionCard question={question} part={part} />}
+                <CircularTimer
+                  totalSeconds={phase === "followup-speaking" ? 60 : config.speak}
+                  label={phase === "followup-speaking" ? "Follow-up" : "Speaking"}
+                  onComplete={onSpeakingComplete}
+                  onExit={exitToHome}
+                  onRepeat={phase === "speaking" ? repeatQuestion : undefined}
+                  autoStart
+                />
                 <motion.button
                   whileTap={{ scale: 0.96 }}
                   onClick={() => stopAndTranscribe()}
@@ -253,9 +312,9 @@ const PracticePage = () => {
               </motion.div>
             )}
 
-            {phase === "processing" && (
+            {(phase === "processing" || phase === "followup-processing") && (
               <motion.div key="processing" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col items-center gap-6">
-                <TalkieCat state="feedback" size={120} />
+                <TalkieCat state="thinking" size={120} />
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Loader2 className="animate-spin" size={20} />
                   <p className="text-sm font-medium">Processing speech...</p>
@@ -263,9 +322,9 @@ const PracticePage = () => {
               </motion.div>
             )}
 
-            {phase === "analyzing" && (
+            {(phase === "analyzing" || phase === "followup-analyzing") && (
               <motion.div key="analyzing" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col items-center gap-6">
-                <TalkieCat state="feedback" size={120} />
+                <TalkieCat state="thinking" size={120} />
                 <div className="flex items-center gap-3 text-muted-foreground">
                   <Loader2 className="animate-spin" size={20} />
                   <p className="text-sm font-medium">Analyzing your speech...</p>
@@ -275,7 +334,7 @@ const PracticePage = () => {
 
             {phase === "feedback" && feedback && (
               <motion.div key="feedback" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="flex flex-col items-center gap-6 w-full">
-                <TalkieCat state="feedback" size={80} />
+                <TalkieCat state={feedback.band_score >= 7 ? "impressed" : "happy"} size={80} />
                 <FeedbackCard
                   band={feedback.band_score}
                   fluency={feedback.fluency}
@@ -291,6 +350,40 @@ const PracticePage = () => {
                   onClose={exitToHome}
                   onPracticeAgain={practiceAgain}
                 />
+
+                {/* Share */}
+                <ShareResultCard
+                  bandScore={feedback.band_score}
+                  fluencyScore={feedback.fluency_score}
+                  vocabularyScore={feedback.vocabulary_score}
+                  grammarScore={feedback.grammar_score}
+                  pronunciationScore={feedback.pronunciation_score}
+                />
+
+                {/* Follow-up questions */}
+                {followUpQuestions.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="w-full bg-card rounded-3xl p-5 shadow-soft space-y-3"
+                  >
+                    <p className="text-sm font-semibold font-display text-foreground">🎤 Follow-up Questions</p>
+                    <p className="text-xs text-muted-foreground">Like a real IELTS examiner — answer to practice more!</p>
+                    <div className="space-y-2">
+                      {followUpQuestions.map((q, i) => (
+                        <motion.button
+                          key={i}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => startFollowUp(i)}
+                          className="w-full text-left p-3 rounded-2xl bg-secondary/50 hover:bg-secondary text-sm text-foreground transition-colors flex items-center gap-2"
+                        >
+                          <span className="text-primary font-medium">{i + 1}.</span>
+                          {q}
+                        </motion.button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
