@@ -1,11 +1,9 @@
-import { motion, type Easing } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface TalkieCatProps {
   state: "idle" | "listening" | "feedback" | "sleeping" | "thinking" | "happy" | "impressed";
   size?: number;
 }
-
-const ease: Easing = "easeInOut";
 
 const smooth = { type: "tween" as const, ease: [0.4, 0, 0.2, 1] };
 
