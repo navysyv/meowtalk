@@ -193,7 +193,7 @@ const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
         {showStars && (
           <motion.div
             animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
-            transition={{ repeat: Infinity, duration: 1.5, delay: 0.3, ease }}
+            transition={{ repeat: Infinity, duration: 1.5, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
             className="absolute"
             style={{ top: "10%", right: "10%", fontSize: s * 0.04, color: "white" }}
           >
