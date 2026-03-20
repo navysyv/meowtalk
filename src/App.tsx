@@ -3,10 +3,12 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import ModeSelectPage from "./pages/ModeSelectPage.tsx";
 import Index from "./pages/Index.tsx";
 import PracticePage from "./pages/PracticePage.tsx";
 import HistoryPage from "./pages/HistoryPage.tsx";
 import FullTestPage from "./pages/FullTestPage.tsx";
+import GrowthPracticePage from "./pages/GrowthPracticePage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -18,10 +20,12 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<ModeSelectPage />} />
+          <Route path="/ielts" element={<Index />} />
           <Route path="/practice/:part" element={<PracticePage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/full-test" element={<FullTestPage />} />
+          <Route path="/growth" element={<GrowthPracticePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

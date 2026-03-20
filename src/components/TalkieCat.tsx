@@ -1,40 +1,40 @@
-import { motion, type Easing } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface TalkieCatProps {
   state: "idle" | "listening" | "feedback" | "sleeping" | "thinking" | "happy" | "impressed";
   size?: number;
 }
 
-const ease: Easing = "easeInOut";
+const smooth = { type: "tween" as const, ease: [0.4, 0, 0.2, 1] };
 
 const breatheAnimation: Record<TalkieCatProps["state"], any> = {
-  idle: { y: [0, -6, 0], transition: { repeat: Infinity, duration: 3.5, ease } },
-  listening: { scale: [1, 1.04, 1], transition: { repeat: Infinity, duration: 2, ease } },
-  feedback: { rotate: [0, 8, -8, 0], transition: { duration: 0.8, ease } },
-  sleeping: { y: [0, -3, 0], transition: { repeat: Infinity, duration: 4.5, ease } },
-  thinking: { rotate: [0, -5, 0], y: [0, -4, 0], transition: { repeat: Infinity, duration: 3, ease } },
-  happy: { y: [0, -10, 0], transition: { repeat: Infinity, duration: 1.2, ease } },
-  impressed: { scale: [1, 1.06, 1], transition: { repeat: Infinity, duration: 1.5, ease } },
+  idle: { y: [0, -6, 0], transition: { repeat: Infinity, duration: 3.5, ...smooth } },
+  listening: { scale: [1, 1.04, 1], transition: { repeat: Infinity, duration: 2, ...smooth } },
+  feedback: { rotate: [0, 8, -8, 0], transition: { duration: 0.8, ...smooth } },
+  sleeping: { y: [0, -3, 0], transition: { repeat: Infinity, duration: 4.5, ...smooth } },
+  thinking: { rotate: [0, -5, 0], y: [0, -4, 0], transition: { repeat: Infinity, duration: 3, ...smooth } },
+  happy: { y: [0, -10, 0], transition: { repeat: Infinity, duration: 1.2, ...smooth } },
+  impressed: { scale: [1, 1.06, 1], transition: { repeat: Infinity, duration: 1.5, ...smooth } },
 };
 
 const blinkAnimation: Record<TalkieCatProps["state"], any> = {
   idle: { scaleY: [1, 0.05, 1], transition: { repeat: Infinity, repeatDelay: 3, duration: 0.25, times: [0, 0.5, 1] } },
-  listening: { scale: [1, 1.08, 1], transition: { repeat: Infinity, duration: 1.5, ease } },
+  listening: { scale: [1, 1.08, 1], transition: { repeat: Infinity, duration: 1.5, ...smooth } },
   feedback: {},
   sleeping: { scaleY: 0.1 },
   thinking: { scaleY: [1, 0.05, 1], transition: { repeat: Infinity, repeatDelay: 5, duration: 0.3, times: [0, 0.5, 1] } },
   happy: { scaleY: [1, 0.9, 1], transition: { repeat: Infinity, repeatDelay: 2, duration: 0.2, times: [0, 0.5, 1] } },
-  impressed: { scale: [1, 1.12, 1], transition: { repeat: Infinity, duration: 1, ease } },
+  impressed: { scale: [1, 1.12, 1], transition: { repeat: Infinity, duration: 1, ...smooth } },
 };
 
 const tailWag: Record<TalkieCatProps["state"], any> = {
-  idle: { rotate: [0, 12, -12, 0], transition: { repeat: Infinity, duration: 3, ease } },
-  listening: { rotate: [0, 18, -18, 0], transition: { repeat: Infinity, duration: 1.2, ease } },
-  feedback: { rotate: [0, 25, -25, 0], transition: { repeat: Infinity, duration: 0.8, ease } },
-  sleeping: { rotate: 5 },
-  thinking: { rotate: [0, 5, -5, 0], transition: { repeat: Infinity, duration: 4, ease } },
-  happy: { rotate: [0, 30, -30, 0], transition: { repeat: Infinity, duration: 0.6, ease } },
-  impressed: { rotate: [0, 20, -20, 0], transition: { repeat: Infinity, duration: 0.9, ease } },
+  idle: { rotate: [0, 12, -12, 0], transition: { repeat: Infinity, duration: 3, ...smooth } },
+  listening: { rotate: [0, 18, -18, 0], transition: { repeat: Infinity, duration: 1.2, ...smooth } },
+  feedback: { rotate: [0, 25, -25, 0], transition: { repeat: Infinity, duration: 0.8, ...smooth } },
+  sleeping: { rotate: 5, transition: { duration: 0.5, ...smooth } },
+  thinking: { rotate: [0, 5, -5, 0], transition: { repeat: Infinity, duration: 4, ...smooth } },
+  happy: { rotate: [0, 30, -30, 0], transition: { repeat: Infinity, duration: 0.6, ...smooth } },
+  impressed: { rotate: [0, 20, -20, 0], transition: { repeat: Infinity, duration: 0.9, ...smooth } },
 };
 
 const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
@@ -147,7 +147,7 @@ const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
         {showStars && (
           <motion.div
             animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
-            transition={{ repeat: Infinity, duration: 1.5, ease }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: [0.4, 0, 0.2, 1] }}
             className="absolute"
             style={{ top: "10%", right: "10%", fontSize: s * 0.04, color: "white" }}
           >
@@ -193,7 +193,7 @@ const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
         {showStars && (
           <motion.div
             animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
-            transition={{ repeat: Infinity, duration: 1.5, delay: 0.3, ease }}
+            transition={{ repeat: Infinity, duration: 1.5, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
             className="absolute"
             style={{ top: "10%", right: "10%", fontSize: s * 0.04, color: "white" }}
           >

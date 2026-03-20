@@ -74,17 +74,17 @@ const Index = () => {
         {/* Header */}
         <header className="flex items-center justify-between px-6 py-4 max-w-2xl mx-auto">
           <h2 className="text-lg font-semibold font-display text-foreground tracking-tight">
-            MeowTalk
+            MeowTalk Practice
           </h2>
           <div className="flex items-center gap-3">
             {/* Streak */}
             {streak > 0 && (
               <motion.div
-                animate={justIncreased ? { scale: [1, 1.2, 1] } : {}}
+                animate={justIncreased ? { scale: [1, 1.3, 1] } : {}}
                 transition={{ duration: 0.5 }}
-                className="flex items-center gap-1 text-sm font-medium text-accent-foreground bg-accent/20 px-2.5 py-1 rounded-full"
+                className="flex items-center gap-1.5 text-sm font-bold bg-primary/15 text-primary px-3 py-1.5 rounded-full shadow-glow"
               >
-                <Flame size={14} className="text-accent" />
+                <Flame size={16} className="text-accent" />
                 <span>{streak}</span>
               </motion.div>
             )}
@@ -110,10 +110,10 @@ const Index = () => {
             <TalkieCat state="idle" size={160} />
             <div className="mt-2">
               <h1 className="text-4xl md:text-5xl font-bold font-display tracking-tight text-foreground mb-3 text-balance">
-                Practice Speaking<br />with MeowTalk
+                IELTS Speaking<br />Practice
               </h1>
               <p className="text-muted-foreground leading-relaxed max-w-md mx-auto">
-                Take a deep breath. MeowTalk will guide you through your IELTS Speaking practice — one part at a time.
+                Take a deep breath. MeowTalk Practice will guide you through each part of the IELTS Speaking test.
               </p>
             </div>
           </motion.div>
