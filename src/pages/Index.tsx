@@ -74,7 +74,7 @@ const Index = () => {
         {/* Header */}
         <header className="flex items-center justify-between px-6 py-4 max-w-2xl mx-auto">
           <h2 className="text-lg font-semibold font-display text-foreground tracking-tight">
-            MeowTalk
+            MeowTalk Practice
           </h2>
           <div className="flex items-center gap-3">
             {/* Streak */}
