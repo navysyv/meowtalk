@@ -7,14 +7,16 @@ interface TalkieCatProps {
 
 const ease: Easing = "easeInOut";
 
+const smooth = { type: "tween" as const, ease: [0.4, 0, 0.2, 1] };
+
 const breatheAnimation: Record<TalkieCatProps["state"], any> = {
-  idle: { y: [0, -6, 0], transition: { repeat: Infinity, duration: 3.5, ease } },
-  listening: { scale: [1, 1.04, 1], transition: { repeat: Infinity, duration: 2, ease } },
-  feedback: { rotate: [0, 8, -8, 0], transition: { duration: 0.8, ease } },
-  sleeping: { y: [0, -3, 0], transition: { repeat: Infinity, duration: 4.5, ease } },
-  thinking: { rotate: [0, -5, 0], y: [0, -4, 0], transition: { repeat: Infinity, duration: 3, ease } },
-  happy: { y: [0, -10, 0], transition: { repeat: Infinity, duration: 1.2, ease } },
-  impressed: { scale: [1, 1.06, 1], transition: { repeat: Infinity, duration: 1.5, ease } },
+  idle: { y: [0, -6, 0], transition: { repeat: Infinity, duration: 3.5, ...smooth } },
+  listening: { scale: [1, 1.04, 1], transition: { repeat: Infinity, duration: 2, ...smooth } },
+  feedback: { rotate: [0, 8, -8, 0], transition: { duration: 0.8, ...smooth } },
+  sleeping: { y: [0, -3, 0], transition: { repeat: Infinity, duration: 4.5, ...smooth } },
+  thinking: { rotate: [0, -5, 0], y: [0, -4, 0], transition: { repeat: Infinity, duration: 3, ...smooth } },
+  happy: { y: [0, -10, 0], transition: { repeat: Infinity, duration: 1.2, ...smooth } },
+  impressed: { scale: [1, 1.06, 1], transition: { repeat: Infinity, duration: 1.5, ...smooth } },
 };
 
 const blinkAnimation: Record<TalkieCatProps["state"], any> = {
