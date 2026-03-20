@@ -80,11 +80,11 @@ const Index = () => {
             {/* Streak */}
             {streak > 0 && (
               <motion.div
-                animate={justIncreased ? { scale: [1, 1.2, 1] } : {}}
+                animate={justIncreased ? { scale: [1, 1.3, 1] } : {}}
                 transition={{ duration: 0.5 }}
-                className="flex items-center gap-1 text-sm font-medium text-accent-foreground bg-accent/20 px-2.5 py-1 rounded-full"
+                className="flex items-center gap-1.5 text-sm font-bold bg-primary/15 text-primary px-3 py-1.5 rounded-full shadow-glow"
               >
-                <Flame size={14} className="text-accent" />
+                <Flame size={16} className="text-accent" />
                 <span>{streak}</span>
               </motion.div>
             )}
