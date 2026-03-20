@@ -212,7 +212,7 @@ const GrowthPracticePage = () => {
                   <div className="w-full bg-card rounded-3xl p-5 shadow-soft space-y-2">
                     <p className="text-sm font-semibold font-display text-foreground">✏️ Grammar Fix</p>
                     <p className="text-xs text-destructive line-through">{result.grammar_fix.original}</p>
-                    <p className="text-xs text-green-600 font-medium">{result.grammar_fix.corrected}</p>
+                    <p className="text-xs text-primary font-medium">{result.grammar_fix.corrected}</p>
                     <p className="text-xs text-muted-foreground">{result.grammar_fix.explanation}</p>
                   </div>
                 )}

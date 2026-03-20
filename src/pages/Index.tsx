@@ -110,10 +110,10 @@ const Index = () => {
             <TalkieCat state="idle" size={160} />
             <div className="mt-2">
               <h1 className="text-4xl md:text-5xl font-bold font-display tracking-tight text-foreground mb-3 text-balance">
-                Practice Speaking<br />with MeowTalk
+                IELTS Speaking<br />Practice
               </h1>
               <p className="text-muted-foreground leading-relaxed max-w-md mx-auto">
-                Take a deep breath. MeowTalk will guide you through your IELTS Speaking practice — one part at a time.
+                Take a deep breath. MeowTalk Practice will guide you through each part of the IELTS Speaking test.
               </p>
             </div>
           </motion.div>

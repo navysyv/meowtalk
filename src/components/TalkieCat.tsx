@@ -21,22 +21,22 @@ const breatheAnimation: Record<TalkieCatProps["state"], any> = {
 
 const blinkAnimation: Record<TalkieCatProps["state"], any> = {
   idle: { scaleY: [1, 0.05, 1], transition: { repeat: Infinity, repeatDelay: 3, duration: 0.25, times: [0, 0.5, 1] } },
-  listening: { scale: [1, 1.08, 1], transition: { repeat: Infinity, duration: 1.5, ease } },
+  listening: { scale: [1, 1.08, 1], transition: { repeat: Infinity, duration: 1.5, ...smooth } },
   feedback: {},
   sleeping: { scaleY: 0.1 },
   thinking: { scaleY: [1, 0.05, 1], transition: { repeat: Infinity, repeatDelay: 5, duration: 0.3, times: [0, 0.5, 1] } },
   happy: { scaleY: [1, 0.9, 1], transition: { repeat: Infinity, repeatDelay: 2, duration: 0.2, times: [0, 0.5, 1] } },
-  impressed: { scale: [1, 1.12, 1], transition: { repeat: Infinity, duration: 1, ease } },
+  impressed: { scale: [1, 1.12, 1], transition: { repeat: Infinity, duration: 1, ...smooth } },
 };
 
 const tailWag: Record<TalkieCatProps["state"], any> = {
-  idle: { rotate: [0, 12, -12, 0], transition: { repeat: Infinity, duration: 3, ease } },
-  listening: { rotate: [0, 18, -18, 0], transition: { repeat: Infinity, duration: 1.2, ease } },
-  feedback: { rotate: [0, 25, -25, 0], transition: { repeat: Infinity, duration: 0.8, ease } },
-  sleeping: { rotate: 5 },
-  thinking: { rotate: [0, 5, -5, 0], transition: { repeat: Infinity, duration: 4, ease } },
-  happy: { rotate: [0, 30, -30, 0], transition: { repeat: Infinity, duration: 0.6, ease } },
-  impressed: { rotate: [0, 20, -20, 0], transition: { repeat: Infinity, duration: 0.9, ease } },
+  idle: { rotate: [0, 12, -12, 0], transition: { repeat: Infinity, duration: 3, ...smooth } },
+  listening: { rotate: [0, 18, -18, 0], transition: { repeat: Infinity, duration: 1.2, ...smooth } },
+  feedback: { rotate: [0, 25, -25, 0], transition: { repeat: Infinity, duration: 0.8, ...smooth } },
+  sleeping: { rotate: 5, transition: { duration: 0.5, ...smooth } },
+  thinking: { rotate: [0, 5, -5, 0], transition: { repeat: Infinity, duration: 4, ...smooth } },
+  happy: { rotate: [0, 30, -30, 0], transition: { repeat: Infinity, duration: 0.6, ...smooth } },
+  impressed: { rotate: [0, 20, -20, 0], transition: { repeat: Infinity, duration: 0.9, ...smooth } },
 };
 
 const TalkieCat = ({ state = "idle", size = 128 }: TalkieCatProps) => {
