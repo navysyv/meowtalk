@@ -27,26 +27,31 @@ serve(async (req) => {
 
 Return a JSON object with EXACTLY this structure:
 {
-  "improved_answer": "A natural, fluent version of their answer",
+  "improved_answer": "A natural, fluent version of their answer that keeps the same meaning but uses better grammar, vocabulary and phrasing",
   "vocabulary_words": [
-    { "word": "word1", "meaning": "definition", "example": "example sentence" },
-    { "word": "word2", "meaning": "definition", "example": "example sentence" },
-    { "word": "word3", "meaning": "definition", "example": "example sentence" }
+    { "word": "word1", "meaning": "clear definition", "example": "example sentence using this word" },
+    { "word": "word2", "meaning": "clear definition", "example": "example sentence using this word" },
+    { "word": "word3", "meaning": "clear definition", "example": "example sentence using this word" }
   ],
   "grammar_fix": {
     "original": "a sentence with a grammar error from the transcript",
     "corrected": "the corrected version",
-    "explanation": "why it was wrong"
+    "explanation": "brief explanation of the grammar rule"
   },
   "useful_phrase": {
     "phrase": "a useful English phrase related to the topic",
-    "usage": "when and how to use it"
+    "usage": "when and how to use this phrase with an example"
   }
 }
 
-Pick vocabulary words that would upgrade their speaking level. Find a real grammar mistake from their transcript. If no mistakes, pick the weakest sentence and show how to make it stronger.`;
+Rules:
+- The improved_answer MUST be different from the original - show clear improvements
+- Pick vocabulary words that would upgrade their speaking level
+- Find a real grammar mistake from their transcript
+- If no obvious mistakes, pick the weakest sentence and show how to strengthen it
+- Always return valid JSON, nothing else`;
 
-    const response = await fetch("https://api.lovable.dev/v1/chat/completions", {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -56,7 +61,7 @@ Pick vocabulary words that would upgrade their speaking level. Find a real gramm
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: `Question: "${questionText}"\n\nStudent's answer: "${transcript}"\n\nAnalyze and return JSON only.` },
+          { role: "user", content: `Question: "${questionText}"\n\nStudent's spoken answer: "${transcript}"\n\nAnalyze and return JSON only. No markdown, no backticks, just the JSON object.` },
         ],
         temperature: 0.7,
       }),
@@ -64,21 +69,65 @@ Pick vocabulary words that would upgrade their speaking level. Find a real gramm
 
     if (!response.ok) {
       const errText = await response.text();
-      throw new Error(`AI API error: ${response.status} - ${errText}`);
+      console.error("AI API error:", response.status, errText);
+      
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: "Rate limited, please try again in a moment" }), {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: "Service temporarily unavailable" }), {
+          status: 402,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      
+      throw new Error(`AI API error: ${response.status}`);
     }
 
     const aiData = await response.json();
     const content = aiData.choices?.[0]?.message?.content || "";
 
-    // Extract JSON from response
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("No JSON in AI response");
+    // Extract JSON from response - handle markdown code blocks
+    let jsonStr = content;
+    const codeBlockMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (codeBlockMatch) {
+      jsonStr = codeBlockMatch[1].trim();
+    } else {
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        jsonStr = jsonMatch[0];
+      }
+    }
 
-    const parsed = JSON.parse(jsonMatch[0]);
+    try {
+      const parsed = JSON.parse(jsonStr);
+      
+      // Validate required fields exist with defaults
+      const result = {
+        improved_answer: parsed.improved_answer || transcript,
+        vocabulary_words: Array.isArray(parsed.vocabulary_words) ? parsed.vocabulary_words.slice(0, 3) : [],
+        grammar_fix: parsed.grammar_fix || { original: "", corrected: "", explanation: "" },
+        useful_phrase: parsed.useful_phrase || { phrase: "", usage: "" },
+      };
 
-    return new Response(JSON.stringify(parsed), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+      return new Response(JSON.stringify(result), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    } catch (parseErr) {
+      console.error("JSON parse error:", parseErr, "Content:", content.substring(0, 500));
+      // Return a fallback with just the improved answer extracted if possible
+      return new Response(JSON.stringify({
+        improved_answer: transcript,
+        vocabulary_words: [],
+        grammar_fix: { original: "", corrected: "", explanation: "" },
+        useful_phrase: { phrase: "", usage: "" },
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
   } catch (error) {
     console.error("Growth evaluation error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
