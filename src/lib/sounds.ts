@@ -3,7 +3,6 @@ const audioCtx = typeof window !== "undefined" ? new (window.AudioContext || (wi
 
 function playTone(freq: number, duration: number, type: OscillatorType = "sine", volume = 0.08) {
   if (!audioCtx) return;
-  // Resume context if suspended (autoplay policy)
   if (audioCtx.state === "suspended") audioCtx.resume();
 
   const osc = audioCtx.createOscillator();
@@ -19,22 +18,27 @@ function playTone(freq: number, duration: number, type: OscillatorType = "sine",
 }
 
 export function playClick() {
-  playTone(2200, 0.08, "sine", 0.05);
+  playTone(2200, 0.08, "sine", 0.04);
 }
 
 export function playSuccess() {
-  // Two-note "meow-mew"
-  playTone(800, 0.15, "sine", 0.06);
-  setTimeout(() => playTone(1000, 0.12, "sine", 0.05), 160);
+  playTone(800, 0.15, "sine", 0.05);
+  setTimeout(() => playTone(1000, 0.12, "sine", 0.04), 160);
 }
 
 export function playPurr() {
-  // Low soft rumble
-  playTone(80, 0.6, "sine", 0.04);
-  setTimeout(() => playTone(90, 0.5, "sine", 0.03), 200);
+  playTone(80, 0.6, "sine", 0.03);
+  setTimeout(() => playTone(90, 0.5, "sine", 0.025), 200);
 }
 
 export function playStart() {
-  playTone(440, 0.12, "sine", 0.05);
-  setTimeout(() => playTone(660, 0.15, "sine", 0.05), 130);
+  playTone(440, 0.12, "sine", 0.04);
+  setTimeout(() => playTone(660, 0.15, "sine", 0.04), 130);
+}
+
+export function playMeow() {
+  // Soft ascending "mew" for follow-up questions
+  playTone(600, 0.12, "sine", 0.04);
+  setTimeout(() => playTone(900, 0.18, "sine", 0.035), 100);
+  setTimeout(() => playTone(700, 0.15, "sine", 0.025), 250);
 }

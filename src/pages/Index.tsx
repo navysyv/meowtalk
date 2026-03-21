@@ -77,17 +77,15 @@ const Index = () => {
             MeowTalk Practice
           </h2>
           <div className="flex items-center gap-3">
-            {/* Streak */}
-            {streak > 0 && (
-              <motion.div
-                animate={justIncreased ? { scale: [1, 1.3, 1] } : {}}
-                transition={{ duration: 0.5 }}
-                className="flex items-center gap-1.5 text-sm font-bold bg-primary/15 text-primary px-3 py-1.5 rounded-full shadow-glow"
-              >
-                <Flame size={16} className="text-accent" />
-                <span>{streak}</span>
-              </motion.div>
-            )}
+            {/* Streak - always visible */}
+            <motion.div
+              animate={justIncreased ? { scale: [1, 1.3, 1] } : {}}
+              transition={{ duration: 0.5 }}
+              className="flex items-center gap-1.5 text-sm font-bold bg-primary/15 text-primary px-3 py-1.5 rounded-full shadow-glow"
+            >
+              <Flame size={16} className="text-accent" />
+              <span>{streak > 0 ? streak : 0}</span>
+            </motion.div>
             <motion.button whileTap={{ scale: 0.96 }} onClick={() => navigate("/full-test")} className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5">
               <Zap size={16} />
               Full Test
@@ -100,14 +98,14 @@ const Index = () => {
         </header>
 
         {/* Hero */}
-        <main className="max-w-2xl mx-auto px-6 py-[6vh] flex flex-col items-center gap-8">
+        <main className="max-w-2xl mx-auto px-6 py-[4vh] flex flex-col items-center gap-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center gap-4 text-center"
           >
-            <TalkieCat state="idle" size={160} />
+            <TalkieCat state="idle" size={140} />
             <div className="mt-2">
               <h1 className="text-4xl md:text-5xl font-bold font-display tracking-tight text-foreground mb-3 text-balance">
                 IELTS Speaking<br />Practice
@@ -118,12 +116,15 @@ const Index = () => {
             </div>
           </motion.div>
 
-          {/* Progress Map */}
-          {hasAttempts && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.4 }} className="w-full">
-              <ProgressMap {...progressScores} />
-            </motion.div>
-          )}
+          {/* Progress Map - always show, with defaults if no attempts */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.4 }} className="w-full">
+            <ProgressMap
+              fluency={hasAttempts ? progressScores.fluency : 0}
+              vocabulary={hasAttempts ? progressScores.vocabulary : 0}
+              grammar={hasAttempts ? progressScores.grammar : 0}
+              pronunciation={hasAttempts ? progressScores.pronunciation : 0}
+            />
+          </motion.div>
 
           {/* Part Cards */}
           <div className="w-full flex flex-col gap-4">

@@ -9,13 +9,13 @@ import FeedbackCard from "@/components/FeedbackCard";
 import ShareResultCard from "@/components/ShareResultCard";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import { part1Questions, part2Questions, part3Questions, createQuestionShuffler, type Question } from "@/data/questions";
-import { playClick, playSuccess, playStart } from "@/lib/sounds";
+import { playClick, playSuccess, playStart, playMeow } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useVoiceRecorder } from "@/hooks/useVoiceRecorder";
 import { useStreak } from "@/hooks/useStreak";
 
-type Phase = "intro" | "prep" | "speaking" | "processing" | "analyzing" | "feedback" | "followup" | "followup-speaking" | "followup-processing" | "followup-analyzing";
+type Phase = "intro" | "prep" | "speaking" | "processing" | "analyzing" | "feedback" | "followup-speaking" | "followup-processing" | "followup-analyzing";
 
 const questionsMap = { 1: part1Questions, 2: part2Questions, 3: part3Questions };
 const timers = {
@@ -71,10 +71,10 @@ const PracticePage = () => {
   const autoStartedRef = useRef(false);
   const questionRef = useRef<Question | null>(null);
 
-  // Follow-up state
+  // Follow-up state - integrated into main flow
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
   const [currentFollowUp, setCurrentFollowUp] = useState(0);
-  const [followUpTranscript, setFollowUpTranscript] = useState("");
+  const [followUpAutoTriggered, setFollowUpAutoTriggered] = useState(false);
 
   useEffect(() => { questionRef.current = question; }, [question]);
 
@@ -89,21 +89,43 @@ const PracticePage = () => {
   }, []);
 
   const handleFollowUpTranscript = useCallback((text: string) => {
-    setFollowUpTranscript(text);
     if (!text) {
-      setPhase("feedback");
-      setTalkieState("happy");
+      // Move to next follow-up or back to feedback
+      if (currentFollowUp + 1 < followUpQuestions.length) {
+        const nextIdx = currentFollowUp + 1;
+        setCurrentFollowUp(nextIdx);
+        playMeow();
+        resetRecorderRef.current();
+        autoStartedRef.current = false;
+        setPhase("followup-speaking");
+      } else {
+        setPhase("feedback");
+        setTalkieState("happy");
+      }
       return;
     }
-    // Just show they answered, go back to feedback
-    setPhase("feedback");
-    setTalkieState("happy");
-    toast({ title: "Great follow-up answer! 🐱" });
-  }, [toast]);
+    toast({ title: "Great answer! 🐱" });
+    // Auto-advance to next follow-up or back to feedback
+    if (currentFollowUp + 1 < followUpQuestions.length) {
+      const nextIdx = currentFollowUp + 1;
+      setCurrentFollowUp(nextIdx);
+      playMeow();
+      resetRecorderRef.current();
+      autoStartedRef.current = false;
+      setPhase("followup-speaking");
+    } else {
+      setPhase("feedback");
+      setTalkieState("happy");
+    }
+  }, [currentFollowUp, followUpQuestions, toast]);
+
+  const resetRecorderRef = useRef<() => void>(() => {});
 
   const { isRecording, isProcessing, startRecording, stopAndTranscribe, reset: resetRecorder } = useVoiceRecorder({
     onTranscript: phase.startsWith("followup") ? handleFollowUpTranscript : handleTranscript,
   });
+
+  useEffect(() => { resetRecorderRef.current = resetRecorder; }, [resetRecorder]);
 
   useEffect(() => {
     if (isRecording) setTalkieState("listening");
@@ -120,11 +142,11 @@ const PracticePage = () => {
       const { data, error } = await supabase.functions.invoke("generate-followup", {
         body: { questionText, transcript: spokenText, part },
       });
-      if (!error && data?.questions) {
+      if (!error && data?.questions && data.questions.length > 0) {
         setFollowUpQuestions(data.questions);
       }
     } catch {
-      // Follow-ups are optional, don't block
+      // Follow-ups are optional
     }
   }, [part]);
 
@@ -155,10 +177,7 @@ const PracticePage = () => {
         suggestions: aiFeedback.suggestions,
       });
 
-      // Record practice for streak
       await recordPractice();
-
-      // Generate follow-up questions in parallel
       generateFollowUps(questionText, spokenText);
 
       setPhase("feedback");
@@ -171,6 +190,21 @@ const PracticePage = () => {
       setTalkieState("idle");
     }
   }, [part, toast, recordPractice, generateFollowUps]);
+
+  // Auto-trigger follow-ups after feedback is shown for 3 seconds
+  useEffect(() => {
+    if (phase === "feedback" && followUpQuestions.length > 0 && !followUpAutoTriggered) {
+      const timer = setTimeout(() => {
+        setFollowUpAutoTriggered(true);
+        setCurrentFollowUp(0);
+        playMeow();
+        resetRecorder();
+        autoStartedRef.current = false;
+        setPhase("followup-speaking");
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [phase, followUpQuestions, followUpAutoTriggered, resetRecorder]);
 
   // Auto-start recording when speaking phase begins
   useEffect(() => {
@@ -190,6 +224,7 @@ const PracticePage = () => {
     setTranscript("");
     setFollowUpQuestions([]);
     setCurrentFollowUp(0);
+    setFollowUpAutoTriggered(false);
     resetRecorder();
     if (config.prep > 0) {
       setPhase("prep");
@@ -207,19 +242,13 @@ const PracticePage = () => {
     stopAndTranscribe();
   }, [stopAndTranscribe]);
 
-  const startFollowUp = useCallback((index: number) => {
-    setCurrentFollowUp(index);
-    resetRecorder();
-    setFollowUpTranscript("");
-    setPhase("followup-speaking");
-  }, [resetRecorder]);
-
   const repeatQuestion = useCallback(() => {
     resetRecorder();
     setTranscript("");
     setTalkieState("idle");
     setFeedback(null);
     setFollowUpQuestions([]);
+    setFollowUpAutoTriggered(false);
     autoStartedRef.current = false;
     if (config.prep > 0) {
       setPhase("prep");
@@ -237,6 +266,7 @@ const PracticePage = () => {
     setFeedback(null);
     setTranscript("");
     setFollowUpQuestions([]);
+    setFollowUpAutoTriggered(false);
     resetRecorder();
     setTalkieState("idle");
     setPhase("intro");
@@ -286,13 +316,15 @@ const PracticePage = () => {
                     <p className="text-sm text-primary font-medium">Listening...</p>
                   </motion.div>
                 )}
-                {phase === "followup-speaking" && followUpQuestions[currentFollowUp] && (
-                  <div className="bg-card rounded-2xl p-4 shadow-soft text-center max-w-md">
-                    <p className="text-xs text-primary font-medium mb-1">Follow-up Question</p>
-                    <p className="text-sm text-foreground font-medium">{followUpQuestions[currentFollowUp]}</p>
+                {/* Show follow-up question inline, same style as main question */}
+                {phase === "followup-speaking" && followUpQuestions[currentFollowUp] ? (
+                  <div className="bg-card rounded-2xl p-5 shadow-soft text-center max-w-md">
+                    <p className="text-xs text-primary font-medium mb-2">Follow-up</p>
+                    <p className="text-foreground font-medium">{followUpQuestions[currentFollowUp]}</p>
                   </div>
-                )}
-                {phase === "speaking" && <QuestionCard question={question} part={part} />}
+                ) : phase === "speaking" ? (
+                  <QuestionCard question={question} part={part} />
+                ) : null}
                 <CircularTimer
                   totalSeconds={phase === "followup-speaking" ? 60 : config.speak}
                   label={phase === "followup-speaking" ? "Follow-up" : "Speaking"}
@@ -351,7 +383,6 @@ const PracticePage = () => {
                   onPracticeAgain={practiceAgain}
                 />
 
-                {/* Share */}
                 <ShareResultCard
                   bandScore={feedback.band_score}
                   fluencyScore={feedback.fluency_score}
@@ -360,29 +391,15 @@ const PracticePage = () => {
                   pronunciationScore={feedback.pronunciation_score}
                 />
 
-                {/* Follow-up questions */}
-                {followUpQuestions.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="w-full bg-card rounded-3xl p-5 shadow-soft space-y-3"
+                {/* Follow-up auto-triggers after 4s - show hint */}
+                {followUpQuestions.length > 0 && !followUpAutoTriggered && (
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-xs text-muted-foreground text-center"
                   >
-                    <p className="text-sm font-semibold font-display text-foreground">🎤 Follow-up Questions</p>
-                    <p className="text-xs text-muted-foreground">Like a real IELTS examiner — answer to practice more!</p>
-                    <div className="space-y-2">
-                      {followUpQuestions.map((q, i) => (
-                        <motion.button
-                          key={i}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={() => startFollowUp(i)}
-                          className="w-full text-left p-3 rounded-2xl bg-secondary/50 hover:bg-secondary text-sm text-foreground transition-colors flex items-center gap-2"
-                        >
-                          <span className="text-primary font-medium">{i + 1}.</span>
-                          {q}
-                        </motion.button>
-                      ))}
-                    </div>
-                  </motion.div>
+                    🐱 MeowTalk will ask a follow-up question shortly...
+                  </motion.p>
                 )}
               </motion.div>
             )}
