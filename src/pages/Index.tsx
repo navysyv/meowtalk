@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { MessageCircle, Clock, BookOpen, History, Zap, Flame } from "lucide-react";
+import { MessageCircle, Clock, BookOpen, History, Zap, Flame, Headphones, PenTool, Mic, Sparkles, Brain, Award, Target, TrendingUp } from "lucide-react";
 import TalkieCat from "@/components/TalkieCat";
 import ProgressMap from "@/components/ProgressMap";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import { playClick } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
-import { useStreak } from "@/hooks/useStreak";
+import { useStreak, getSessionId } from "@/hooks/useStreak";
 
 const parts = [
   {
@@ -41,9 +41,11 @@ const Index = () => {
 
   useEffect(() => {
     const fetchProgress = async () => {
+      const sid = getSessionId();
       const { data } = await supabase
         .from("speaking_attempts")
         .select("band_score, fluency_feedback, vocabulary_feedback, grammar_feedback, pronunciation_feedback")
+        .eq("session_id", sid)
         .order("created_at", { ascending: false })
         .limit(10);
 
@@ -74,7 +76,7 @@ const Index = () => {
         {/* Header */}
         <header className="flex items-center justify-between px-6 py-4 max-w-2xl mx-auto">
           <h2 className="text-lg font-semibold font-display text-foreground tracking-tight">
-            MeowTalk Practice
+            Talkie IELTS
           </h2>
           <div className="flex items-center gap-3">
             {/* Streak - always visible */}
@@ -86,9 +88,9 @@ const Index = () => {
               <Flame size={16} className="text-accent" />
               <span>{streak > 0 ? streak : 0}</span>
             </motion.div>
-            <motion.button whileTap={{ scale: 0.96 }} onClick={() => navigate("/full-test")} className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5">
+            <motion.button whileTap={{ scale: 0.96 }} onClick={() => navigate("/mock-test")} className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5">
               <Zap size={16} />
-              Full Test
+              Mock Test
             </motion.button>
             <motion.button whileTap={{ scale: 0.96 }} onClick={() => navigate("/history")} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5">
               <History size={16} />
@@ -108,13 +110,38 @@ const Index = () => {
             <TalkieCat state="idle" size={140} />
             <div className="mt-2">
               <h1 className="text-4xl md:text-5xl font-bold font-display tracking-tight text-foreground mb-3 text-balance">
-                IELTS Speaking<br />Practice
+                Talkie IELTS<br />Practice Platform
               </h1>
               <p className="text-muted-foreground leading-relaxed max-w-md mx-auto">
-                Take a deep breath. MeowTalk Practice will guide you through each part of the IELTS Speaking test.
+                Realistic AI-powered practice across all four IELTS skills. Take your time — Talkie will guide you.
               </p>
             </div>
           </motion.div>
+
+          {/* Skill modules */}
+          <div className="grid grid-cols-2 gap-3 w-full">
+            {[
+              { icon: Headphones, label: "Listening", path: "/practice-listening" },
+              { icon: BookOpen, label: "Reading", path: "/practice-reading" },
+              { icon: PenTool, label: "Writing", path: "/practice-writing" },
+              { icon: Mic, label: "Speaking", path: "/practice/1" },
+            ].map((m, i) => (
+              <motion.button
+                key={m.label}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 + i * 0.05 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => { playClick(); navigate(m.path); }}
+                className="bg-card rounded-2xl p-4 shadow-soft flex flex-col items-center gap-2 hover:shadow-medium transition-shadow"
+              >
+                <div className="w-10 h-10 rounded-xl bg-lavender-soft flex items-center justify-center">
+                  <m.icon size={18} className="text-primary" />
+                </div>
+                <span className="text-sm font-medium text-foreground">{m.label}</span>
+              </motion.button>
+            ))}
+          </div>
 
           {/* Progress Map - always show, with defaults if no attempts */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.4 }} className="w-full">
@@ -128,6 +155,7 @@ const Index = () => {
 
           {/* Part Cards */}
           <div className="w-full flex flex-col gap-4">
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Speaking Parts</h3>
             {parts.map((p, i) => (
               <motion.button
                 key={p.num}
@@ -162,12 +190,34 @@ const Index = () => {
             transition={{ delay: 0.5 }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.96 }}
-            onClick={() => navigate("/full-test")}
+            onClick={() => navigate("/mock-test")}
             className="w-full bg-primary text-primary-foreground rounded-3xl p-5 shadow-glow hover:shadow-[0_8px_40px_-8px_hsla(265,70%,70%,0.4)] transition-shadow flex items-center justify-center gap-2 font-semibold"
           >
             <Zap size={18} />
-            Start Full IELTS Simulation
+            Start Full Mock Test
           </motion.button>
+
+          {/* Why Talkie IELTS section */}
+          <section className="w-full mt-4">
+            <h3 className="text-lg font-semibold font-display text-foreground mb-3 text-center">Why Talkie IELTS?</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { icon: Sparkles, label: "Real IELTS simulation" },
+                { icon: Brain, label: "AI-powered feedback" },
+                { icon: Target, label: "Personalized study" },
+                { icon: Award, label: "Mock exams" },
+                { icon: PenTool, label: "Writing correction" },
+                { icon: BookOpen, label: "Vocabulary upgrade" },
+                { icon: Mic, label: "Pronunciation tips" },
+                { icon: TrendingUp, label: "Progress tracking" },
+              ].map((f) => (
+                <div key={f.label} className="bg-card rounded-2xl p-3 shadow-soft flex items-center gap-2">
+                  <f.icon size={16} className="text-primary shrink-0" />
+                  <span className="text-xs font-medium text-foreground">{f.label}</span>
+                </div>
+              ))}
+            </div>
+          </section>
 
           {/* Footer note */}
           <motion.p
@@ -176,7 +226,7 @@ const Index = () => {
             transition={{ delay: 0.6 }}
             className="text-xs text-muted-foreground text-center max-w-sm"
           >
-            100+ authentic IELTS-style questions per part. Questions won't repeat until you've seen them all.
+            Practice across all 4 IELTS skills. Your progress is saved automatically.
           </motion.p>
         </main>
       </div>

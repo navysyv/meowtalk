@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, TrendingUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import DecorativeBackground from "@/components/DecorativeBackground";
+import { getSessionId } from "@/hooks/useStreak";
 
 interface Attempt {
   id: string;
@@ -28,9 +29,11 @@ const HistoryPage = () => {
 
   useEffect(() => {
     const fetchAttempts = async () => {
+      const sid = getSessionId();
       const { data } = await supabase
         .from("speaking_attempts")
         .select("*")
+        .eq("session_id", sid)
         .order("created_at", { ascending: false })
         .limit(50);
       setAttempts((data as Attempt[]) || []);
