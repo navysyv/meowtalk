@@ -11,6 +11,7 @@ import ListeningPage from "./pages/ListeningPage.tsx";
 import ReadingPage from "./pages/ReadingPage.tsx";
 import WritingPage from "./pages/WritingPage.tsx";
 import MockTestPage from "./pages/MockTestPage.tsx";
+import AuthPage from "./pages/AuthPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/mock-test" element={<MockTestPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/full-test" element={<FullTestPage />} />
+          <Route path="/auth" element={<AuthPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
