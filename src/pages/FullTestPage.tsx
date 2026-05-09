@@ -13,7 +13,7 @@ import { playClick, playSuccess, playStart } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useVoiceRecorder } from "@/hooks/useVoiceRecorder";
-import { useStreak } from "@/hooks/useStreak";
+import { useStreak, getSessionId } from "@/hooks/useStreak";
 
 const timers = {
   1: { prep: 0, speak: 120 },
@@ -101,6 +101,7 @@ const FullTestPage = () => {
       };
 
       await supabase.from("speaking_attempts").insert({
+        session_id: getSessionId(),
         part: partNum,
         question_text: questionRef.current?.text || "",
         transcript: text,
