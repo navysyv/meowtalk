@@ -24,9 +24,9 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
       },
       manifest: {
-        name: "MeowTalk Practice",
-        short_name: "MeowTalk",
-        description: "AI-powered English speaking practice. Improve fluency, vocabulary, grammar & pronunciation daily.",
+        name: "Talkie IELTS",
+        short_name: "Talkie IELTS",
+        description: "AI-powered IELTS preparation. Realistic mock exams across Listening, Reading, Writing & Speaking.",
         theme_color: "#9b7ed8",
         background_color: "#f8f6fd",
         display: "standalone",
