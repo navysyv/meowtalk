@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-const SESSION_KEY = "meowtalk_session_id";
+const SESSION_KEY = "talkie_ielts_session_id";
 
-function getSessionId(): string {
+export function getSessionId(): string {
   let id = localStorage.getItem(SESSION_KEY);
   if (!id) {
     id = crypto.randomUUID();

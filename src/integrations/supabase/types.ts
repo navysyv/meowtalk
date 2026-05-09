@@ -35,6 +35,120 @@ export type Database = {
         }
         Relationships: []
       }
+      listening_attempts: {
+        Row: {
+          ai_explanation: string | null
+          answers: Json | null
+          band_score: number | null
+          created_at: string
+          id: string
+          mistakes: Json | null
+          score: number
+          session_id: string
+          test_id: string
+          total: number
+        }
+        Insert: {
+          ai_explanation?: string | null
+          answers?: Json | null
+          band_score?: number | null
+          created_at?: string
+          id?: string
+          mistakes?: Json | null
+          score?: number
+          session_id: string
+          test_id: string
+          total?: number
+        }
+        Update: {
+          ai_explanation?: string | null
+          answers?: Json | null
+          band_score?: number | null
+          created_at?: string
+          id?: string
+          mistakes?: Json | null
+          score?: number
+          session_id?: string
+          test_id?: string
+          total?: number
+        }
+        Relationships: []
+      }
+      mock_results: {
+        Row: {
+          created_at: string
+          id: string
+          listening_band: number | null
+          overall_band: number | null
+          reading_band: number | null
+          report: Json | null
+          session_id: string
+          speaking_band: number | null
+          writing_band: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          listening_band?: number | null
+          overall_band?: number | null
+          reading_band?: number | null
+          report?: Json | null
+          session_id: string
+          speaking_band?: number | null
+          writing_band?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          listening_band?: number | null
+          overall_band?: number | null
+          reading_band?: number | null
+          report?: Json | null
+          session_id?: string
+          speaking_band?: number | null
+          writing_band?: number | null
+        }
+        Relationships: []
+      }
+      reading_attempts: {
+        Row: {
+          ai_explanation: string | null
+          answers: Json | null
+          band_score: number | null
+          created_at: string
+          id: string
+          mistakes: Json | null
+          passage_id: string
+          score: number
+          session_id: string
+          total: number
+        }
+        Insert: {
+          ai_explanation?: string | null
+          answers?: Json | null
+          band_score?: number | null
+          created_at?: string
+          id?: string
+          mistakes?: Json | null
+          passage_id: string
+          score?: number
+          session_id: string
+          total?: number
+        }
+        Update: {
+          ai_explanation?: string | null
+          answers?: Json | null
+          band_score?: number | null
+          created_at?: string
+          id?: string
+          mistakes?: Json | null
+          passage_id?: string
+          score?: number
+          session_id?: string
+          total?: number
+        }
+        Relationships: []
+      }
       speaking_attempts: {
         Row: {
           band_score: number | null
@@ -80,6 +194,84 @@ export type Database = {
           suggestions?: string[] | null
           transcript?: string | null
           vocabulary_feedback?: string | null
+        }
+        Relationships: []
+      }
+      user_skills: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          score: number | null
+          session_id: string
+          skill: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          score?: number | null
+          session_id: string
+          skill: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          score?: number | null
+          session_id?: string
+          skill?: string
+        }
+        Relationships: []
+      }
+      writing_attempts: {
+        Row: {
+          band_score: number | null
+          coherence: number | null
+          created_at: string
+          essay: string
+          feedback: string | null
+          grammar: number | null
+          id: string
+          improved_sample: string | null
+          lexical: number | null
+          prompt: string
+          session_id: string
+          task: number
+          task_response: number | null
+          word_count: number | null
+        }
+        Insert: {
+          band_score?: number | null
+          coherence?: number | null
+          created_at?: string
+          essay: string
+          feedback?: string | null
+          grammar?: number | null
+          id?: string
+          improved_sample?: string | null
+          lexical?: number | null
+          prompt: string
+          session_id: string
+          task: number
+          task_response?: number | null
+          word_count?: number | null
+        }
+        Update: {
+          band_score?: number | null
+          coherence?: number | null
+          created_at?: string
+          essay?: string
+          feedback?: string | null
+          grammar?: number | null
+          id?: string
+          improved_sample?: string | null
+          lexical?: number | null
+          prompt?: string
+          session_id?: string
+          task?: number
+          task_response?: number | null
+          word_count?: number | null
         }
         Relationships: []
       }

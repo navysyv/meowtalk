@@ -13,7 +13,7 @@ import { playClick, playSuccess, playStart, playMeow } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useVoiceRecorder } from "@/hooks/useVoiceRecorder";
-import { useStreak } from "@/hooks/useStreak";
+import { useStreak, getSessionId } from "@/hooks/useStreak";
 
 type Phase = "intro" | "prep" | "speaking" | "processing" | "analyzing" | "feedback" | "followup-speaking" | "followup-processing" | "followup-analyzing";
 
@@ -165,6 +165,7 @@ const PracticePage = () => {
       setFeedback(aiFeedback);
 
       await supabase.from("speaking_attempts").insert({
+        session_id: getSessionId(),
         part,
         question_text: questionText,
         transcript: spokenText,
@@ -398,7 +399,7 @@ const PracticePage = () => {
                     animate={{ opacity: 1 }}
                     className="text-xs text-muted-foreground text-center"
                   >
-                    🐱 MeowTalk will ask a follow-up question shortly...
+                    🐱 Talkie will ask a follow-up question shortly...
                   </motion.p>
                 )}
               </motion.div>
