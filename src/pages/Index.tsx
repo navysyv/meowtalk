@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { MessageCircle, Clock, BookOpen, History, Zap, Flame, Headphones, PenTool, Mic, Sparkles, Brain, Award, Target, TrendingUp } from "lucide-react";
+import { MessageCircle, Clock, BookOpen, History, Zap, Flame, Headphones, PenTool, Mic, Sparkles, Brain, Award, Target, TrendingUp, LogIn, LogOut, User as UserIcon } from "lucide-react";
 import TalkieCat from "@/components/TalkieCat";
 import ProgressMap from "@/components/ProgressMap";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import { playClick } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
 import { useStreak, getSessionId } from "@/hooks/useStreak";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 const parts = [
   {
@@ -36,6 +38,7 @@ const parts = [
 const Index = () => {
   const navigate = useNavigate();
   const { streak, justIncreased } = useStreak();
+  const { user, signOut } = useAuth();
   const [progressScores, setProgressScores] = useState({ fluency: 0, vocabulary: 0, grammar: 0, pronunciation: 0 });
   const [hasAttempts, setHasAttempts] = useState(false);
 
@@ -96,6 +99,17 @@ const Index = () => {
               <History size={16} />
               History
             </motion.button>
+            {user ? (
+              <motion.button whileTap={{ scale: 0.96 }} onClick={async () => { await signOut(); toast.success("Signed out"); }} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5" title={user.email ?? "Account"}>
+                <UserIcon size={16} />
+                <span className="hidden sm:inline">Sign out</span>
+              </motion.button>
+            ) : (
+              <motion.button whileTap={{ scale: 0.96 }} onClick={() => navigate("/auth")} className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5">
+                <LogIn size={16} />
+                Sign in
+              </motion.button>
+            )}
           </div>
         </header>
 
