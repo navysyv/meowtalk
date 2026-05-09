@@ -142,7 +142,7 @@ const ShareResultCard = ({ bandScore, fluencyScore, vocabularyScore, grammarScor
     ctx.fillStyle = "#4a3670";
     ctx.font = "bold 20px 'Outfit', sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("MeowTalk Practice predicted my band score:", 300, 170);
+    ctx.fillText("Talkie IELTS predicted my band score:", 300, 170);
 
     // Band score
     const scoreColor = bandScore >= 7 ? "#16a34a" : bandScore >= 6 ? "#7c5cbf" : "#ea580c";
@@ -169,7 +169,7 @@ const ShareResultCard = ({ bandScore, fluencyScore, vocabularyScore, grammarScor
     // Footer
     ctx.fillStyle = "#9b87c3";
     ctx.font = "13px 'Outfit', sans-serif";
-    ctx.fillText("Practice English Speaking with MeowTalk 🐾", 300, 375);
+    ctx.fillText("Prepare for IELTS with Talkie 🐾", 300, 375);
 
     return canvas;
   }, [bandScore, fluencyScore, vocabularyScore, grammarScore, pronunciationScore]);
@@ -177,7 +177,7 @@ const ShareResultCard = ({ bandScore, fluencyScore, vocabularyScore, grammarScor
   const downloadImage = useCallback(async () => {
     const canvas = await generateCanvas();
     const link = document.createElement("a");
-    link.download = `meowtalk-band-${bandScore.toFixed(1)}.png`;
+    link.download = `talkie-ielts-band-${bandScore.toFixed(1)}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
     toast({ title: "Image downloaded! 🎉" });
@@ -185,13 +185,13 @@ const ShareResultCard = ({ bandScore, fluencyScore, vocabularyScore, grammarScor
 
   const shareResult = useCallback(async () => {
     const canvas = await generateCanvas();
-    const text = `🐱 MeowTalk Practice predicted my IELTS band score: ${bandScore.toFixed(1)}! Practice speaking with MeowTalk.`;
+    const text = `🐱 Talkie IELTS predicted my band score: ${bandScore.toFixed(1)}! Prep for IELTS with Talkie.`;
 
     if (navigator.share) {
       try {
         canvas.toBlob(async (blob) => {
           if (!blob) return;
-          const file = new File([blob], "meowtalk-result.png", { type: "image/png" });
+          const file = new File([blob], "talkie-ielts-result.png", { type: "image/png" });
           await navigator.share({ text, files: [file] });
         });
       } catch {

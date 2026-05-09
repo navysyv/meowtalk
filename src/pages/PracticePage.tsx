@@ -398,7 +398,7 @@ const PracticePage = () => {
                     animate={{ opacity: 1 }}
                     className="text-xs text-muted-foreground text-center"
                   >
-                    🐱 MeowTalk will ask a follow-up question shortly...
+                    🐱 Talkie will ask a follow-up question shortly...
                   </motion.p>
                 )}
               </motion.div>
