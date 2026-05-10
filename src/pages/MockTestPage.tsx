@@ -5,10 +5,10 @@ import DecorativeBackground from "@/components/DecorativeBackground";
 import TalkieCat from "@/components/TalkieCat";
 
 const sections = [
-  { icon: Headphones, label: "1. Listening", path: "/practice-listening" },
-  { icon: BookOpen, label: "2. Reading", path: "/practice-reading" },
-  { icon: PenTool, label: "3. Writing", path: "/practice-writing" },
-  { icon: Mic, label: "4. Speaking", path: "/full-test" },
+  { icon: Mic, label: "1. Speaking", path: "/full-test" },
+  { icon: BookOpen, label: "2. Reading", path: "/practice-reading?mock=1" },
+  { icon: PenTool, label: "3. Writing", path: "/practice-writing?mock=1" },
+  { icon: Headphones, label: "4. Listening", path: "/practice-listening?mock=1" },
 ];
 
 const MockTestPage = () => {

@@ -7,13 +7,21 @@ import "./index.css";
 const isInIframe = (() => {
   try { return window.self !== window.top; } catch { return true; }
 })();
+const host = window.location.hostname;
 const isPreviewHost =
-  window.location.hostname.includes("id-preview--") ||
-  window.location.hostname.includes("lovableproject.com") ||
-  window.location.hostname.includes("lovableproject-dev.com");
+  host.includes("id-preview--") ||
+  host.includes("lovable.app") ||
+  host.includes("lovableproject.com") ||
+  host.includes("lovableproject-dev.com") ||
+  host === "localhost" ||
+  host === "127.0.0.1";
 if (isInIframe || isPreviewHost) {
-  navigator.serviceWorker?.getRegistrations().then((rs) => rs.forEach((r) => r.unregister()));
-  caches?.keys().then((keys) => keys.forEach((k) => caches.delete(k)));
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister()));
+  }
+  if (typeof caches !== "undefined") {
+    caches.keys().then((keys) => keys.forEach((k) => caches.delete(k)));
+  }
 }
 
 createRoot(document.getElementById("root")!).render(<App />);
