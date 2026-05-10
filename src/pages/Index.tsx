@@ -135,10 +135,10 @@ const Index = () => {
           {/* Skill modules */}
           <div className="grid grid-cols-2 gap-3 w-full">
             {[
-              { icon: Headphones, label: "Listening", path: "/practice-listening" },
+              { icon: Mic, label: "Speaking", path: "/practice/1" },
               { icon: BookOpen, label: "Reading", path: "/practice-reading" },
               { icon: PenTool, label: "Writing", path: "/practice-writing" },
-              { icon: Mic, label: "Speaking", path: "/practice/1" },
+              { icon: Headphones, label: "Listening", path: "/practice-listening" },
             ].map((m, i) => (
               <motion.button
                 key={m.label}
