@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { MessageCircle, Clock, BookOpen, History, Zap, Flame, Headphones, PenTool, Mic, Sparkles, Brain, Award, Target, TrendingUp, LogIn, LogOut, User as UserIcon } from "lucide-react";
+import { BookOpen, History, Zap, Flame, Headphones, PenTool, Mic, Sparkles, Brain, Award, Target, TrendingUp, LogIn, User as UserIcon } from "lucide-react";
 import TalkieCat from "@/components/TalkieCat";
 import ProgressMap from "@/components/ProgressMap";
 import DecorativeBackground from "@/components/DecorativeBackground";
@@ -10,30 +10,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useStreak, getSessionId } from "@/hooks/useStreak";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-
-const parts = [
-  {
-    num: 1,
-    title: "Introduction & Interview",
-    desc: "Short questions about familiar topics like home, work, studies, and hobbies.",
-    icon: MessageCircle,
-    time: "~2 min",
-  },
-  {
-    num: 2,
-    title: "Individual Long Turn",
-    desc: "Speak about a topic for 2 minutes with 1 minute preparation time.",
-    icon: Clock,
-    time: "~3 min",
-  },
-  {
-    num: 3,
-    title: "Two-Way Discussion",
-    desc: "Deeper discussion questions on abstract topics related to Part 2.",
-    icon: BookOpen,
-    time: "~2 min",
-  },
-];
 
 const Index = () => {
   const navigate = useNavigate();
@@ -66,11 +42,6 @@ const Index = () => {
     };
     fetchProgress();
   }, []);
-
-  const handlePartClick = (part: number) => {
-    playClick();
-    navigate(`/practice/${part}`);
-  };
 
   return (
     <div className="min-h-screen relative">
@@ -135,7 +106,7 @@ const Index = () => {
           {/* Skill modules */}
           <div className="grid grid-cols-2 gap-3 w-full">
             {[
-              { icon: Mic, label: "Speaking", path: "/practice/1" },
+              { icon: Mic, label: "Speaking", path: "/speaking" },
               { icon: BookOpen, label: "Reading", path: "/practice-reading" },
               { icon: PenTool, label: "Writing", path: "/practice-writing" },
               { icon: Headphones, label: "Listening", path: "/practice-listening" },
@@ -166,36 +137,6 @@ const Index = () => {
               pronunciation={hasAttempts ? progressScores.pronunciation : 0}
             />
           </motion.div>
-
-          {/* Part Cards */}
-          <div className="w-full flex flex-col gap-4">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Speaking Parts</h3>
-            {parts.map((p, i) => (
-              <motion.button
-                key={p.num}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 + i * 0.1, duration: 0.4 }}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => handlePartClick(p.num)}
-                className="w-full bg-card rounded-3xl p-6 shadow-medium text-left flex items-start gap-4 group transition-all hover:shadow-glow"
-              >
-                <div className="w-12 h-12 rounded-2xl bg-lavender-soft flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-                  <p.icon size={20} className="text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <h3 className="font-semibold font-display text-foreground">
-                      Part {p.num}: {p.title}
-                    </h3>
-                    <span className="text-xs text-muted-foreground tabular-nums">{p.time}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
-                </div>
-              </motion.button>
-            ))}
-          </div>
 
           {/* Full Test CTA */}
           <motion.button

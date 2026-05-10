@@ -66,4 +66,56 @@ export const readingPassages: ReadingPassage[] = [
       { id: "q5", type: "completion", question: "Arabica is threatened by ____ change.", answer: "climate", explanation: "Climate change threatens Arabica." },
     ],
   },
+  {
+    id: "venice",
+    title: "Saving Venice",
+    body:
+      "The Italian city of Venice, built across more than a hundred small islands in a shallow lagoon, has fascinated travellers for centuries. Yet rising sea levels and the gradual sinking of its wooden foundations now threaten its survival. Acqua alta, or \"high water\", once a rare event, today floods St Mark's Square dozens of times each winter.\n\nIn 2020, the long-delayed MOSE project finally entered service. The system uses a series of mobile barriers at the lagoon's three entrances, which can be raised within thirty minutes when an exceptional tide is forecast. Engineers credit MOSE with preventing several catastrophic floods, although critics point to its enormous cost and the maintenance challenges of operating moving steel gates in salt water.\n\nVenice's troubles, however, are not only environmental. Mass tourism has emptied many neighbourhoods of permanent residents, and the local population has fallen below 50,000 for the first time in modern history. Authorities have begun charging day-trippers a small entry fee in an attempt to manage crowds and fund preservation.",
+    questions: [
+      { id: "q1", type: "tfng", question: "Acqua alta floods St Mark's Square many times each winter.", answer: "True", explanation: "Para 1: 'floods St Mark's Square dozens of times each winter'." },
+      { id: "q2", type: "tfng", question: "The MOSE project began operating in 2010.", answer: "False", explanation: "It entered service in 2020." },
+      { id: "q3", type: "mcq", question: "MOSE barriers can be raised in:", options: ["10 minutes", "30 minutes", "1 hour", "2 hours"], answer: "30 minutes", explanation: "Para 2: 'raised within thirty minutes'." },
+      { id: "q4", type: "tfng", question: "Venice's permanent population has grown in recent years.", answer: "False", explanation: "It fell below 50,000 for the first time in modern history." },
+      { id: "q5", type: "completion", question: "Day-trippers are now charged a small entry ____.", answer: "fee", explanation: "Para 3: 'charging day-trippers a small entry fee'." },
+    ],
+  },
+  {
+    id: "ai-jobs",
+    title: "Artificial Intelligence and the Future of Work",
+    body:
+      "Few topics provoke as much debate as the impact of artificial intelligence on employment. Some economists predict that automation will displace millions of jobs in transport, manufacturing and routine office work within the next two decades. Others argue that, like previous waves of technology, AI will ultimately create more roles than it eliminates, particularly in fields that require creativity, empathy or complex judgement.\n\nA 2023 OECD report concluded that around 27 percent of jobs in member countries are at high risk of automation, with eastern European economies most exposed. However, the same report stressed that risk does not equal inevitability: the speed of change depends heavily on regulation, retraining programmes and the cost of adopting AI tools.\n\nWorkers in healthcare, education and skilled trades appear comparatively safe, while jobs that involve repetitive language tasks – customer support scripts, basic translation, simple legal drafting – are already being reshaped by large language models. Most experts agree that lifelong learning will become essential rather than optional.",
+    questions: [
+      { id: "q1", type: "mcq", question: "According to the OECD report, what percentage of jobs face high automation risk?", options: ["10%", "27%", "45%", "60%"], answer: "27%", explanation: "Around 27 percent of jobs in member countries." },
+      { id: "q2", type: "tfng", question: "Eastern European economies are the least exposed to automation.", answer: "False", explanation: "They are 'most exposed', not least." },
+      { id: "q3", type: "tfng", question: "Healthcare jobs are seen as relatively safe from automation.", answer: "True", explanation: "Para 3 lists healthcare as comparatively safe." },
+      { id: "q4", type: "tfng", question: "All economists agree AI will destroy more jobs than it creates.", answer: "False", explanation: "Some argue AI will create more roles than it eliminates." },
+      { id: "q5", type: "completion", question: "The report says ____ learning will become essential.", answer: "lifelong", explanation: "Para 3: 'lifelong learning will become essential'." },
+    ],
+  },
+  {
+    id: "amazon",
+    title: "The Amazon Rainforest",
+    body:
+      "Covering more than 5.5 million square kilometres across nine countries, the Amazon is the largest tropical rainforest on the planet. It produces around 6 percent of the world's oxygen and stores vast amounts of carbon in its trees and soils. Scientists estimate that one in ten of all known species lives within its borders, including thousands not yet formally described.\n\nDeforestation, however, has accelerated alarmingly. Between 2000 and 2020, an area roughly the size of France was lost, mainly to cattle ranching, soy farming and illegal logging. Studies suggest that if forest loss exceeds about 20 to 25 percent of the original area, parts of the Amazon could shift permanently from rainforest to dry savanna – a process known as a tipping point.\n\nIndigenous communities, who manage roughly a third of the remaining forest, have proven remarkably effective stewards: deforestation rates inside indigenous territories are far lower than in surrounding regions. International funding mechanisms increasingly recognise their role.",
+    questions: [
+      { id: "q1", type: "mcq", question: "Roughly what fraction of known species lives in the Amazon?", options: ["1 in 4", "1 in 10", "1 in 20", "1 in 50"], answer: "1 in 10", explanation: "One in ten of all known species." },
+      { id: "q2", type: "tfng", question: "An area the size of France was lost between 2000 and 2020.", answer: "True", explanation: "Para 2 states this directly." },
+      { id: "q3", type: "tfng", question: "Soy farming is one of the main drivers of deforestation.", answer: "True", explanation: "Listed alongside cattle ranching and illegal logging." },
+      { id: "q4", type: "completion", question: "A permanent shift from rainforest to dry savanna is called a ____ point.", answer: "tipping", explanation: "Para 2 names it the 'tipping point'." },
+      { id: "q5", type: "tfng", question: "Deforestation rates are higher inside indigenous territories.", answer: "False", explanation: "They are 'far lower'." },
+    ],
+  },
+  {
+    id: "antibiotics",
+    title: "The Discovery of Antibiotics",
+    body:
+      "Before the 20th century, even minor wounds could prove fatal. The accidental discovery of penicillin by Alexander Fleming in 1928 transformed medicine, although it took more than a decade and the work of researchers Howard Florey and Ernst Chain in Oxford to turn the mould into a usable drug. By the end of the Second World War, mass production of penicillin in the United States had saved tens of thousands of soldiers' lives.\n\nIn the decades that followed, dozens of new classes of antibiotics were developed, dramatically reducing deaths from infectious disease. Yet over-prescription in human medicine and intensive use in livestock farming have created a serious problem: bacteria resistant to multiple drugs. The World Health Organization now considers antimicrobial resistance one of the top ten global health threats.\n\nDeveloping new antibiotics is slow and unprofitable, so several governments have begun offering financial incentives to pharmaceutical companies. Researchers are also exploring alternatives such as bacteriophage therapy, which uses viruses that attack specific bacteria.",
+    questions: [
+      { id: "q1", type: "completion", question: "Penicillin was discovered by ____ in 1928.", answer: "Fleming", explanation: "Alexander Fleming discovered it in 1928." },
+      { id: "q2", type: "mcq", question: "Who turned the mould into a usable drug?", options: ["Pasteur and Koch", "Florey and Chain", "Watson and Crick", "Salk and Sabin"], answer: "Florey and Chain", explanation: "Para 1: Howard Florey and Ernst Chain." },
+      { id: "q3", type: "tfng", question: "Antimicrobial resistance is in the WHO's top ten global health threats.", answer: "True", explanation: "Para 2 states this." },
+      { id: "q4", type: "tfng", question: "Developing new antibiotics is highly profitable.", answer: "False", explanation: "Para 3: 'slow and unprofitable'." },
+      { id: "q5", type: "completion", question: "An alternative therapy uses viruses called ____.", answer: "bacteriophage", explanation: "Bacteriophage therapy uses viruses that attack bacteria." },
+    ],
+  },
 ];
