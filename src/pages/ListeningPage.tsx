@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Play, Pause, Loader2 } from "lucide-react";
+import { ArrowLeft, Play, Pause, Loader2, Check, X, Zap } from "lucide-react";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import TalkieCat from "@/components/TalkieCat";
 import { listeningTests } from "@/data/listeningTests";
@@ -12,12 +12,13 @@ import { useToast } from "@/hooks/use-toast";
 const ListeningPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [mockMode, setMockMode] = useState(false);
   const [testIdx, setTestIdx] = useState(0);
   const test = listeningTests[testIdx];
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [playing, setPlaying] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<{ score: number; total: number; band: number; explanation: string; mistakes: { q: string; correct: string; given: string }[] } | null>(null);
+  const [result, setResult] = useState<{ score: number; total: number; band: number; explanation: string } | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const togglePlay = () => {
@@ -27,6 +28,9 @@ const ListeningPage = () => {
     setPlaying(!playing);
   };
 
+  const isCorrect = (q: typeof test.questions[number]) =>
+    (answers[q.id] || "").trim().toLowerCase() === q.answer.trim().toLowerCase();
+
   const submit = async () => {
     setSubmitting(true);
     try {
@@ -34,7 +38,7 @@ const ListeningPage = () => {
         body: { testId: test.id, transcript: test.transcript, questions: test.questions, answers },
       });
       if (error) throw error;
-      const r = { score: data.score, total: data.total, band: data.band_score, explanation: data.explanation, mistakes: data.mistakes || [] };
+      const r = { score: data.score, total: data.total, band: data.band_score, explanation: data.explanation };
       setResult(r);
       await supabase.from("listening_attempts").insert({
         session_id: getSessionId(),
@@ -43,7 +47,7 @@ const ListeningPage = () => {
         total: r.total,
         band_score: r.band,
         answers,
-        mistakes: r.mistakes,
+        mistakes: data.mistakes || [],
         ai_explanation: r.explanation,
       });
     } catch (e: any) {
@@ -53,29 +57,51 @@ const ListeningPage = () => {
     }
   };
 
-  const reset = () => {
-    setAnswers({});
-    setResult(null);
+  const reset = () => { setAnswers({}); setResult(null); };
+
+  const startMock = () => {
+    setMockMode(true);
+    setTestIdx(0);
+    reset();
+  };
+
+  const nextMockSection = () => {
+    if (testIdx < listeningTests.length - 1) {
+      setTestIdx(testIdx + 1);
+      reset();
+    } else {
+      setMockMode(false);
+      navigate("/history");
+    }
   };
 
   return (
     <div className="min-h-screen relative">
       <DecorativeBackground />
       <div className="relative z-10 max-w-2xl mx-auto px-6 py-4">
-        <header className="flex items-center gap-4 mb-6">
-          <button onClick={() => navigate("/")} className="text-muted-foreground"><ArrowLeft size={18} /></button>
-          <h1 className="text-lg font-semibold font-display">Listening Practice</h1>
+        <header className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <button onClick={() => navigate("/")} className="text-muted-foreground"><ArrowLeft size={18} /></button>
+            <h1 className="text-lg font-semibold font-display">Listening Practice</h1>
+          </div>
+          {!mockMode ? (
+            <button onClick={startMock} className="text-xs font-medium text-primary flex items-center gap-1"><Zap size={14}/>Full mock</button>
+          ) : (
+            <span className="text-xs text-muted-foreground">Mock {testIdx + 1}/{listeningTests.length}</span>
+          )}
         </header>
 
         <div className="flex justify-center mb-4"><TalkieCat state={result ? "happy" : "idle"} size={80} /></div>
 
-        <div className="flex gap-2 mb-4 overflow-x-auto">
-          {listeningTests.map((t, i) => (
-            <button key={t.id} onClick={() => { setTestIdx(i); reset(); }} className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap ${i === testIdx ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground"}`}>
-              {t.title}
-            </button>
-          ))}
-        </div>
+        {!mockMode && (
+          <div className="flex gap-2 mb-4 overflow-x-auto">
+            {listeningTests.map((t, i) => (
+              <button key={t.id} onClick={() => { setTestIdx(i); reset(); }} className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap ${i === testIdx ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground"}`}>
+                {t.title}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="bg-card rounded-3xl p-6 shadow-medium space-y-4">
           <div>
@@ -90,18 +116,33 @@ const ListeningPage = () => {
           </button>
 
           <div className="space-y-3">
-            {test.questions.map((q, i) => (
-              <div key={q.id}>
-                <label className="text-sm font-medium text-foreground block mb-1">{i + 1}. {q.question}</label>
-                <input
-                  value={answers[q.id] || ""}
-                  onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })}
-                  disabled={!!result}
-                  className="w-full px-3 py-2 rounded-xl bg-background border border-border text-sm"
-                  placeholder="Your answer"
-                />
-              </div>
-            ))}
+            {test.questions.map((q, i) => {
+              const correct = result ? isCorrect(q) : null;
+              return (
+                <div key={q.id}>
+                  <label className="text-sm font-medium text-foreground block mb-1 flex items-center gap-2">
+                    {result && (correct ? <Check size={16} className="text-green-500" /> : <X size={16} className="text-red-500" />)}
+                    {i + 1}. {q.question}
+                  </label>
+                  <input
+                    value={answers[q.id] || ""}
+                    onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })}
+                    disabled={!!result}
+                    className={`w-full px-3 py-2 rounded-xl bg-background border text-sm ${result ? (correct ? "border-green-500" : "border-red-500") : "border-border"}`}
+                    placeholder="Your answer"
+                  />
+                  {result && !correct && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Correct: <span className="font-medium text-foreground">{q.answer}</span>
+                      {q.explanation && <> — {q.explanation}</>}
+                    </p>
+                  )}
+                  {result && correct && q.explanation && (
+                    <p className="text-xs text-muted-foreground mt-1">{q.explanation}</p>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {!result ? (
@@ -116,8 +157,14 @@ const ListeningPage = () => {
                 <p className="text-3xl font-bold font-display text-primary">{result.score} / {result.total}</p>
                 <p className="text-sm text-muted-foreground">Band ~ {result.band.toFixed(1)}</p>
               </div>
-              <p className="text-sm text-foreground whitespace-pre-line">{result.explanation}</p>
-              <button onClick={reset} className="w-full py-2.5 rounded-2xl bg-secondary text-secondary-foreground text-sm font-medium">Try again</button>
+              {result.explanation && <p className="text-sm text-foreground whitespace-pre-line">{result.explanation}</p>}
+              {mockMode ? (
+                <button onClick={nextMockSection} className="w-full py-2.5 rounded-2xl bg-primary text-primary-foreground text-sm font-medium">
+                  {testIdx < listeningTests.length - 1 ? "Next test →" : "Finish mock"}
+                </button>
+              ) : (
+                <button onClick={reset} className="w-full py-2.5 rounded-2xl bg-secondary text-secondary-foreground text-sm font-medium">Try again</button>
+              )}
             </motion.div>
           )}
         </div>
