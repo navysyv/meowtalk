@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import PracticePage from "./pages/PracticePage.tsx";
+import SpeakingPage from "./pages/SpeakingPage.tsx";
 import HistoryPage from "./pages/HistoryPage.tsx";
 import FullTestPage from "./pages/FullTestPage.tsx";
 import ListeningPage from "./pages/ListeningPage.tsx";
@@ -24,6 +25,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/speaking" element={<SpeakingPage />} />
           <Route path="/practice/:part" element={<PracticePage />} />
           <Route path="/practice-listening" element={<ListeningPage />} />
           <Route path="/practice-reading" element={<ReadingPage />} />
