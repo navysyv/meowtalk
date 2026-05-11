@@ -141,4 +141,49 @@ export const writingPrompts: WritingPrompt[] = [
     minWords: 250,
     minutes: 40,
   },
+  {
+    id: "t2-edu-language",
+    task: 2,
+    category: "education",
+    prompt:
+      "Some experts believe that children should start learning a foreign language at primary school rather than secondary school. Do the advantages outweigh the disadvantages?",
+    minWords: 250,
+    minutes: 40,
+  },
+  {
+    id: "t2-tech-privacy",
+    task: 2,
+    category: "technology",
+    prompt:
+      "Modern technology allows governments and companies to monitor individuals more closely than ever before. Is this a positive or negative development?",
+    minWords: 250,
+    minutes: 40,
+  },
+  {
+    id: "t2-env-renewable",
+    task: 2,
+    category: "environment",
+    prompt:
+      "Some people argue that investing in renewable energy is the most effective way to fight climate change, while others believe that reducing consumption matters more. Discuss both views and give your opinion.",
+    minWords: 250,
+    minutes: 40,
+  },
+  {
+    id: "t2-soc-work",
+    task: 2,
+    category: "society",
+    prompt:
+      "In some countries, the average working week is becoming longer. What are the effects of this trend on individuals and society?",
+    minWords: 250,
+    minutes: 40,
+  },
+  {
+    id: "t2-health-mental",
+    task: 2,
+    category: "health",
+    prompt:
+      "Mental health problems among young people have risen sharply in recent years. What do you think are the main causes, and what can be done to address them?",
+    minWords: 250,
+    minutes: 40,
+  },
 ];
