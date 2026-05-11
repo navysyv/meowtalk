@@ -2,6 +2,8 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 
+declare const __BUILD_VERSION__: string;
+
 // Build version is stamped at build time by Vite. When it changes between
 // visits we run a "strict cleanup": unregister any service workers, drop
 // every Cache Storage entry, and auto-reload once so the user always sees
