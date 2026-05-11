@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, History, Zap, Flame, Headphones, PenTool, Mic, Sparkles, Brain, Award, Target, TrendingUp, LogIn, User as UserIcon, MoreVertical, LogOut } from "lucide-react";
+import { BookOpen, History, Zap, Flame, Headphones, PenTool, Mic, Sparkles, Brain, Award, Target, TrendingUp, LogIn, MoreVertical, LogOut } from "lucide-react";
 import TalkieCat from "@/components/TalkieCat";
 import ProgressMap from "@/components/ProgressMap";
 import DecorativeBackground from "@/components/DecorativeBackground";
