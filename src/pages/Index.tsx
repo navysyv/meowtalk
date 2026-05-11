@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, History, Zap, Flame, Headphones, PenTool, Mic, Sparkles, Brain, Award, Target, TrendingUp, LogIn, User as UserIcon } from "lucide-react";
+import { BookOpen, History, Zap, Flame, Headphones, PenTool, Mic, Sparkles, Brain, Award, Target, TrendingUp, LogIn, User as UserIcon, MoreVertical, LogOut } from "lucide-react";
 import TalkieCat from "@/components/TalkieCat";
 import ProgressMap from "@/components/ProgressMap";
 import DecorativeBackground from "@/components/DecorativeBackground";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
 import { playClick } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
 import { useStreak, getSessionId } from "@/hooks/useStreak";
@@ -66,21 +67,29 @@ const Index = () => {
               <Zap size={16} />
               Mock Test
             </motion.button>
-            <motion.button whileTap={{ scale: 0.96 }} onClick={() => navigate("/history")} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5">
-              <History size={16} />
-              History
-            </motion.button>
-            {user ? (
-              <motion.button whileTap={{ scale: 0.96 }} onClick={async () => { await signOut(); toast.success("Signed out"); }} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5" title={user.email ?? "Account"}>
-                <UserIcon size={16} />
-                <span className="hidden sm:inline">Sign out</span>
-              </motion.button>
-            ) : (
-              <motion.button whileTap={{ scale: 0.96 }} onClick={() => navigate("/auth")} className="text-sm font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1.5">
-                <LogIn size={16} />
-                Sign in
-              </motion.button>
-            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button aria-label="Menu" className="text-muted-foreground hover:text-foreground transition-colors p-1.5 rounded-full hover:bg-card">
+                  <MoreVertical size={18} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {user && <DropdownMenuLabel className="text-xs truncate">{user.email}</DropdownMenuLabel>}
+                {user && <DropdownMenuSeparator />}
+                <DropdownMenuItem onClick={() => navigate("/history")}>
+                  <History size={14} className="mr-2" /> History
+                </DropdownMenuItem>
+                {user ? (
+                  <DropdownMenuItem onClick={async () => { await signOut(); toast.success("Signed out"); }}>
+                    <LogOut size={14} className="mr-2" /> Sign out
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem onClick={() => navigate("/auth")}>
+                    <LogIn size={14} className="mr-2" /> Sign in
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 
