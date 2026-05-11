@@ -124,13 +124,24 @@ const ListeningPage = () => {
                     {result && (correct ? <Check size={16} className="text-green-500" /> : <X size={16} className="text-red-500" />)}
                     {i + 1}. {q.question}
                   </label>
-                  <input
-                    value={answers[q.id] || ""}
-                    onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })}
-                    disabled={!!result}
-                    className={`w-full px-3 py-2 rounded-xl bg-background border text-sm ${result ? (correct ? "border-green-500" : "border-red-500") : "border-border"}`}
-                    placeholder="Your answer"
-                  />
+                  {q.type === "mcq" && q.options ? (
+                    <div className="space-y-1">
+                      {q.options.map((o) => (
+                        <label key={o} className="flex items-center gap-2 text-sm">
+                          <input type="radio" name={q.id} value={o} checked={answers[q.id] === o} onChange={() => setAnswers({ ...answers, [q.id]: o })} disabled={!!result} />
+                          {o}
+                        </label>
+                      ))}
+                    </div>
+                  ) : (
+                    <input
+                      value={answers[q.id] || ""}
+                      onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })}
+                      disabled={!!result}
+                      className={`w-full px-3 py-2 rounded-xl bg-background border text-sm ${result ? (correct ? "border-green-500" : "border-red-500") : "border-border"}`}
+                      placeholder="Your answer"
+                    />
+                  )}
                   {result && !correct && (
                     <p className="text-xs text-muted-foreground mt-1">
                       Correct: <span className="font-medium text-foreground">{q.answer}</span>

@@ -5,6 +5,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import TalkieCat from "@/components/TalkieCat";
 import { writingPrompts } from "@/data/writingPrompts";
+import Task1Chart from "@/components/Task1Chart";
 import { supabase } from "@/integrations/supabase/client";
 import { getSessionId } from "@/hooks/useStreak";
 import { useToast } from "@/hooks/use-toast";
@@ -65,14 +66,23 @@ const WritingPage = () => {
 
         <div className="flex gap-2 mb-4 overflow-x-auto">
           {writingPrompts.map((p, i) => (
-            <button key={p.id} onClick={() => setIdx(i)} className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap ${i === idx ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground"}`}>Task {p.task}: {p.id}</button>
+            <button key={p.id} onClick={() => setIdx(i)} className={`px-3 py-1.5 rounded-full text-xs whitespace-nowrap ${i === idx ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground"}`}>
+              Task {p.task}{p.category ? ` · ${p.category}` : p.chart ? ` · ${p.chart}` : ""}
+            </button>
           ))}
         </div>
 
         <div className="bg-card rounded-3xl p-6 shadow-medium space-y-4">
           <div>
-            <span className="text-xs font-medium text-primary bg-lavender-soft px-2 py-1 rounded-full">Task {prompt.task} • {prompt.minWords}+ words • {prompt.minutes} min</span>
+            <span className="text-xs font-medium text-primary bg-lavender-soft px-2 py-1 rounded-full">
+              Task {prompt.task} • {prompt.minWords}+ words • {prompt.minutes} min{prompt.category ? ` • ${prompt.category}` : ""}
+            </span>
             <p className="text-sm text-foreground mt-3 leading-relaxed">{prompt.prompt}</p>
+            {prompt.task === 1 && prompt.chart && (
+              <div className="mt-4">
+                <Task1Chart kind={prompt.chart} promptId={prompt.id} />
+              </div>
+            )}
           </div>
 
           <div className="flex justify-between text-xs text-muted-foreground">

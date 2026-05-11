@@ -1,6 +1,6 @@
 export interface ReadingQuestion {
   id: string;
-  type: "tfng" | "mcq" | "completion";
+  type: "tfng" | "mcq" | "completion" | "heading";
   question: string;
   options?: string[];
   answer: string;
@@ -14,108 +14,70 @@ export interface ReadingPassage {
   questions: ReadingQuestion[];
 }
 
+// 3 passages × ~13 questions = 40 total (full IELTS Reading format).
 export const readingPassages: ReadingPassage[] = [
   {
     id: "honeybees",
-    title: "The Decline of Honeybees",
+    title: "Passage 1 – The Decline of Honeybees",
     body:
-      "Honeybees play a critical role in global agriculture, pollinating roughly one third of the food crops humans consume. Yet over the past two decades, beekeepers across Europe and North America have reported alarming declines in colony numbers, a phenomenon often referred to as Colony Collapse Disorder (CCD). Researchers have identified a combination of factors behind these losses, including the widespread use of neonicotinoid pesticides, habitat loss caused by industrial farming, and the spread of the parasitic Varroa mite.\n\nDespite the seriousness of the problem, recent initiatives offer cautious optimism. Several European countries have banned the most harmful pesticides outright, and urban beekeeping movements have helped re-establish pollinator populations in unexpected places, from rooftop gardens in Paris to community parks in Toronto. Scientists at the University of Reading also report that bees raised in diverse floral environments show stronger immune responses than those kept near monoculture farms.\n\nStill, experts caution that without sustained policy intervention and farmer cooperation, honeybee populations will remain under threat. The challenge, as one researcher notes, is not merely to save the bees, but to redesign the agricultural systems that depend on them.",
+      "Honeybees play a critical role in global agriculture, pollinating roughly one third of the food crops humans consume. Yet over the past two decades, beekeepers across Europe and North America have reported alarming declines in colony numbers, a phenomenon often referred to as Colony Collapse Disorder (CCD). Researchers have identified a combination of factors behind these losses, including the widespread use of neonicotinoid pesticides, habitat loss caused by industrial farming, and the spread of the parasitic Varroa mite.\n\nDespite the seriousness of the problem, recent initiatives offer cautious optimism. Several European countries have banned the most harmful pesticides outright, and urban beekeeping movements have helped re-establish pollinator populations in unexpected places, from rooftop gardens in Paris to community parks in Toronto. Scientists at the University of Reading also report that bees raised in diverse floral environments show stronger immune responses than those kept near monoculture farms.\n\nCommercial beekeepers have begun rotating hives across multiple crop types throughout the season, mimicking the natural variety of pollen sources that wild bees would encounter. This practice, known as managed migration, has reportedly halved colony losses on participating farms in California. At the same time, public awareness campaigns have driven a sharp rise in amateur beekeeping: membership in the British Beekeepers Association has tripled since 2008.\n\nStill, experts caution that without sustained policy intervention and farmer cooperation, honeybee populations will remain under threat. The challenge, as one researcher notes, is not merely to save the bees, but to redesign the agricultural systems that depend on them.",
     questions: [
       { id: "q1", type: "tfng", question: "Honeybees pollinate around one third of human food crops.", answer: "True", explanation: "Para 1: 'pollinating roughly one third of the food crops'." },
-      { id: "q2", type: "tfng", question: "Colony Collapse Disorder is caused by a single factor.", answer: "False", explanation: "Para 1 lists multiple factors: pesticides, habitat loss, Varroa mite." },
-      { id: "q3", type: "tfng", question: "All European countries have banned neonicotinoid pesticides.", answer: "Not Given", explanation: "Only 'several' countries are mentioned, not all." },
-      { id: "q4", type: "mcq", question: "Bees in diverse floral environments tend to have:", options: ["Weaker colonies", "Stronger immune responses", "Higher mite infestation", "Smaller hives"], answer: "Stronger immune responses", explanation: "Para 2: 'stronger immune responses than those kept near monoculture farms'." },
-      { id: "q5", type: "completion", question: "Urban beekeeping has thrived in places like rooftop gardens in ____.", answer: "Paris", explanation: "Para 2 cites 'rooftop gardens in Paris'." },
+      { id: "q2", type: "tfng", question: "Colony Collapse Disorder is caused by a single factor.", answer: "False", explanation: "Para 1 lists multiple factors." },
+      { id: "q3", type: "tfng", question: "All European countries have banned neonicotinoid pesticides.", answer: "Not Given", explanation: "Only 'several' countries are mentioned." },
+      { id: "q4", type: "mcq", question: "Bees in diverse floral environments tend to have:", options: ["Weaker colonies", "Stronger immune responses", "Higher mite infestation", "Smaller hives"], answer: "Stronger immune responses", explanation: "Para 2." },
+      { id: "q5", type: "completion", question: "Urban beekeeping has thrived in places like rooftop gardens in ____.", answer: "Paris", explanation: "Para 2: 'rooftop gardens in Paris'." },
+      { id: "q6", type: "tfng", question: "Managed migration has been reported to halve colony losses in California.", answer: "True", explanation: "Para 3 states this." },
+      { id: "q7", type: "completion", question: "Rotating hives across crop types is known as managed ____.", answer: "migration", explanation: "Para 3 names the practice." },
+      { id: "q8", type: "mcq", question: "Membership in the British Beekeepers Association has:", options: ["Doubled", "Tripled", "Halved", "Stayed the same"], answer: "Tripled", explanation: "Para 3: 'tripled since 2008'." },
+      { id: "q9", type: "tfng", question: "The Varroa mite is mentioned as one cause of bee losses.", answer: "True", explanation: "Para 1." },
+      { id: "q10", type: "tfng", question: "Bees kept near monoculture farms perform better than diverse-fed bees.", answer: "False", explanation: "Para 2: opposite is true." },
+      { id: "q11", type: "mcq", question: "The researcher's main message is that we should:", options: ["Ban all pesticides", "Encourage urban beekeeping only", "Redesign agricultural systems", "Import wild bees"], answer: "Redesign agricultural systems", explanation: "Final paragraph." },
+      { id: "q12", type: "completion", question: "Habitat loss is caused by industrial ____.", answer: "farming", explanation: "Para 1." },
+      { id: "q13", type: "tfng", question: "Toronto has community parks involved in urban beekeeping.", answer: "True", explanation: "Para 2." },
     ],
   },
   {
     id: "sleep",
-    title: "Why We Sleep",
+    title: "Passage 2 – Why We Sleep",
     body:
-      "For decades, sleep was considered a passive state in which the brain simply rested. Modern neuroscience has overturned that view. Sleep is now understood as an active period during which the brain consolidates memory, clears metabolic waste, and regulates emotional processing. The discovery of the glymphatic system in 2013, a network of channels that flush toxins from neural tissue during deep sleep, has reshaped how researchers think about chronic sleep deprivation.\n\nAdults who consistently sleep fewer than six hours per night show measurable declines in attention, decision-making, and immune function. Long-term studies link insufficient sleep to higher risk of cardiovascular disease and Alzheimer's. However, the optimal duration is not identical for every person; genetic variation accounts for some of the differences in sleep need.\n\nEducators have begun to act on this evidence. Several school districts in the United States have shifted high school start times later, citing improved attendance and academic performance. The cultural assumption that less sleep equals greater productivity, researchers argue, is finally beginning to fade.",
+      "For decades, sleep was considered a passive state in which the brain simply rested. Modern neuroscience has overturned that view. Sleep is now understood as an active period during which the brain consolidates memory, clears metabolic waste, and regulates emotional processing. The discovery of the glymphatic system in 2013, a network of channels that flush toxins from neural tissue during deep sleep, has reshaped how researchers think about chronic sleep deprivation.\n\nAdults who consistently sleep fewer than six hours per night show measurable declines in attention, decision-making, and immune function. Long-term studies link insufficient sleep to higher risk of cardiovascular disease and Alzheimer's. However, the optimal duration is not identical for every person; genetic variation accounts for some of the differences in sleep need.\n\nNon-REM and REM stages alternate roughly every ninety minutes throughout the night. Most memory consolidation appears to occur in deep non-REM sleep, while emotional integration and creative problem-solving are linked to REM. Disrupting either stage – through alcohol, late screen use, or shift work – can blunt the next day's cognitive performance even when total sleep time seems adequate.\n\nEducators have begun to act on this evidence. Several school districts in the United States have shifted high school start times later, citing improved attendance and academic performance. The cultural assumption that less sleep equals greater productivity, researchers argue, is finally beginning to fade.",
     questions: [
       { id: "q1", type: "tfng", question: "The brain is inactive during sleep.", answer: "False", explanation: "Modern neuroscience overturned that view." },
       { id: "q2", type: "tfng", question: "The glymphatic system was discovered before 2010.", answer: "False", explanation: "It was discovered in 2013." },
       { id: "q3", type: "tfng", question: "Everyone needs exactly the same amount of sleep.", answer: "False", explanation: "Optimal duration varies by genetics." },
-      { id: "q4", type: "mcq", question: "Sleeping fewer than six hours is linked to:", options: ["Better focus", "Stronger immunity", "Cardiovascular disease risk", "Increased lifespan"], answer: "Cardiovascular disease risk", explanation: "Para 2: 'higher risk of cardiovascular disease'." },
-      { id: "q5", type: "completion", question: "Some US school districts moved high school start times ____.", answer: "later", explanation: "Para 3: 'shifted high school start times later'." },
-    ],
-  },
-  {
-    id: "great-wall",
-    title: "Building the Great Wall",
-    body:
-      "Contrary to popular belief, the Great Wall of China is not a single continuous structure but a series of fortifications built across more than two thousand years. The earliest sections were constructed in the 7th century BC by warring states. The wall reached its largest extent under the Ming dynasty (1368–1644), when most of the surviving stone and brick sections were built. Estimates of its total length, including all branches, exceed 21,000 kilometres.\n\nWhile the wall was effective at slowing nomadic raids, historians argue that its symbolic power often outweighed its military utility. Many sections were abandoned shortly after construction. Today, only about 30 percent of the Ming-era wall remains in good condition; the rest has eroded or been dismantled for building materials.",
-    questions: [
-      { id: "q1", type: "tfng", question: "The Great Wall is one continuous structure.", answer: "False", explanation: "It is 'a series of fortifications', not continuous." },
-      { id: "q2", type: "tfng", question: "Most surviving stone sections date to the Ming dynasty.", answer: "True", explanation: "Most surviving sections were built under the Ming." },
-      { id: "q3", type: "mcq", question: "Total length including branches exceeds:", options: ["10,000 km", "15,000 km", "21,000 km", "30,000 km"], answer: "21,000 km", explanation: "Estimates exceed 21,000 km." },
-      { id: "q4", type: "completion", question: "Around ____ percent of the Ming-era wall remains in good condition.", answer: "30", explanation: "About 30 percent remains in good condition." },
-    ],
-  },
-  {
-    id: "coffee",
-    title: "The Global Journey of Coffee",
-    body:
-      "Coffee originated in the highlands of Ethiopia, where legend holds that a goat herder noticed his animals becoming energetic after eating bright red berries. By the 15th century, coffee was being cultivated in Yemen and consumed in Sufi monasteries to help worshippers stay awake during long prayers. From there it spread through the Ottoman Empire and reached Europe in the 17th century, sparking the rise of coffeehouses in cities such as Vienna, Paris and London.\n\nToday, coffee is the second most traded commodity in the world after oil. Brazil is the largest producer, growing roughly a third of global supply, while Finland leads in per-capita consumption. The industry, however, faces serious challenges from climate change, with rising temperatures threatening the narrow band of tropical regions in which Arabica thrives.",
-    questions: [
-      { id: "q1", type: "tfng", question: "Coffee originated in Yemen.", answer: "False", explanation: "It originated in Ethiopia." },
-      { id: "q2", type: "tfng", question: "Coffeehouses appeared in Europe in the 17th century.", answer: "True", explanation: "Reached Europe in the 17th century." },
-      { id: "q3", type: "mcq", question: "The world's largest producer of coffee is:", options: ["Ethiopia", "Vietnam", "Brazil", "Colombia"], answer: "Brazil", explanation: "Brazil grows roughly a third of supply." },
-      { id: "q4", type: "mcq", question: "Country with highest per-capita consumption:", options: ["Italy", "USA", "Finland", "Brazil"], answer: "Finland", explanation: "Finland leads per-capita consumption." },
-      { id: "q5", type: "completion", question: "Arabica is threatened by ____ change.", answer: "climate", explanation: "Climate change threatens Arabica." },
-    ],
-  },
-  {
-    id: "venice",
-    title: "Saving Venice",
-    body:
-      "The Italian city of Venice, built across more than a hundred small islands in a shallow lagoon, has fascinated travellers for centuries. Yet rising sea levels and the gradual sinking of its wooden foundations now threaten its survival. Acqua alta, or \"high water\", once a rare event, today floods St Mark's Square dozens of times each winter.\n\nIn 2020, the long-delayed MOSE project finally entered service. The system uses a series of mobile barriers at the lagoon's three entrances, which can be raised within thirty minutes when an exceptional tide is forecast. Engineers credit MOSE with preventing several catastrophic floods, although critics point to its enormous cost and the maintenance challenges of operating moving steel gates in salt water.\n\nVenice's troubles, however, are not only environmental. Mass tourism has emptied many neighbourhoods of permanent residents, and the local population has fallen below 50,000 for the first time in modern history. Authorities have begun charging day-trippers a small entry fee in an attempt to manage crowds and fund preservation.",
-    questions: [
-      { id: "q1", type: "tfng", question: "Acqua alta floods St Mark's Square many times each winter.", answer: "True", explanation: "Para 1: 'floods St Mark's Square dozens of times each winter'." },
-      { id: "q2", type: "tfng", question: "The MOSE project began operating in 2010.", answer: "False", explanation: "It entered service in 2020." },
-      { id: "q3", type: "mcq", question: "MOSE barriers can be raised in:", options: ["10 minutes", "30 minutes", "1 hour", "2 hours"], answer: "30 minutes", explanation: "Para 2: 'raised within thirty minutes'." },
-      { id: "q4", type: "tfng", question: "Venice's permanent population has grown in recent years.", answer: "False", explanation: "It fell below 50,000 for the first time in modern history." },
-      { id: "q5", type: "completion", question: "Day-trippers are now charged a small entry ____.", answer: "fee", explanation: "Para 3: 'charging day-trippers a small entry fee'." },
-    ],
-  },
-  {
-    id: "ai-jobs",
-    title: "Artificial Intelligence and the Future of Work",
-    body:
-      "Few topics provoke as much debate as the impact of artificial intelligence on employment. Some economists predict that automation will displace millions of jobs in transport, manufacturing and routine office work within the next two decades. Others argue that, like previous waves of technology, AI will ultimately create more roles than it eliminates, particularly in fields that require creativity, empathy or complex judgement.\n\nA 2023 OECD report concluded that around 27 percent of jobs in member countries are at high risk of automation, with eastern European economies most exposed. However, the same report stressed that risk does not equal inevitability: the speed of change depends heavily on regulation, retraining programmes and the cost of adopting AI tools.\n\nWorkers in healthcare, education and skilled trades appear comparatively safe, while jobs that involve repetitive language tasks – customer support scripts, basic translation, simple legal drafting – are already being reshaped by large language models. Most experts agree that lifelong learning will become essential rather than optional.",
-    questions: [
-      { id: "q1", type: "mcq", question: "According to the OECD report, what percentage of jobs face high automation risk?", options: ["10%", "27%", "45%", "60%"], answer: "27%", explanation: "Around 27 percent of jobs in member countries." },
-      { id: "q2", type: "tfng", question: "Eastern European economies are the least exposed to automation.", answer: "False", explanation: "They are 'most exposed', not least." },
-      { id: "q3", type: "tfng", question: "Healthcare jobs are seen as relatively safe from automation.", answer: "True", explanation: "Para 3 lists healthcare as comparatively safe." },
-      { id: "q4", type: "tfng", question: "All economists agree AI will destroy more jobs than it creates.", answer: "False", explanation: "Some argue AI will create more roles than it eliminates." },
-      { id: "q5", type: "completion", question: "The report says ____ learning will become essential.", answer: "lifelong", explanation: "Para 3: 'lifelong learning will become essential'." },
+      { id: "q4", type: "mcq", question: "Sleeping fewer than six hours is linked to:", options: ["Better focus", "Stronger immunity", "Cardiovascular disease risk", "Increased lifespan"], answer: "Cardiovascular disease risk", explanation: "Para 2." },
+      { id: "q5", type: "completion", question: "Some US school districts moved high school start times ____.", answer: "later", explanation: "Para 4." },
+      { id: "q6", type: "completion", question: "REM and non-REM cycles alternate every ____ minutes.", answer: "90", explanation: "Para 3: 'roughly every ninety minutes'." },
+      { id: "q7", type: "mcq", question: "Memory consolidation is most linked to:", options: ["Light sleep", "Deep non-REM sleep", "REM sleep", "Wakefulness"], answer: "Deep non-REM sleep", explanation: "Para 3." },
+      { id: "q8", type: "mcq", question: "REM sleep is linked to:", options: ["Bone repair", "Memory only", "Emotional integration and creativity", "Digestion"], answer: "Emotional integration and creativity", explanation: "Para 3." },
+      { id: "q9", type: "tfng", question: "Insufficient sleep raises Alzheimer's risk.", answer: "True", explanation: "Para 2." },
+      { id: "q10", type: "tfng", question: "Shift work has no impact on cognitive performance.", answer: "False", explanation: "Para 3 lists shift work as a disruptor." },
+      { id: "q11", type: "completion", question: "The glymphatic system flushes ____ from neural tissue.", answer: "toxins", explanation: "Para 1." },
+      { id: "q12", type: "mcq", question: "The phrase 'finally beginning to fade' refers to:", options: ["Sleep cycles", "The myth that less sleep = more productivity", "Caffeine effects", "School curricula"], answer: "The myth that less sleep = more productivity", explanation: "Final paragraph." },
+      { id: "q13", type: "tfng", question: "Late screen use is mentioned as harmful to sleep stages.", answer: "True", explanation: "Para 3." },
     ],
   },
   {
     id: "amazon",
-    title: "The Amazon Rainforest",
+    title: "Passage 3 – The Amazon Rainforest",
     body:
-      "Covering more than 5.5 million square kilometres across nine countries, the Amazon is the largest tropical rainforest on the planet. It produces around 6 percent of the world's oxygen and stores vast amounts of carbon in its trees and soils. Scientists estimate that one in ten of all known species lives within its borders, including thousands not yet formally described.\n\nDeforestation, however, has accelerated alarmingly. Between 2000 and 2020, an area roughly the size of France was lost, mainly to cattle ranching, soy farming and illegal logging. Studies suggest that if forest loss exceeds about 20 to 25 percent of the original area, parts of the Amazon could shift permanently from rainforest to dry savanna – a process known as a tipping point.\n\nIndigenous communities, who manage roughly a third of the remaining forest, have proven remarkably effective stewards: deforestation rates inside indigenous territories are far lower than in surrounding regions. International funding mechanisms increasingly recognise their role.",
+      "Covering more than 5.5 million square kilometres across nine countries, the Amazon is the largest tropical rainforest on the planet. It produces around 6 percent of the world's oxygen and stores vast amounts of carbon in its trees and soils. Scientists estimate that one in ten of all known species lives within its borders, including thousands not yet formally described.\n\nDeforestation, however, has accelerated alarmingly. Between 2000 and 2020, an area roughly the size of France was lost, mainly to cattle ranching, soy farming and illegal logging. Studies suggest that if forest loss exceeds about 20 to 25 percent of the original area, parts of the Amazon could shift permanently from rainforest to dry savanna – a process known as a tipping point.\n\nIndigenous communities, who manage roughly a third of the remaining forest, have proven remarkably effective stewards: deforestation rates inside indigenous territories are far lower than in surrounding regions. International funding mechanisms increasingly recognise their role, with payments for ecosystem services emerging as one promising approach.\n\nClimate scientists also warn that the rainforest's water cycle is changing. The Amazon generates much of its own rainfall through evapotranspiration, and large-scale clearance reduces this self-watering effect, leading to longer dry seasons. Recent satellite analysis suggests parts of the south-eastern Amazon now release more carbon than they absorb.\n\nDespite these warnings, several governments have pledged to halt and reverse deforestation by 2030. Whether the political will and funding will materialise remains uncertain, but conservationists point to brief drops in deforestation rates during periods of strong enforcement as evidence that rapid change is still possible.",
     questions: [
       { id: "q1", type: "mcq", question: "Roughly what fraction of known species lives in the Amazon?", options: ["1 in 4", "1 in 10", "1 in 20", "1 in 50"], answer: "1 in 10", explanation: "One in ten of all known species." },
-      { id: "q2", type: "tfng", question: "An area the size of France was lost between 2000 and 2020.", answer: "True", explanation: "Para 2 states this directly." },
-      { id: "q3", type: "tfng", question: "Soy farming is one of the main drivers of deforestation.", answer: "True", explanation: "Listed alongside cattle ranching and illegal logging." },
-      { id: "q4", type: "completion", question: "A permanent shift from rainforest to dry savanna is called a ____ point.", answer: "tipping", explanation: "Para 2 names it the 'tipping point'." },
+      { id: "q2", type: "tfng", question: "An area the size of France was lost between 2000 and 2020.", answer: "True", explanation: "Para 2." },
+      { id: "q3", type: "tfng", question: "Soy farming is one of the main drivers of deforestation.", answer: "True", explanation: "Para 2." },
+      { id: "q4", type: "completion", question: "A permanent shift from rainforest to dry savanna is called a ____ point.", answer: "tipping", explanation: "Para 2." },
       { id: "q5", type: "tfng", question: "Deforestation rates are higher inside indigenous territories.", answer: "False", explanation: "They are 'far lower'." },
-    ],
-  },
-  {
-    id: "antibiotics",
-    title: "The Discovery of Antibiotics",
-    body:
-      "Before the 20th century, even minor wounds could prove fatal. The accidental discovery of penicillin by Alexander Fleming in 1928 transformed medicine, although it took more than a decade and the work of researchers Howard Florey and Ernst Chain in Oxford to turn the mould into a usable drug. By the end of the Second World War, mass production of penicillin in the United States had saved tens of thousands of soldiers' lives.\n\nIn the decades that followed, dozens of new classes of antibiotics were developed, dramatically reducing deaths from infectious disease. Yet over-prescription in human medicine and intensive use in livestock farming have created a serious problem: bacteria resistant to multiple drugs. The World Health Organization now considers antimicrobial resistance one of the top ten global health threats.\n\nDeveloping new antibiotics is slow and unprofitable, so several governments have begun offering financial incentives to pharmaceutical companies. Researchers are also exploring alternatives such as bacteriophage therapy, which uses viruses that attack specific bacteria.",
-    questions: [
-      { id: "q1", type: "completion", question: "Penicillin was discovered by ____ in 1928.", answer: "Fleming", explanation: "Alexander Fleming discovered it in 1928." },
-      { id: "q2", type: "mcq", question: "Who turned the mould into a usable drug?", options: ["Pasteur and Koch", "Florey and Chain", "Watson and Crick", "Salk and Sabin"], answer: "Florey and Chain", explanation: "Para 1: Howard Florey and Ernst Chain." },
-      { id: "q3", type: "tfng", question: "Antimicrobial resistance is in the WHO's top ten global health threats.", answer: "True", explanation: "Para 2 states this." },
-      { id: "q4", type: "tfng", question: "Developing new antibiotics is highly profitable.", answer: "False", explanation: "Para 3: 'slow and unprofitable'." },
-      { id: "q5", type: "completion", question: "An alternative therapy uses viruses called ____.", answer: "bacteriophage", explanation: "Bacteriophage therapy uses viruses that attack bacteria." },
+      { id: "q6", type: "mcq", question: "The Amazon produces approximately what percentage of world oxygen?", options: ["2%", "6%", "12%", "20%"], answer: "6%", explanation: "Para 1." },
+      { id: "q7", type: "completion", question: "The Amazon generates much of its own rainfall through ____.", answer: "evapotranspiration", explanation: "Para 4." },
+      { id: "q8", type: "tfng", question: "Parts of the south-eastern Amazon now emit more carbon than they absorb.", answer: "True", explanation: "Para 4." },
+      { id: "q9", type: "mcq", question: "Indigenous communities manage approximately how much of the remaining forest?", options: ["10%", "20%", "33%", "50%"], answer: "33%", explanation: "Roughly a third = 33%." },
+      { id: "q10", type: "completion", question: "Several governments have pledged to halt deforestation by ____.", answer: "2030", explanation: "Para 5." },
+      { id: "q11", type: "tfng", question: "The Amazon spans nine countries.", answer: "True", explanation: "Para 1." },
+      { id: "q12", type: "mcq", question: "Which is NOT listed as a deforestation driver?", options: ["Cattle ranching", "Soy farming", "Mining", "Illegal logging"], answer: "Mining", explanation: "Para 2 lists ranching, soy, illegal logging — not mining." },
+      { id: "q13", type: "tfng", question: "The forest's water cycle is unaffected by clearance.", answer: "False", explanation: "Para 4: clearance reduces self-watering." },
+      { id: "q14", type: "completion", question: "One promising approach is payments for ecosystem ____.", answer: "services", explanation: "Para 3." },
     ],
   },
 ];
