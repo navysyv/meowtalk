@@ -12,6 +12,7 @@ import ListeningPage from "./pages/ListeningPage.tsx";
 import ReadingPage from "./pages/ReadingPage.tsx";
 import WritingPage from "./pages/WritingPage.tsx";
 import MockTestPage from "./pages/MockTestPage.tsx";
+import MockSummaryPage from "./pages/MockSummaryPage.tsx";
 import AuthPage from "./pages/AuthPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/practice-reading" element={<ReadingPage />} />
           <Route path="/practice-writing" element={<WritingPage />} />
           <Route path="/mock-test" element={<MockTestPage />} />
+          <Route path="/mock-summary" element={<MockSummaryPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/full-test" element={<FullTestPage />} />
           <Route path="/auth" element={<AuthPage />} />

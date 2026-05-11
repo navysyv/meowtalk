@@ -80,4 +80,25 @@ export const readingPassages: ReadingPassage[] = [
       { id: "q14", type: "completion", question: "One promising approach is payments for ecosystem ____.", answer: "services", explanation: "Para 3." },
     ],
   },
+  {
+    id: "antarctica",
+    title: "Passage 4 – Life Beneath Antarctic Ice",
+    body:
+      "For most of the twentieth century, biologists assumed that the waters under Antarctic ice shelves were essentially lifeless. The shelves can be hundreds of metres thick, blocking sunlight and locking off the seabed from the open ocean. Recent boreholes drilled through the Filchner-Ronne Ice Shelf have overturned that picture entirely. Cameras lowered into the dark cavities revealed sponges, anemones and other filter-feeding animals clinging to the underside of boulders, sometimes more than 250 kilometres from the nearest open water.\n\nHow such ecosystems sustain themselves remains debated. Without sunlight, photosynthesis is impossible, so the resident species depend on organic particles drifting in from far away. Ocean currents appear to deliver just enough food, but only at trickle rates. The animals' growth must therefore be slow, and individual sponges may be hundreds of years old.\n\nThe discoveries matter beyond simple curiosity. As warmer ocean water reaches deeper under the shelves, parts of the ice are thinning rapidly. If shelves collapse, the cavities below will be exposed to sunlight and competition from open-ocean species, almost certainly displacing the slow-growing communities. Some researchers argue that these habitats should receive formal protection before they are lost.",
+    questions: [
+      { id: "q1", type: "tfng", question: "Scientists once thought sub-shelf waters held no life.", answer: "True", explanation: "Para 1." },
+      { id: "q2", type: "tfng", question: "Light easily passes through Antarctic ice shelves.", answer: "False", explanation: "Shelves can be hundreds of metres thick, blocking sunlight." },
+      { id: "q3", type: "completion", question: "Animals were found over ___ km from open water.", answer: "250", explanation: "Para 1." },
+      { id: "q4", type: "mcq", question: "What sustains life under the ice?", options: ["Photosynthesis", "Hydrothermal vents", "Drifting organic particles", "Plankton blooms"], answer: "Drifting organic particles", explanation: "Para 2." },
+      { id: "q5", type: "tfng", question: "The sponges grow quickly.", answer: "False", explanation: "Growth must be slow." },
+      { id: "q6", type: "completion", question: "The boreholes were drilled through the ___ Ice Shelf.", answer: "Filchner-Ronne", explanation: "Para 1." },
+      { id: "q7", type: "mcq", question: "If shelves collapse, the existing communities will likely:", options: ["Thrive", "Be displaced", "Migrate", "Adapt quickly"], answer: "Be displaced", explanation: "Para 3." },
+      { id: "q8", type: "tfng", question: "Some researchers want formal protection for these habitats.", answer: "True", explanation: "Final paragraph." },
+      { id: "q9", type: "tfng", question: "All sub-shelf species photosynthesise.", answer: "False", explanation: "Photosynthesis is impossible without light." },
+      { id: "q10", type: "mcq", question: "Cameras revealed mainly which type of feeders?", options: ["Predators", "Filter-feeders", "Grazers", "Scavengers only"], answer: "Filter-feeders", explanation: "Para 1: sponges, anemones." },
+      { id: "q11", type: "tfng", question: "Sponges may live for centuries.", answer: "True", explanation: "'Hundreds of years old.'" },
+      { id: "q12", type: "completion", question: "Warmer ocean water is causing parts of the ice to ___.", answer: "thin", explanation: "Para 3." },
+      { id: "q13", type: "tfng", question: "All scientists agree on how the ecosystems are sustained.", answer: "False", explanation: "It 'remains debated'." },
+    ],
+  },
 ];

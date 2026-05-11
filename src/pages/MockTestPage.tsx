@@ -1,18 +1,34 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Headphones, BookOpen, PenTool, Mic } from "lucide-react";
+import { ArrowLeft, Headphones, BookOpen, PenTool, Mic, ArrowRight } from "lucide-react";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import TalkieCat from "@/components/TalkieCat";
+import { startMock, clearMock, getMockState } from "@/lib/mockState";
 
 const sections = [
-  { icon: Mic, label: "1. Speaking", path: "/full-test" },
-  { icon: BookOpen, label: "2. Reading", path: "/practice-reading?mock=1" },
-  { icon: PenTool, label: "3. Writing", path: "/practice-writing?mock=1" },
-  { icon: Headphones, label: "4. Listening", path: "/practice-listening?mock=1" },
+  { icon: Headphones, label: "1. Listening", time: "30 min" },
+  { icon: BookOpen, label: "2. Reading", time: "60 min" },
+  { icon: PenTool, label: "3. Writing", time: "60 min" },
+  { icon: Mic, label: "4. Speaking", time: "11–14 min" },
 ];
 
 const MockTestPage = () => {
   const navigate = useNavigate();
+  const existing = getMockState();
+
+  const begin = () => {
+    clearMock();
+    startMock();
+    navigate("/practice-listening?mock=1");
+  };
+
+  const resume = () => {
+    if (!existing) return;
+    const route = ["/practice-listening", "/practice-reading", "/practice-writing", "/full-test", "/mock-summary"][
+      Math.max(0, existing.step - 1)
+    ];
+    navigate(`${route}${route === "/mock-summary" ? "" : "?mock=1"}`);
+  };
 
   return (
     <div className="min-h-screen relative">
@@ -27,27 +43,42 @@ const MockTestPage = () => {
           <TalkieCat state="impressed" size={120} />
           <div className="text-center">
             <h2 className="text-2xl font-bold font-display">Complete IELTS Simulation</h2>
-            <p className="text-sm text-muted-foreground mt-2 max-w-sm">Take all four sections in order. Your scores combine into an overall band prediction.</p>
+            <p className="text-sm text-muted-foreground mt-2 max-w-sm">
+              The exam runs automatically: Listening → Reading → Writing → Speaking. You'll get an overall band at the end.
+            </p>
           </div>
 
           <div className="w-full space-y-3">
-            {sections.map((s, i) => (
-              <motion.button
+            {sections.map((s) => (
+              <motion.div
                 key={s.label}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigate(s.path)}
                 className="w-full bg-card rounded-2xl p-4 shadow-soft flex items-center gap-3 text-left"
               >
                 <div className="w-10 h-10 rounded-xl bg-lavender-soft flex items-center justify-center">
                   <s.icon size={18} className="text-primary" />
                 </div>
                 <span className="font-medium text-foreground flex-1">{s.label}</span>
-                <span className="text-xs text-muted-foreground">Start →</span>
-              </motion.button>
+                <span className="text-xs text-muted-foreground">{s.time}</span>
+              </motion.div>
             ))}
           </div>
 
-          <p className="text-xs text-muted-foreground text-center max-w-sm">Complete each module separately, then check your History for the combined band view.</p>
+          <div className="flex flex-col gap-2 w-full">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={begin}
+              className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-semibold shadow-glow flex items-center justify-center gap-2"
+            >
+              {existing?.active ? "Restart Mock" : "Begin Mock"} <ArrowRight size={18} />
+            </motion.button>
+            {existing?.active && existing.step < 5 && (
+              <button onClick={resume} className="w-full py-3 rounded-2xl bg-secondary text-secondary-foreground text-sm font-medium">
+                Resume from step {existing.step}
+              </button>
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground text-center max-w-sm">Sections advance automatically once you submit each one.</p>
         </div>
       </div>
     </div>
