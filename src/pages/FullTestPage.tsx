@@ -2,6 +2,8 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Loader2, MicOff, ArrowRight } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { isMockUrl, isMockActive, recordBand } from "@/lib/mockState";
 import TalkieCat from "@/components/TalkieCat";
 import CircularTimer from "@/components/CircularTimer";
 import QuestionCard from "@/components/QuestionCard";
@@ -41,6 +43,8 @@ type Phase = "intro" | "prep" | "speaking" | "processing" | "analyzing" | "trans
 
 const FullTestPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const inMock = isMockUrl(location.search) && isMockActive();
   const { toast } = useToast();
   const { recordPractice } = useStreak();
 
@@ -304,12 +308,26 @@ const FullTestPage = () => {
                 />
 
                 <div className="flex gap-3">
+                  {inMock && (
+                    <motion.button
+                      whileTap={{ scale: 0.96 }}
+                      onClick={() => {
+                        recordBand("speaking", Math.round(overallBand * 2) / 2, 5);
+                        navigate("/mock-summary");
+                      }}
+                      className="px-6 py-3 rounded-2xl bg-primary text-primary-foreground font-semibold text-sm shadow-glow"
+                    >
+                      See Mock Result →
+                    </motion.button>
+                  )}
                   <motion.button whileTap={{ scale: 0.96 }} onClick={() => navigate("/")} className="px-6 py-3 rounded-2xl bg-secondary text-secondary-foreground font-medium text-sm">
                     Back to Home
                   </motion.button>
-                  <motion.button whileTap={{ scale: 0.96 }} onClick={() => navigate("/history")} className="px-6 py-3 rounded-2xl bg-primary text-primary-foreground font-semibold text-sm shadow-glow">
-                    View History
-                  </motion.button>
+                  {!inMock && (
+                    <motion.button whileTap={{ scale: 0.96 }} onClick={() => navigate("/history")} className="px-6 py-3 rounded-2xl bg-primary text-primary-foreground font-semibold text-sm shadow-glow">
+                      View History
+                    </motion.button>
+                  )}
                 </div>
               </motion.div>
             )}
