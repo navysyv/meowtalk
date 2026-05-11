@@ -12,11 +12,6 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
-  define: {
-    __BUILD_VERSION__: JSON.stringify(
-      process.env.VITE_BUILD_VERSION || `${mode}-${Date.now()}`
-    ),
-  },
   plugins: [
     react(),
     mode === "development" && componentTagger(),
