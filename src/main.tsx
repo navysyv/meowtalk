@@ -1,22 +1,42 @@
 import { createRoot } from "react-dom/client";
 import { Component, type ReactNode } from "react";
-import App from "./App.tsx";
 import "./index.css";
 
 // One-shot cleanup of any legacy service workers / caches left from
-// previous PWA shells. Guarded by sessionStorage so it never loops.
-if (typeof window !== "undefined" && !sessionStorage.getItem("__sw_cleaned")) {
-  sessionStorage.setItem("__sw_cleaned", "1");
+// previous PWA shells. Storage access itself can throw in restricted
+// browsers/incognito, so all reads/writes must stay guarded.
+const swAlreadyCleaned = (() => {
+  if (typeof window === "undefined") return true;
+  try {
+    return sessionStorage.getItem("__sw_cleaned") === "1";
+  } catch {
+    return false;
+  }
+})();
+
+if (typeof window !== "undefined" && !swAlreadyCleaned) {
+  try {
+    sessionStorage.setItem("__sw_cleaned", "1");
+  } catch {
+    // ignore storage write failures
+  }
+
   try {
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.getRegistrations().then((regs) => {
-        regs.forEach((r) => r.unregister().catch(() => {}));
-      }).catch(() => {});
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((regs) => {
+          regs.forEach((r) => r.unregister().catch(() => {}));
+        })
+        .catch(() => {});
     }
     if (typeof caches !== "undefined") {
-      caches.keys().then((keys) => {
-        keys.forEach((k) => caches.delete(k).catch(() => {}));
-      }).catch(() => {});
+      caches
+        .keys()
+        .then((keys) => {
+          keys.forEach((k) => caches.delete(k).catch(() => {}));
+        })
+        .catch(() => {});
     }
   } catch {
     // never block app boot
@@ -26,12 +46,27 @@ if (typeof window !== "undefined" && !sessionStorage.getItem("__sw_cleaned")) {
 // Safe check for required Supabase env vars. Don't crash on absence —
 // surface a friendly fallback so the app shell still renders.
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_KEY = SUPABASE_PUBLISHABLE_KEY || SUPABASE_ANON_KEY;
+
+if (!SUPABASE_PUBLISHABLE_KEY && SUPABASE_ANON_KEY) {
+  try {
+    (import.meta.env as Record<string, string | boolean | undefined>).VITE_SUPABASE_PUBLISHABLE_KEY = SUPABASE_ANON_KEY;
+    // eslint-disable-next-line no-console
+    console.warn(
+      "[Lovable] VITE_SUPABASE_PUBLISHABLE_KEY is missing. Falling back to VITE_SUPABASE_ANON_KEY for compatibility."
+    );
+  } catch {
+    // never block app boot
+  }
+}
+
 const envMissing = !SUPABASE_URL || !SUPABASE_KEY;
 if (envMissing) {
   // eslint-disable-next-line no-console
   console.warn(
-    "[Lovable] Missing Supabase env vars (VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY). Backend features will be disabled."
+    "[Lovable] Missing Supabase env vars (VITE_SUPABASE_URL and either VITE_SUPABASE_PUBLISHABLE_KEY or VITE_SUPABASE_ANON_KEY). Backend features will be disabled."
   );
 }
 
@@ -71,17 +106,29 @@ class RootErrorBoundary extends Component<{ children: ReactNode }, { error: Erro
   }
 }
 
-const rootEl = document.getElementById("root")!;
-if (envMissing) {
-  createRoot(rootEl).render(
-    <Fallback
-      title="Backend not configured"
-      message="Supabase environment variables are missing. The app cannot connect to its backend yet."
-    />
-  );
-} else {
+const rootEl = document.getElementById("root");
+
+if (!rootEl) {
+  throw new Error("[Lovable] Root element #root was not found.");
+}
+
+const root = createRoot(rootEl);
+
+async function bootstrap() {
+  if (envMissing) {
+    root.render(
+      <Fallback
+        title="Backend not configured"
+        message="Supabase environment variables are missing. The app cannot connect to its backend yet."
+      />
+    );
+    return;
+  }
+
   try {
-    createRoot(rootEl).render(
+    const { default: App } = await import("./App.tsx");
+
+    root.render(
       <RootErrorBoundary>
         <App />
       </RootErrorBoundary>
@@ -89,7 +136,7 @@ if (envMissing) {
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error("[Lovable] Failed to mount app:", err);
-    createRoot(rootEl).render(
+    root.render(
       <Fallback
         title="Unable to load"
         message="The app failed to start. Please refresh the page."
@@ -97,3 +144,5 @@ if (envMissing) {
     );
   }
 }
+
+void bootstrap();
