@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, Loader2, Check, X, Zap } from "lucide-react";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import TalkieCat from "@/components/TalkieCat";
@@ -8,16 +8,25 @@ import { readingPassages } from "@/data/readingPassages";
 import { supabase } from "@/integrations/supabase/client";
 import { getSessionId } from "@/hooks/useStreak";
 import { useToast } from "@/hooks/use-toast";
+import { isMockUrl, isMockActive, recordBand } from "@/lib/mockState";
 
 const ReadingPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
-  const [mockMode, setMockMode] = useState(false);
+  const inMock = isMockUrl(location.search) && isMockActive();
+  const [mockMode, setMockMode] = useState(inMock);
   const [idx, setIdx] = useState(0);
   const passage = readingPassages[idx];
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ score: number; total: number; band: number; explanation: string } | null>(null);
+  const [mockBands, setMockBands] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (inMock) { setMockMode(true); setIdx(0); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const isCorrect = (q: typeof passage.questions[number]) =>
     (answers[q.id] || "").trim().toLowerCase() === q.answer.trim().toLowerCase();
@@ -46,7 +55,17 @@ const ReadingPage = () => {
   const startMock = () => { setMockMode(true); setIdx(0); reset(); };
   const nextMock = () => {
     if (idx < readingPassages.length - 1) { setIdx(idx + 1); reset(); }
-    else { setMockMode(false); navigate("/history"); }
+    else {
+      const all = [...mockBands, result?.band ?? 0].filter((b) => b > 0);
+      const avg = all.length ? all.reduce((a, b) => a + b, 0) / all.length : 0;
+      if (inMock) {
+        recordBand("reading", Math.round(avg * 2) / 2, 3);
+        navigate("/practice-writing?mock=1");
+      } else {
+        setMockMode(false);
+        navigate("/history");
+      }
+    }
   };
 
   return (
@@ -135,7 +154,13 @@ const ReadingPage = () => {
               </div>
               {result.explanation && <p className="text-sm text-foreground whitespace-pre-line">{result.explanation}</p>}
               {mockMode ? (
-                <button onClick={nextMock} className="w-full py-2.5 rounded-2xl bg-primary text-primary-foreground text-sm font-medium">
+                <button
+                  onClick={() => {
+                    if (result?.band) setMockBands((b) => [...b, result.band]);
+                    nextMock();
+                  }}
+                  className="w-full py-2.5 rounded-2xl bg-primary text-primary-foreground text-sm font-medium"
+                >
                   {idx < readingPassages.length - 1 ? "Next passage →" : "Finish mock"}
                 </button>
               ) : (
