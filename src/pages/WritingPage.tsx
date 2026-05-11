@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import TalkieCat from "@/components/TalkieCat";
@@ -9,10 +9,13 @@ import Task1Chart from "@/components/Task1Chart";
 import { supabase } from "@/integrations/supabase/client";
 import { getSessionId } from "@/hooks/useStreak";
 import { useToast } from "@/hooks/use-toast";
+import { isMockUrl, isMockActive, recordBand } from "@/lib/mockState";
 
 const WritingPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+  const inMock = isMockUrl(location.search) && isMockActive();
   const [idx, setIdx] = useState(0);
   const prompt = writingPrompts[idx];
   const [essay, setEssay] = useState("");
@@ -124,7 +127,20 @@ const WritingPage = () => {
                   <p className="text-sm text-foreground whitespace-pre-line bg-background rounded-xl p-3">{result.improved_sample}</p>
                 </div>
               )}
-              <button onClick={() => setResult(null)} className="w-full py-2.5 rounded-2xl bg-secondary text-secondary-foreground text-sm font-medium">Write another</button>
+              {inMock ? (
+                <button
+                  onClick={() => {
+                    const band = Number(result?.band_score) || 0;
+                    recordBand("writing", Math.round(band * 2) / 2, 4);
+                    navigate("/full-test?mock=1");
+                  }}
+                  className="w-full py-2.5 rounded-2xl bg-primary text-primary-foreground text-sm font-medium"
+                >
+                  Continue to Speaking →
+                </button>
+              ) : (
+                <button onClick={() => setResult(null)} className="w-full py-2.5 rounded-2xl bg-secondary text-secondary-foreground text-sm font-medium">Write another</button>
+              )}
             </motion.div>
           )}
         </div>
