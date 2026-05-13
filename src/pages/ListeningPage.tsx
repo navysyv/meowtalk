@@ -300,6 +300,22 @@ const ListeningPage = () => {
                 ))}
               </div>
             )}
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span>Accent</span>
+              {(["en-GB", "en-US"] as Accent[]).map((a) => (
+                <button
+                  key={a}
+                  onClick={() => { setAccent(a); if (ttsSupported) window.speechSynthesis.cancel(); setPlaying(false); }}
+                  className={`px-2 py-0.5 rounded-full ${accent === a ? "bg-primary text-primary-foreground" : "bg-card border border-border"}`}
+                >
+                  {a === "en-GB" ? "🇬🇧 UK" : "🇺🇸 US"}
+                </button>
+              ))}
+              {(() => {
+                const v = pickVoice(voices, accent);
+                return v ? <span className="ml-1 truncate max-w-[140px]">{v.name}</span> : <span className="ml-1 italic">default voice</span>;
+              })()}
+            </div>
             <p className="text-[11px] text-muted-foreground">
               {mockMode
                 ? "Mock mode: audio plays once, timer is strict — just like the real Cambridge IELTS exam."
