@@ -14,6 +14,28 @@ import { isMockUrl, recordBand, isMockActive } from "@/lib/mockState";
 const LISTENING_DURATION_SEC = 30 * 60;
 const MOCK_MAX_PLAYS = 1; // Real exam: audio plays once.
 
+type Accent = "en-GB" | "en-US";
+
+/** Pick the most natural-sounding voice for the requested accent. */
+const pickVoice = (voices: SpeechSynthesisVoice[], accent: Accent): SpeechSynthesisVoice | null => {
+  if (!voices.length) return null;
+  const matchAccent = voices.filter((v) => v.lang?.toLowerCase().startsWith(accent.toLowerCase()));
+  const pool = matchAccent.length ? matchAccent : voices.filter((v) => v.lang?.toLowerCase().startsWith("en"));
+  // Prefer high-quality neural voices by name hints.
+  const priorityHints = [
+    /natural/i, /neural/i, /premium/i, /enhanced/i,
+    /google.*(uk|us|english)/i, /microsoft.*(aria|jenny|guy|libby|sonia|ryan|natasha)/i,
+    /samantha/i, /daniel/i, /karen/i, /serena/i, /moira/i, /tessa/i,
+  ];
+  for (const re of priorityHints) {
+    const v = pool.find((x) => re.test(x.name));
+    if (v) return v;
+  }
+  // Avoid eSpeak / compact / "Microsoft David"-style robotic ones.
+  const nonRobotic = pool.find((v) => !/espeak|compact|david\b/i.test(v.name));
+  return nonRobotic || pool[0];
+};
+
 const formatTime = (s: number) => {
   const m = Math.floor(s / 60).toString().padStart(2, "0");
   const sec = (s % 60).toString().padStart(2, "0");
