@@ -10,12 +10,14 @@ import { playClick } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
 import { useStreak, getSessionId } from "@/hooks/useStreak";
 import { useAuth } from "@/hooks/useAuth";
+import { useFreemium } from "@/lib/freemium";
 import { toast } from "sonner";
 
 const Index = () => {
   const navigate = useNavigate();
   const { streak, justIncreased } = useStreak();
   const { user, signOut } = useAuth();
+  const { isPremium } = useFreemium();
   const [progressScores, setProgressScores] = useState({ fluency: 0, vocabulary: 0, grammar: 0, pronunciation: 0 });
   const [hasAttempts, setHasAttempts] = useState(false);
 
@@ -67,6 +69,9 @@ const Index = () => {
               <Zap size={16} />
               Mock Test
             </motion.button>
+            <span className={`hidden sm:inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full ${isPremium ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+              <Sparkles size={10} /> {isPremium ? "Premium" : "Free"}
+            </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button aria-label="Menu" className="text-muted-foreground hover:text-foreground transition-colors p-1.5 rounded-full hover:bg-card">

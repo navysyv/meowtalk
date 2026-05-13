@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Headphones, BookOpen, PenTool, Mic, ArrowRight } from "lucide-react";
+import { ArrowLeft, Headphones, BookOpen, PenTool, Mic, ArrowRight, Lock, Sparkles } from "lucide-react";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import TalkieCat from "@/components/TalkieCat";
 import { startMock, clearMock, getMockState } from "@/lib/mockState";
+import { useFreemium, FREE_MOCK_LIMIT_PER_WEEK } from "@/lib/freemium";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 const sections = [
   { icon: Headphones, label: "1. Listening", time: "30 min" },
@@ -15,8 +18,11 @@ const sections = [
 const MockTestPage = () => {
   const navigate = useNavigate();
   const existing = getMockState();
+  const { blocked, mocksThisWeek, remaining, loading } = useFreemium();
+  const [paywallOpen, setPaywallOpen] = useState(false);
 
   const begin = () => {
+    if (blocked) { setPaywallOpen(true); return; }
     clearMock();
     startMock();
     navigate("/practice-listening?mock=1");
@@ -64,13 +70,21 @@ const MockTestPage = () => {
           </div>
 
           <div className="flex flex-col gap-2 w-full">
+            {!loading && (
+              <div className="w-full bg-card rounded-2xl px-4 py-3 shadow-soft flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">
+                  Free plan · {mocksThisWeek}/{FREE_MOCK_LIMIT_PER_WEEK} mocks this week
+                </span>
+                <span className="text-primary font-medium">{remaining} left</span>
+              </div>
+            )}
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.96 }}
               onClick={begin}
-              className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-semibold shadow-glow flex items-center justify-center gap-2"
+              className="w-full bg-primary text-primary-foreground py-4 rounded-2xl font-semibold shadow-glow flex items-center justify-center gap-2 disabled:opacity-60"
             >
-              {existing?.active ? "Restart Mock" : "Begin Mock"} <ArrowRight size={18} />
+              {blocked ? <><Lock size={16} /> Weekly limit reached</> : <>{existing?.active ? "Restart Mock" : "Begin Mock"} <ArrowRight size={18} /></>}
             </motion.button>
             {existing?.active && existing.step < 5 && (
               <button onClick={resume} className="w-full py-3 rounded-2xl bg-secondary text-secondary-foreground text-sm font-medium">
@@ -80,6 +94,30 @@ const MockTestPage = () => {
           </div>
           <p className="text-xs text-muted-foreground text-center max-w-sm">Sections advance automatically once you submit each one.</p>
         </div>
+
+        <Dialog open={paywallOpen} onOpenChange={setPaywallOpen}>
+          <DialogContent className="rounded-3xl">
+            <DialogHeader>
+              <div className="w-12 h-12 rounded-2xl bg-lavender-soft flex items-center justify-center mb-2">
+                <Sparkles size={20} className="text-primary" />
+              </div>
+              <DialogTitle className="font-display">Talkie Premium</DialogTitle>
+              <DialogDescription>
+                You've used your {FREE_MOCK_LIMIT_PER_WEEK} free mock tests this week. Premium unlocks unlimited mocks and detailed examiner-style feedback.
+              </DialogDescription>
+            </DialogHeader>
+            <ul className="text-sm text-foreground space-y-2 py-2">
+              <li className="flex items-center gap-2"><Sparkles size={14} className="text-primary" /> Unlimited full mock tests</li>
+              <li className="flex items-center gap-2"><Sparkles size={14} className="text-primary" /> Advanced examiner feedback</li>
+              <li className="flex items-center gap-2"><Sparkles size={14} className="text-primary" /> Priority AI evaluation</li>
+            </ul>
+            <DialogFooter>
+              <button onClick={() => setPaywallOpen(false)} className="w-full bg-primary text-primary-foreground py-3 rounded-2xl font-semibold shadow-glow">
+                Coming soon
+              </button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
