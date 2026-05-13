@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Play, Pause, Loader2, Check, X, Zap } from "lucide-react";
+import { ArrowLeft, Play, Pause, Loader2, Check, X, Zap, Clock } from "lucide-react";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import TalkieCat from "@/components/TalkieCat";
 import { listeningTests } from "@/data/listeningTests";
@@ -9,6 +9,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { getSessionId } from "@/hooks/useStreak";
 import { useToast } from "@/hooks/use-toast";
 import { isMockUrl, recordBand, isMockActive } from "@/lib/mockState";
+
+// Cambridge IELTS Listening test = 30 minutes (+10 min transfer in paper test).
+const LISTENING_DURATION_SEC = 30 * 60;
+
+const formatTime = (s: number) => {
+  const m = Math.floor(s / 60).toString().padStart(2, "0");
+  const sec = (s % 60).toString().padStart(2, "0");
+  return `${m}:${sec}`;
+};
 
 const ListeningPage = () => {
   const navigate = useNavigate();
@@ -23,6 +32,8 @@ const ListeningPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ score: number; total: number; band: number; explanation: string } | null>(null);
   const [mockBands, setMockBands] = useState<number[]>([]);
+  const [timeLeft, setTimeLeft] = useState(LISTENING_DURATION_SEC);
+  const [timerActive, setTimerActive] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
@@ -30,10 +41,28 @@ const ListeningPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Countdown timer — Cambridge IELTS exam style.
+  useEffect(() => {
+    if (!timerActive || result) return;
+    if (timeLeft <= 0) {
+      setTimerActive(false);
+      toast({ title: "Time's up", description: "Auto-submitting your answers." });
+      submit();
+      return;
+    }
+    const t = setTimeout(() => setTimeLeft((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timerActive, timeLeft, result]);
+
   const togglePlay = () => {
     if (!audioRef.current) return;
-    if (playing) audioRef.current.pause();
-    else audioRef.current.play();
+    if (playing) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+      if (!timerActive && !result) setTimerActive(true);
+    }
     setPlaying(!playing);
   };
 
@@ -41,6 +70,7 @@ const ListeningPage = () => {
     (answers[q.id] || "").trim().toLowerCase() === q.answer.trim().toLowerCase();
 
   const submit = async () => {
+    setTimerActive(false);
     setSubmitting(true);
     try {
       const { data, error } = await supabase.functions.invoke("evaluate-listening", {
@@ -66,7 +96,17 @@ const ListeningPage = () => {
     }
   };
 
-  const reset = () => { setAnswers({}); setResult(null); };
+  const reset = () => {
+    setAnswers({});
+    setResult(null);
+    setTimeLeft(LISTENING_DURATION_SEC);
+    setTimerActive(false);
+    setPlaying(false);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  };
 
   const startMock = () => {
     setMockMode(true);
@@ -101,11 +141,17 @@ const ListeningPage = () => {
             <button onClick={() => navigate("/")} className="text-muted-foreground"><ArrowLeft size={18} /></button>
             <h1 className="text-lg font-semibold font-display">Listening Practice</h1>
           </div>
-          {!mockMode ? (
-            <button onClick={startMock} className="text-xs font-medium text-primary flex items-center gap-1"><Zap size={14}/>Full mock</button>
-          ) : (
-            <span className="text-xs text-muted-foreground">Mock {testIdx + 1}/{listeningTests.length}</span>
-          )}
+          <div className="flex items-center gap-3">
+            <div className={`flex items-center gap-1 text-xs font-mono px-2 py-1 rounded-full ${timeLeft < 60 ? "bg-red-500/10 text-red-500" : "bg-secondary text-foreground"}`}>
+              <Clock size={12} />
+              {formatTime(timeLeft)}
+            </div>
+            {!mockMode ? (
+              <button onClick={startMock} className="text-xs font-medium text-primary flex items-center gap-1"><Zap size={14}/>Full mock</button>
+            ) : (
+              <span className="text-xs text-muted-foreground">Mock {testIdx + 1}/{listeningTests.length}</span>
+            )}
+          </div>
         </header>
 
         <div className="flex justify-center mb-4"><TalkieCat state={result ? "happy" : "idle"} size={80} /></div>
@@ -121,16 +167,23 @@ const ListeningPage = () => {
         )}
 
         <div className="bg-card rounded-3xl p-6 shadow-medium space-y-4">
-          <div>
-            <h2 className="font-semibold font-display text-foreground mb-1">{test.title}</h2>
-            <p className="text-sm text-muted-foreground">{test.description}</p>
+          <div className="border-b border-border pb-3">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">IELTS Listening</p>
+            <h2 className="font-semibold font-display text-foreground">{test.title}</h2>
+            <p className="text-sm text-muted-foreground mt-1">{test.description}</p>
+            <p className="text-xs text-muted-foreground mt-2">
+              Questions 1–{test.questions.length} • Write NO MORE THAN THREE WORDS AND/OR A NUMBER for each answer.
+            </p>
           </div>
 
           <audio ref={audioRef} src={test.audioUrl} onEnded={() => setPlaying(false)} />
-          <button onClick={togglePlay} className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-primary text-primary-foreground text-sm font-medium">
-            {playing ? <Pause size={16} /> : <Play size={16} />}
-            {playing ? "Pause" : "Play audio"}
-          </button>
+          <div className="flex items-center justify-between bg-secondary/50 rounded-2xl px-3 py-2">
+            <button onClick={togglePlay} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium">
+              {playing ? <Pause size={16} /> : <Play size={16} />}
+              {playing ? "Pause" : "Play audio"}
+            </button>
+            <span className="text-xs text-muted-foreground pr-2">Audio plays once in real exam</span>
+          </div>
 
           <div className="space-y-3">
             {test.questions.map((q, i) => {
@@ -139,7 +192,7 @@ const ListeningPage = () => {
                 <div key={q.id}>
                   <label className="text-sm font-medium text-foreground block mb-1 flex items-center gap-2">
                     {result && (correct ? <Check size={16} className="text-green-500" /> : <X size={16} className="text-red-500" />)}
-                    {i + 1}. {q.question}
+                    <span className="font-mono text-primary mr-1">{i + 1}.</span> {q.question}
                   </label>
                   {q.type === "mcq" && q.options ? (
                     <div className="space-y-1">
