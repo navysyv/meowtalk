@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Play, Pause, Loader2, Check, X, Zap, Clock } from "lucide-react";
+import { ArrowLeft, Play, Pause, Loader2, Check, X, Zap, Clock, RotateCcw, Volume2 } from "lucide-react";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import TalkieCat from "@/components/TalkieCat";
 import { listeningTests } from "@/data/listeningTests";
@@ -12,6 +12,7 @@ import { isMockUrl, recordBand, isMockActive } from "@/lib/mockState";
 
 // Cambridge IELTS Listening test = 30 minutes (+10 min transfer in paper test).
 const LISTENING_DURATION_SEC = 30 * 60;
+const MOCK_MAX_PLAYS = 1; // Real exam: audio plays once.
 
 const formatTime = (s: number) => {
   const m = Math.floor(s / 60).toString().padStart(2, "0");
@@ -34,12 +35,27 @@ const ListeningPage = () => {
   const [mockBands, setMockBands] = useState<number[]>([]);
   const [timeLeft, setTimeLeft] = useState(LISTENING_DURATION_SEC);
   const [timerActive, setTimerActive] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const [playCount, setPlayCount] = useState(0);
+  const [rate, setRate] = useState(1);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const ttsSupported = typeof window !== "undefined" && "speechSynthesis" in window;
 
   useEffect(() => {
     if (inMock) { setMockMode(true); setTestIdx(0); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Stop TTS on unmount or test change.
+  useEffect(() => {
+    return () => {
+      if (ttsSupported) window.speechSynthesis.cancel();
+    };
+  }, [ttsSupported]);
+
+  useEffect(() => {
+    if (ttsSupported) window.speechSynthesis.cancel();
+    setPlaying(false);
+  }, [testIdx, ttsSupported]);
 
   // Countdown timer — Cambridge IELTS exam style.
   useEffect(() => {
@@ -55,15 +71,50 @@ const ListeningPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timerActive, timeLeft, result]);
 
-  const togglePlay = () => {
-    if (!audioRef.current) return;
-    if (playing) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play();
-      if (!timerActive && !result) setTimerActive(true);
+  const speak = () => {
+    if (!ttsSupported) {
+      toast({ title: "Audio not supported", description: "Your browser doesn't support speech playback.", variant: "destructive" });
+      return;
     }
-    setPlaying(!playing);
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(test.transcript);
+    const voices = window.speechSynthesis.getVoices();
+    const enVoice = voices.find((v) => /en[-_](GB|US|AU)/i.test(v.lang)) || voices.find((v) => v.lang?.startsWith("en"));
+    if (enVoice) u.voice = enVoice;
+    u.rate = mockMode ? 1 : rate;
+    u.pitch = 1;
+    u.onend = () => setPlaying(false);
+    u.onerror = () => setPlaying(false);
+    utteranceRef.current = u;
+    window.speechSynthesis.speak(u);
+    setPlaying(true);
+    setPlayCount((c) => c + 1);
+    if (mockMode && !timerActive && !result) setTimerActive(true);
+  };
+
+  const togglePlay = () => {
+    if (!ttsSupported) return;
+    if (playing) {
+      window.speechSynthesis.pause();
+      setPlaying(false);
+      return;
+    }
+    if (window.speechSynthesis.paused && utteranceRef.current) {
+      window.speechSynthesis.resume();
+      setPlaying(true);
+      return;
+    }
+    if (mockMode && playCount >= MOCK_MAX_PLAYS) {
+      toast({ title: "Audio plays once", description: "In mock mode the recording plays only once, like the real exam." });
+      return;
+    }
+    speak();
+  };
+
+  const replay = () => {
+    if (!ttsSupported) return;
+    if (mockMode) return;
+    speak();
   };
 
   const isCorrect = (q: typeof test.questions[number]) =>
@@ -102,10 +153,8 @@ const ListeningPage = () => {
     setTimeLeft(LISTENING_DURATION_SEC);
     setTimerActive(false);
     setPlaying(false);
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-    }
+    setPlayCount(0);
+    if (ttsSupported) window.speechSynthesis.cancel();
   };
 
   const startMock = () => {
@@ -176,13 +225,49 @@ const ListeningPage = () => {
             </p>
           </div>
 
-          <audio ref={audioRef} src={test.audioUrl} onEnded={() => setPlaying(false)} />
-          <div className="flex items-center justify-between bg-secondary/50 rounded-2xl px-3 py-2">
-            <button onClick={togglePlay} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium">
-              {playing ? <Pause size={16} /> : <Play size={16} />}
-              {playing ? "Pause" : "Play audio"}
-            </button>
-            <span className="text-xs text-muted-foreground pr-2">Audio plays once in real exam</span>
+          <div className="bg-secondary/50 rounded-2xl px-3 py-3 space-y-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                onClick={togglePlay}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50"
+                disabled={mockMode && playCount >= MOCK_MAX_PLAYS && !playing}
+              >
+                {playing ? <Pause size={16} /> : <Play size={16} />}
+                {playing ? "Pause" : playCount === 0 ? "Play audio" : "Resume"}
+              </button>
+              {!mockMode && (
+                <button
+                  onClick={replay}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl bg-card text-foreground text-sm font-medium border border-border"
+                  title="Replay from start"
+                >
+                  <RotateCcw size={14} /> Replay
+                </button>
+              )}
+              <span className="text-xs text-muted-foreground ml-auto flex items-center gap-1">
+                <Volume2 size={12} />
+                {mockMode ? `Plays ${playCount}/${MOCK_MAX_PLAYS}` : `Plays: ${playCount}`}
+              </span>
+            </div>
+            {!mockMode && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span>Speed</span>
+                {[0.8, 1, 1.2].map((r) => (
+                  <button
+                    key={r}
+                    onClick={() => setRate(r)}
+                    className={`px-2 py-0.5 rounded-full ${rate === r ? "bg-primary text-primary-foreground" : "bg-card border border-border"}`}
+                  >
+                    {r}×
+                  </button>
+                ))}
+              </div>
+            )}
+            <p className="text-[11px] text-muted-foreground">
+              {mockMode
+                ? "Mock mode: audio plays once, timer is strict — just like the real Cambridge IELTS exam."
+                : "Practice mode: replay as many times as you like and adjust the speed."}
+            </p>
           </div>
 
           <div className="space-y-3">
