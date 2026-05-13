@@ -14,6 +14,28 @@ import { isMockUrl, recordBand, isMockActive } from "@/lib/mockState";
 const LISTENING_DURATION_SEC = 30 * 60;
 const MOCK_MAX_PLAYS = 1; // Real exam: audio plays once.
 
+type Accent = "en-GB" | "en-US";
+
+/** Pick the most natural-sounding voice for the requested accent. */
+const pickVoice = (voices: SpeechSynthesisVoice[], accent: Accent): SpeechSynthesisVoice | null => {
+  if (!voices.length) return null;
+  const matchAccent = voices.filter((v) => v.lang?.toLowerCase().startsWith(accent.toLowerCase()));
+  const pool = matchAccent.length ? matchAccent : voices.filter((v) => v.lang?.toLowerCase().startsWith("en"));
+  // Prefer high-quality neural voices by name hints.
+  const priorityHints = [
+    /natural/i, /neural/i, /premium/i, /enhanced/i,
+    /google.*(uk|us|english)/i, /microsoft.*(aria|jenny|guy|libby|sonia|ryan|natasha)/i,
+    /samantha/i, /daniel/i, /karen/i, /serena/i, /moira/i, /tessa/i,
+  ];
+  for (const re of priorityHints) {
+    const v = pool.find((x) => re.test(x.name));
+    if (v) return v;
+  }
+  // Avoid eSpeak / compact / "Microsoft David"-style robotic ones.
+  const nonRobotic = pool.find((v) => !/espeak|compact|david\b/i.test(v.name));
+  return nonRobotic || pool[0];
+};
+
 const formatTime = (s: number) => {
   const m = Math.floor(s / 60).toString().padStart(2, "0");
   const sec = (s % 60).toString().padStart(2, "0");
@@ -37,6 +59,8 @@ const ListeningPage = () => {
   const [timerActive, setTimerActive] = useState(false);
   const [playCount, setPlayCount] = useState(0);
   const [rate, setRate] = useState(1);
+  const [accent, setAccent] = useState<Accent>("en-GB");
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const ttsSupported = typeof window !== "undefined" && "speechSynthesis" in window;
 
@@ -44,6 +68,15 @@ const ListeningPage = () => {
     if (inMock) { setMockMode(true); setTestIdx(0); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Load available voices (some browsers populate them async).
+  useEffect(() => {
+    if (!ttsSupported) return;
+    const load = () => setVoices(window.speechSynthesis.getVoices());
+    load();
+    window.speechSynthesis.onvoiceschanged = load;
+    return () => { window.speechSynthesis.onvoiceschanged = null; };
+  }, [ttsSupported]);
 
   // Stop TTS on unmount or test change.
   useEffect(() => {
@@ -78,9 +111,13 @@ const ListeningPage = () => {
     }
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(test.transcript);
-    const voices = window.speechSynthesis.getVoices();
-    const enVoice = voices.find((v) => /en[-_](GB|US|AU)/i.test(v.lang)) || voices.find((v) => v.lang?.startsWith("en"));
-    if (enVoice) u.voice = enVoice;
+    const v = pickVoice(voices.length ? voices : window.speechSynthesis.getVoices(), accent);
+    if (v) {
+      u.voice = v;
+      u.lang = v.lang;
+    } else {
+      u.lang = accent;
+    }
     u.rate = mockMode ? 1 : rate;
     u.pitch = 1;
     u.onend = () => setPlaying(false);
@@ -263,6 +300,22 @@ const ListeningPage = () => {
                 ))}
               </div>
             )}
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span>Accent</span>
+              {(["en-GB", "en-US"] as Accent[]).map((a) => (
+                <button
+                  key={a}
+                  onClick={() => { setAccent(a); if (ttsSupported) window.speechSynthesis.cancel(); setPlaying(false); }}
+                  className={`px-2 py-0.5 rounded-full ${accent === a ? "bg-primary text-primary-foreground" : "bg-card border border-border"}`}
+                >
+                  {a === "en-GB" ? "🇬🇧 UK" : "🇺🇸 US"}
+                </button>
+              ))}
+              {(() => {
+                const v = pickVoice(voices, accent);
+                return v ? <span className="ml-1 truncate max-w-[140px]">{v.name}</span> : <span className="ml-1 italic">default voice</span>;
+              })()}
+            </div>
             <p className="text-[11px] text-muted-foreground">
               {mockMode
                 ? "Mock mode: audio plays once, timer is strict — just like the real Cambridge IELTS exam."
