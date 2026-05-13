@@ -59,6 +59,8 @@ const ListeningPage = () => {
   const [timerActive, setTimerActive] = useState(false);
   const [playCount, setPlayCount] = useState(0);
   const [rate, setRate] = useState(1);
+  const [accent, setAccent] = useState<Accent>("en-GB");
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const ttsSupported = typeof window !== "undefined" && "speechSynthesis" in window;
 
@@ -66,6 +68,15 @@ const ListeningPage = () => {
     if (inMock) { setMockMode(true); setTestIdx(0); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Load available voices (some browsers populate them async).
+  useEffect(() => {
+    if (!ttsSupported) return;
+    const load = () => setVoices(window.speechSynthesis.getVoices());
+    load();
+    window.speechSynthesis.onvoiceschanged = load;
+    return () => { window.speechSynthesis.onvoiceschanged = null; };
+  }, [ttsSupported]);
 
   // Stop TTS on unmount or test change.
   useEffect(() => {
@@ -100,9 +111,13 @@ const ListeningPage = () => {
     }
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(test.transcript);
-    const voices = window.speechSynthesis.getVoices();
-    const enVoice = voices.find((v) => /en[-_](GB|US|AU)/i.test(v.lang)) || voices.find((v) => v.lang?.startsWith("en"));
-    if (enVoice) u.voice = enVoice;
+    const v = pickVoice(voices.length ? voices : window.speechSynthesis.getVoices(), accent);
+    if (v) {
+      u.voice = v;
+      u.lang = v.lang;
+    } else {
+      u.lang = accent;
+    }
     u.rate = mockMode ? 1 : rate;
     u.pitch = 1;
     u.onend = () => setPlaying(false);
