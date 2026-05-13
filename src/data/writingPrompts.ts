@@ -186,4 +186,67 @@ export const writingPrompts: WritingPrompt[] = [
     minWords: 250,
     minutes: 40,
   },
+  {
+    id: "t1-bar-energy-use",
+    task: 1,
+    chart: "bar",
+    prompt:
+      "The bar chart below compares average household energy consumption (kWh) for heating, cooling and appliances in four cities in 2022. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    minWords: 150,
+    minutes: 20,
+  },
+  {
+    id: "t1-line-population",
+    task: 1,
+    chart: "line",
+    prompt:
+      "The line graph below shows the population (in millions) of three Asian capital cities between 1970 and 2020. Summarise the information by selecting and reporting the main features.",
+    minWords: 150,
+    minutes: 20,
+  },
+  {
+    id: "t2-edu-creativity",
+    task: 2,
+    category: "education",
+    prompt:
+      "Some educators argue that schools should focus more on creativity and the arts, while others believe academic subjects deserve priority. Discuss both views and give your own opinion.",
+    minWords: 250,
+    minutes: 40,
+  },
+  {
+    id: "t2-soc-cities",
+    task: 2,
+    category: "society",
+    prompt:
+      "More and more people are moving from rural areas to large cities. What are the advantages and disadvantages of this trend?",
+    minWords: 250,
+    minutes: 40,
+  },
+  {
+    id: "t2-tech-remote",
+    task: 2,
+    category: "technology",
+    prompt:
+      "Remote working has become widespread thanks to digital technology. Do the benefits for employees and companies outweigh the drawbacks?",
+    minWords: 250,
+    minutes: 40,
+  },
+  {
+    id: "t2-env-meat",
+    task: 2,
+    category: "environment",
+    prompt:
+      "Some people believe reducing meat consumption is essential to fight climate change. Others argue that individual diet has little impact compared with industrial change. Discuss both views and give your own opinion.",
+    minWords: 250,
+    minutes: 40,
+  },
+  {
+    id: "t2-health-screen",
+    task: 2,
+    category: "health",
+    prompt:
+      "Children today spend many hours each day on screens. What are the effects of this on their physical and mental wellbeing, and what can parents do to manage it?",
+    minWords: 250,
+    minutes: 40,
+  },
 ];
