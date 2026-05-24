@@ -293,6 +293,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_credits: {
+        Row: {
+          balance: number
+          last_grant_date: string
+          lifetime_used: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          last_grant_date?: string
+          lifetime_used?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          last_grant_date?: string
+          lifetime_used?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_skills: {
         Row: {
           created_at: string
@@ -379,6 +403,29 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      consume_credits: {
+        Args: { _cost: number; _user: string }
+        Returns: {
+          balance: number
+          ok: boolean
+        }[]
+      }
+      ensure_user_credits: {
+        Args: { _user: string }
+        Returns: {
+          balance: number
+          last_grant_date: string
+          lifetime_used: number
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "user_credits"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       has_active_subscription: {
         Args: { check_env?: string; user_uuid: string }
         Returns: boolean
