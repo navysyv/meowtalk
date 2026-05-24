@@ -9,16 +9,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { getSessionId } from "@/hooks/useStreak";
 import { useToast } from "@/hooks/use-toast";
 import { isMockUrl, isMockActive, recordBand } from "@/lib/mockState";
+import { pickFreshN } from "@/lib/randomPool";
 
 const MOCK_PASSAGE_COUNT = 3;
 function pickMockPassages() {
-  const pool = [...readingPassages];
-  const out: typeof readingPassages = [];
-  for (let i = 0; i < MOCK_PASSAGE_COUNT && pool.length; i++) {
-    const idx = Math.floor(Math.random() * pool.length);
-    out.push(pool.splice(idx, 1)[0]);
-  }
-  return out;
+  // Pick fresh passages the user has not seen recently. Falls back to
+  // older ones once the pool is exhausted.
+  return pickFreshN(readingPassages, MOCK_PASSAGE_COUNT, "reading-mock");
 }
 
 const ReadingPage = () => {
