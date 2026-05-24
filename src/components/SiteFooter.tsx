@@ -6,9 +6,9 @@ export function SiteFooter() {
       <div className="max-w-md mx-auto px-5 py-6 flex flex-col items-center gap-3 text-[11px] text-muted-foreground">
         <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
           <Link to="/pricing" className="hover:text-foreground transition-colors">Pricing</Link>
-          <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
-          <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
-          <Link to="/refunds" className="hover:text-foreground transition-colors">Refunds</Link>
+          <Link to="/terms-of-service" className="hover:text-foreground transition-colors">Terms of Service</Link>
+          <Link to="/privacy-policy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
+          <Link to="/refund-policy" className="hover:text-foreground transition-colors">Refund Policy</Link>
         </nav>
         <p className="text-center leading-relaxed">
           © {new Date().getFullYear()} girlsproduction. Payments handled by our reseller Paddle.com,

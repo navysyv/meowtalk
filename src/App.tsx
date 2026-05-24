@@ -44,8 +44,11 @@ const App = () => (
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/terms" element={<TermsPage />} />
+          <Route path="/terms-of-service" element={<TermsPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPage />} />
           <Route path="/refunds" element={<RefundsPage />} />
+          <Route path="/refund-policy" element={<RefundsPage />} />
           <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

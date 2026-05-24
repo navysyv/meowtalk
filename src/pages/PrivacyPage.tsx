@@ -2,7 +2,7 @@ import { LegalLayout } from "@/components/LegalLayout";
 
 export default function PrivacyPage() {
   return (
-    <LegalLayout title="Privacy Notice" updated="May 24, 2026">
+    <LegalLayout title="Privacy Policy" updated="May 24, 2026">
       <p>
         This Privacy Notice explains how <strong>girlsproduction</strong> ("we", "us") collects, uses and
         protects personal data when you use Talkie IELTS (the "Service"). girlsproduction acts as the
