@@ -1,7 +1,12 @@
-import { ArrowLeft, Check, Crown, Sparkles } from "lucide-react";
+import { ArrowLeft, Check, Crown, Loader2, Sparkles } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { SiteFooter } from "@/components/SiteFooter";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { useAuth } from "@/hooks/useAuth";
+import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
+import { useSubscription } from "@/hooks/useSubscription";
+import { toast } from "sonner";
 
 const features = [
   "Unlimited full mock tests",
@@ -14,9 +19,35 @@ const features = [
 
 export default function PricingPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { openCheckout, loading: checkoutLoading } = usePaddleCheckout();
+  const { isActive } = useSubscription();
+
+  const handleBuy = async (priceId: string) => {
+    if (!user) {
+      navigate(`/auth?redirect=/pricing`);
+      return;
+    }
+    if (isActive) {
+      toast.success("You're already Premium — enjoy unlimited mocks!");
+      navigate("/");
+      return;
+    }
+    try {
+      await openCheckout({
+        priceId,
+        userId: user.id,
+        customerEmail: user.email ?? undefined,
+        successUrl: `${window.location.origin}/checkout/success`,
+      });
+    } catch (e: any) {
+      toast.error(e?.message || "Could not open checkout");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <PaymentTestModeBanner />
       <div className="max-w-md mx-auto w-full px-5 py-6 flex-1">
         <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft size={14} /> Back
@@ -46,11 +77,12 @@ export default function PricingPage() {
             </div>
             <p className="text-xs text-muted-foreground mb-4">Billed monthly. Cancel anytime.</p>
             <button
-              disabled
-              onClick={() => navigate("/auth")}
-              className="w-full py-2.5 rounded-2xl bg-muted text-muted-foreground text-sm font-semibold cursor-not-allowed"
+              disabled={checkoutLoading}
+              onClick={() => handleBuy("talkie_premium_monthly")}
+              className="w-full py-2.5 rounded-2xl bg-foreground text-background text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-60 flex items-center justify-center gap-2"
             >
-              Coming soon
+              {checkoutLoading ? <Loader2 size={14} className="animate-spin" /> : null}
+              {isActive ? "You're Premium" : "Subscribe monthly"}
             </button>
           </motion.section>
 
@@ -73,11 +105,12 @@ export default function PricingPage() {
             </div>
             <p className="text-xs text-muted-foreground mb-4">≈ $6.58/month. Billed yearly.</p>
             <button
-              disabled
-              onClick={() => navigate("/auth")}
-              className="w-full py-2.5 rounded-2xl bg-primary text-primary-foreground text-sm font-semibold opacity-70 cursor-not-allowed flex items-center justify-center gap-2"
+              disabled={checkoutLoading}
+              onClick={() => handleBuy("talkie_premium_annual")}
+              className="w-full py-2.5 rounded-2xl bg-primary text-primary-foreground text-sm font-semibold shadow-glow hover:shadow-[0_8px_40px_-8px_hsla(265,70%,70%,0.4)] transition-shadow disabled:opacity-60 flex items-center justify-center gap-2"
             >
-              <Sparkles size={14} /> Coming soon
+              {checkoutLoading ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+              {isActive ? "You're Premium" : "Subscribe annually"}
             </button>
           </motion.section>
         </div>
