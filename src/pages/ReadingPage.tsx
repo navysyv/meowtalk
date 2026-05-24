@@ -10,6 +10,17 @@ import { getSessionId } from "@/hooks/useStreak";
 import { useToast } from "@/hooks/use-toast";
 import { isMockUrl, isMockActive, recordBand } from "@/lib/mockState";
 
+const MOCK_PASSAGE_COUNT = 3;
+function pickMockPassages() {
+  const pool = [...readingPassages];
+  const out: typeof readingPassages = [];
+  for (let i = 0; i < MOCK_PASSAGE_COUNT && pool.length; i++) {
+    const idx = Math.floor(Math.random() * pool.length);
+    out.push(pool.splice(idx, 1)[0]);
+  }
+  return out;
+}
+
 const ReadingPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,14 +28,16 @@ const ReadingPage = () => {
   const inMock = isMockUrl(location.search) && isMockActive();
   const [mockMode, setMockMode] = useState(inMock);
   const [idx, setIdx] = useState(0);
-  const passage = readingPassages[idx];
+  const [mockSet, setMockSet] = useState<typeof readingPassages>(() => (inMock ? pickMockPassages() : []));
+  const activeList = mockMode ? mockSet : readingPassages;
+  const passage = activeList[idx] ?? readingPassages[0];
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ score: number; total: number; band: number; explanation: string } | null>(null);
   const [mockBands, setMockBands] = useState<number[]>([]);
 
   useEffect(() => {
-    if (inMock) { setMockMode(true); setIdx(0); }
+    if (inMock) { setMockMode(true); setIdx(0); setMockSet(pickMockPassages()); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
