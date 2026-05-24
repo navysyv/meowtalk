@@ -65,9 +65,9 @@ const ReadingPage = () => {
   };
 
   const reset = () => { setAnswers({}); setResult(null); };
-  const startMock = () => { setMockMode(true); setIdx(0); reset(); };
+  const startMock = () => { setMockSet(pickMockPassages()); setMockMode(true); setIdx(0); reset(); };
   const nextMock = () => {
-    if (idx < readingPassages.length - 1) { setIdx(idx + 1); reset(); }
+    if (idx < activeList.length - 1) { setIdx(idx + 1); reset(); }
     else {
       const all = [...mockBands, result?.band ?? 0].filter((b) => b > 0);
       const avg = all.length ? all.reduce((a, b) => a + b, 0) / all.length : 0;
@@ -93,7 +93,7 @@ const ReadingPage = () => {
           {!mockMode ? (
             <button onClick={startMock} className="text-xs font-medium text-primary flex items-center gap-1"><Zap size={14}/>Full mock</button>
           ) : (
-            <span className="text-xs text-muted-foreground">Mock {idx + 1}/{readingPassages.length}</span>
+            <span className="text-xs text-muted-foreground">Mock {idx + 1}/{activeList.length}</span>
           )}
         </header>
 
@@ -174,7 +174,7 @@ const ReadingPage = () => {
                   }}
                   className="w-full py-2.5 rounded-2xl bg-primary text-primary-foreground text-sm font-medium"
                 >
-                  {idx < readingPassages.length - 1 ? "Next passage →" : "Finish mock"}
+                  {idx < activeList.length - 1 ? "Next passage →" : "Finish mock"}
                 </button>
               ) : (
                 <button onClick={reset} className="w-full py-2.5 rounded-2xl bg-secondary text-secondary-foreground text-sm font-medium">Try again</button>
