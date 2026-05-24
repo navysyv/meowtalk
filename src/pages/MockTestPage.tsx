@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Headphones, BookOpen, PenTool, Mic, ArrowRight, Lock, Sparkles } from "lucide-react";
 import DecorativeBackground from "@/components/DecorativeBackground";
@@ -112,9 +112,13 @@ const MockTestPage = () => {
               <li className="flex items-center gap-2"><Sparkles size={14} className="text-primary" /> Priority AI evaluation</li>
             </ul>
             <DialogFooter>
-              <button onClick={() => setPaywallOpen(false)} className="w-full bg-primary text-primary-foreground py-3 rounded-2xl font-semibold shadow-glow">
-                Coming soon
-              </button>
+              <Link
+                to="/pricing"
+                className="w-full bg-primary text-primary-foreground py-3 rounded-2xl font-semibold shadow-glow text-center"
+                onClick={() => setPaywallOpen(false)}
+              >
+                View plans from $9.99/month
+              </Link>
             </DialogFooter>
           </DialogContent>
         </Dialog>

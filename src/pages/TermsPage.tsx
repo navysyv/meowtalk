@@ -2,9 +2,9 @@ import { LegalLayout } from "@/components/LegalLayout";
 
 export default function TermsPage() {
   return (
-    <LegalLayout title="Terms & Conditions" updated="May 24, 2026">
+    <LegalLayout title="Terms of Service" updated="May 24, 2026">
       <p>
-        These Terms & Conditions ("Terms") govern your use of Talkie IELTS (the "Service"), operated by
+        These Terms of Service ("Terms") govern your use of Talkie IELTS (the "Service"), operated by
         <strong> girlsproduction</strong> ("we", "us", "our"). By creating an account or otherwise using the Service,
         you agree to be bound by these Terms.
       </p>
