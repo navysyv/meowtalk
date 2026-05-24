@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useStreak, getSessionId } from "@/hooks/useStreak";
 import { useAuth } from "@/hooks/useAuth";
 import { useFreemium } from "@/lib/freemium";
+import { SiteFooter } from "@/components/SiteFooter";
 import { toast } from "sonner";
 
 const Index = () => {
