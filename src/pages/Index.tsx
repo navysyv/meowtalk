@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, History, Zap, Flame, Headphones, PenTool, Mic, Sparkles, Brain, Award, Target, TrendingUp, LogIn, MoreVertical, LogOut } from "lucide-react";
+import { BookOpen, History, Zap, Flame, Headphones, PenTool, Mic, Sparkles, Brain, Award, Target, TrendingUp, LogIn, MoreVertical, LogOut, Crown, Check } from "lucide-react";
 import TalkieCat from "@/components/TalkieCat";
 import ProgressMap from "@/components/ProgressMap";
 import DecorativeBackground from "@/components/DecorativeBackground";
@@ -165,6 +165,47 @@ const Index = () => {
             <Zap size={18} />
             Start Full Mock Test
           </motion.button>
+
+          {/* Premium upsell — subtle, lavender, non-aggressive */}
+          {!isPremium && (
+            <motion.section
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.55, duration: 0.4 }}
+              className="w-full relative overflow-hidden rounded-3xl p-5 bg-gradient-to-br from-lavender-soft via-card to-lavender-soft border border-primary/15 shadow-soft"
+            >
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-9 h-9 rounded-2xl bg-primary/15 flex items-center justify-center">
+                    <Crown size={16} className="text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-display font-semibold text-foreground leading-tight">Talkie Premium</p>
+                    <p className="text-[11px] text-muted-foreground">Unlock the full IELTS experience</p>
+                  </div>
+                </div>
+                <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-1 rounded-full">Coming soon</span>
+              </div>
+              <ul className="grid grid-cols-1 gap-1.5 mb-4">
+                {[
+                  "Unlimited full mock tests",
+                  "Advanced examiner-style feedback",
+                  "Deeper AI insights & analytics",
+                  "Priority AI processing",
+                ].map((f) => (
+                  <li key={f} className="flex items-center gap-2 text-xs text-foreground">
+                    <Check size={13} className="text-primary shrink-0" /> {f}
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={() => { playClick(); navigate("/mock-test"); }}
+                className="w-full py-2.5 rounded-2xl bg-primary text-primary-foreground text-sm font-semibold shadow-glow hover:shadow-[0_8px_40px_-8px_hsla(265,70%,70%,0.4)] transition-shadow flex items-center justify-center gap-2"
+              >
+                <Sparkles size={14} /> See Premium
+              </button>
+            </motion.section>
+          )}
 
           {/* Why Talkie IELTS section */}
           <section className="w-full mt-4">

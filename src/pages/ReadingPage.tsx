@@ -10,6 +10,17 @@ import { getSessionId } from "@/hooks/useStreak";
 import { useToast } from "@/hooks/use-toast";
 import { isMockUrl, isMockActive, recordBand } from "@/lib/mockState";
 
+const MOCK_PASSAGE_COUNT = 3;
+function pickMockPassages() {
+  const pool = [...readingPassages];
+  const out: typeof readingPassages = [];
+  for (let i = 0; i < MOCK_PASSAGE_COUNT && pool.length; i++) {
+    const idx = Math.floor(Math.random() * pool.length);
+    out.push(pool.splice(idx, 1)[0]);
+  }
+  return out;
+}
+
 const ReadingPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,14 +28,16 @@ const ReadingPage = () => {
   const inMock = isMockUrl(location.search) && isMockActive();
   const [mockMode, setMockMode] = useState(inMock);
   const [idx, setIdx] = useState(0);
-  const passage = readingPassages[idx];
+  const [mockSet, setMockSet] = useState<typeof readingPassages>(() => (inMock ? pickMockPassages() : []));
+  const activeList = mockMode ? mockSet : readingPassages;
+  const passage = activeList[idx] ?? readingPassages[0];
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{ score: number; total: number; band: number; explanation: string } | null>(null);
   const [mockBands, setMockBands] = useState<number[]>([]);
 
   useEffect(() => {
-    if (inMock) { setMockMode(true); setIdx(0); }
+    if (inMock) { setMockMode(true); setIdx(0); setMockSet(pickMockPassages()); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -52,9 +65,9 @@ const ReadingPage = () => {
   };
 
   const reset = () => { setAnswers({}); setResult(null); };
-  const startMock = () => { setMockMode(true); setIdx(0); reset(); };
+  const startMock = () => { setMockSet(pickMockPassages()); setMockMode(true); setIdx(0); reset(); };
   const nextMock = () => {
-    if (idx < readingPassages.length - 1) { setIdx(idx + 1); reset(); }
+    if (idx < activeList.length - 1) { setIdx(idx + 1); reset(); }
     else {
       const all = [...mockBands, result?.band ?? 0].filter((b) => b > 0);
       const avg = all.length ? all.reduce((a, b) => a + b, 0) / all.length : 0;
@@ -80,7 +93,7 @@ const ReadingPage = () => {
           {!mockMode ? (
             <button onClick={startMock} className="text-xs font-medium text-primary flex items-center gap-1"><Zap size={14}/>Full mock</button>
           ) : (
-            <span className="text-xs text-muted-foreground">Mock {idx + 1}/{readingPassages.length}</span>
+            <span className="text-xs text-muted-foreground">Mock {idx + 1}/{activeList.length}</span>
           )}
         </header>
 
@@ -161,7 +174,7 @@ const ReadingPage = () => {
                   }}
                   className="w-full py-2.5 rounded-2xl bg-primary text-primary-foreground text-sm font-medium"
                 >
-                  {idx < readingPassages.length - 1 ? "Next passage →" : "Finish mock"}
+                  {idx < activeList.length - 1 ? "Next passage →" : "Finish mock"}
                 </button>
               ) : (
                 <button onClick={reset} className="w-full py-2.5 rounded-2xl bg-secondary text-secondary-foreground text-sm font-medium">Try again</button>
