@@ -5,6 +5,7 @@ import { ArrowLeft, TrendingUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import DecorativeBackground from "@/components/DecorativeBackground";
 import { getSessionId } from "@/hooks/useStreak";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Attempt {
   id: string;
@@ -23,24 +24,26 @@ interface Attempt {
 
 const HistoryPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [selected, setSelected] = useState<Attempt | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAttempts = async () => {
-      const sid = getSessionId();
-      const { data } = await supabase
-        .from("speaking_attempts")
-        .select("*")
-        .eq("session_id", sid)
-        .order("created_at", { ascending: false })
-        .limit(50);
-      setAttempts((data as Attempt[]) || []);
-      setLoading(false);
+      try {
+        let q = supabase.from("speaking_attempts").select("*").order("created_at", { ascending: false }).limit(50);
+        q = user?.id ? q.eq("user_id", user.id) : q.eq("session_id", getSessionId());
+        const { data } = await q;
+        setAttempts((data as Attempt[]) || []);
+      } catch {
+        setAttempts([]);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchAttempts();
-  }, []);
+  }, [user?.id]);
 
   const scores = attempts.filter(a => a.band_score).map(a => a.band_score!).reverse();
   const maxScore = Math.max(...scores, 9);
