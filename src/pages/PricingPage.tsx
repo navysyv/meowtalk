@@ -129,9 +129,9 @@ export default function PricingPage() {
         <p className="text-[11px] text-muted-foreground text-center mt-5 leading-relaxed">
           Payments are processed by our reseller Paddle.com, the Merchant of Record for all orders.
           Prices in USD. Taxes calculated at checkout. By subscribing you agree to our{" "}
-          <Link to="/terms" className="underline">Terms</Link>,{" "}
-          <Link to="/privacy" className="underline">Privacy Notice</Link> and{" "}
-          <Link to="/refunds" className="underline">Refund Policy</Link>.
+          <Link to="/terms-of-service" className="underline">Terms of Service</Link>,{" "}
+          <Link to="/privacy-policy" className="underline">Privacy Policy</Link> and{" "}
+          <Link to="/refund-policy" className="underline">Refund Policy</Link>.
         </p>
       </div>
       <SiteFooter />
