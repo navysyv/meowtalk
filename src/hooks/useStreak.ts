@@ -12,18 +12,21 @@ export function getSessionId(): string {
   return id;
 }
 
+async function getOwnerIds() {
+  let user_id: string | null = null;
+  try { user_id = (await supabase.auth.getUser()).data.user?.id ?? null; } catch {}
+  return { user_id, session_id: getSessionId() };
+}
+
 export function useStreak() {
   const [streak, setStreak] = useState(0);
   const [justIncreased, setJustIncreased] = useState(false);
 
   const calculateStreak = useCallback(async () => {
-    const sessionId = getSessionId();
-    const { data } = await supabase
-      .from("daily_streaks")
-      .select("practice_date")
-      .eq("session_id", sessionId)
-      .order("practice_date", { ascending: false })
-      .limit(365);
+    const { user_id, session_id } = await getOwnerIds();
+    let q = supabase.from("daily_streaks").select("practice_date").order("practice_date", { ascending: false }).limit(365);
+    q = user_id ? q.eq("user_id", user_id) : q.eq("session_id", session_id);
+    const { data } = await q;
 
     if (!data || data.length === 0) {
       setStreak(0);
@@ -67,12 +70,12 @@ export function useStreak() {
   }, []);
 
   const recordPractice = useCallback(async () => {
-    const sessionId = getSessionId();
+    const { user_id, session_id } = await getOwnerIds();
     const today = new Date().toISOString().split("T")[0];
     
     const { error } = await supabase
       .from("daily_streaks")
-      .insert({ session_id: sessionId, practice_date: today })
+      .insert({ session_id, user_id, practice_date: today })
       .select();
     
     // Unique constraint violation means already recorded today - that's fine

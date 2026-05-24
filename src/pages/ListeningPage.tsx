@@ -167,8 +167,10 @@ const ListeningPage = () => {
       if (error) throw error;
       const r = { score: data.score, total: data.total, band: data.band_score, explanation: data.explanation };
       setResult(r);
+      const { getOwner } = await import("@/lib/owner");
+      const owner = await getOwner();
       await supabase.from("listening_attempts").insert({
-        session_id: getSessionId(),
+        session_id: owner.session_id, user_id: owner.user_id,
         test_id: test.id,
         score: r.score,
         total: r.total,

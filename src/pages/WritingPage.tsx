@@ -44,8 +44,10 @@ const WritingPage = () => {
       });
       if (error) throw error;
       setResult(data);
+      const { getOwner } = await import("@/lib/owner");
+      const owner = await getOwner();
       await supabase.from("writing_attempts").insert({
-        session_id: getSessionId(),
+        session_id: owner.session_id, user_id: owner.user_id,
         task: prompt.task, prompt: prompt.prompt, essay, word_count: wordCount,
         band_score: data.band_score, task_response: data.task_response,
         coherence: data.coherence, lexical: data.lexical, grammar: data.grammar,
