@@ -57,15 +57,19 @@ const MockSummaryPage = () => {
   useEffect(() => {
     if (!state || saved || overall === 0) return;
     setSaved(true);
-    supabase.from("mock_results").insert({
-      session_id: getSessionId(),
-      listening_band: state.bands.listening ?? null,
-      reading_band: state.bands.reading ?? null,
-      writing_band: state.bands.writing ?? null,
-      speaking_band: state.bands.speaking ?? null,
-      overall_band: overall,
-      report: { strengths: advice.strengths, weaknesses: advice.weaknesses, tips: advice.tips },
-    }).then(() => {});
+    (async () => {
+      const { getOwner } = await import("@/lib/owner");
+      const { user_id, session_id } = await getOwner();
+      await supabase.from("mock_results").insert({
+        session_id, user_id,
+        listening_band: state.bands.listening ?? null,
+        reading_band: state.bands.reading ?? null,
+        writing_band: state.bands.writing ?? null,
+        speaking_band: state.bands.speaking ?? null,
+        overall_band: overall,
+        report: { strengths: advice.strengths, weaknesses: advice.weaknesses, tips: advice.tips },
+      });
+    })();
   }, [state, saved, overall, advice]);
 
   if (!state) {
