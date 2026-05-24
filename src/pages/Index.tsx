@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useStreak, getSessionId } from "@/hooks/useStreak";
 import { useAuth } from "@/hooks/useAuth";
 import { useFreemium } from "@/lib/freemium";
+import { SiteFooter } from "@/components/SiteFooter";
 import { toast } from "sonner";
 
 const Index = () => {
@@ -184,7 +185,7 @@ const Index = () => {
                     <p className="text-[11px] text-muted-foreground">Unlock the full IELTS experience</p>
                   </div>
                 </div>
-                <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-1 rounded-full">Coming soon</span>
+                <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-1 rounded-full">From $9.99/mo</span>
               </div>
               <ul className="grid grid-cols-1 gap-1.5 mb-4">
                 {[
@@ -199,7 +200,7 @@ const Index = () => {
                 ))}
               </ul>
               <button
-                onClick={() => { playClick(); navigate("/mock-test"); }}
+                onClick={() => { playClick(); navigate("/pricing"); }}
                 className="w-full py-2.5 rounded-2xl bg-primary text-primary-foreground text-sm font-semibold shadow-glow hover:shadow-[0_8px_40px_-8px_hsla(265,70%,70%,0.4)] transition-shadow flex items-center justify-center gap-2"
               >
                 <Sparkles size={14} /> See Premium
@@ -240,6 +241,7 @@ const Index = () => {
           </motion.p>
         </main>
       </div>
+      <SiteFooter />
     </div>
   );
 };

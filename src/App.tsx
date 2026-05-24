@@ -15,6 +15,10 @@ import MockTestPage from "./pages/MockTestPage.tsx";
 import MockSummaryPage from "./pages/MockSummaryPage.tsx";
 import AuthPage from "./pages/AuthPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import PricingPage from "./pages/PricingPage.tsx";
+import TermsPage from "./pages/TermsPage.tsx";
+import PrivacyPage from "./pages/PrivacyPage.tsx";
+import RefundsPage from "./pages/RefundsPage.tsx";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +41,10 @@ const App = () => (
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/full-test" element={<FullTestPage />} />
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/refunds" element={<RefundsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
