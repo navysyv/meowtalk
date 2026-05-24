@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,25 +11,27 @@ import { playClick } from "@/lib/sounds";
 
 export default function AuthPage() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const redirect = params.get("redirect") || "/";
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate("/", { replace: true });
+      if (data.session) navigate(redirect, { replace: true });
     });
-  }, [navigate]);
+  }, [navigate, redirect]);
 
   const google = async () => {
     playClick();
     setBusy(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: `${window.location.origin}${redirect}` });
     if (result.error) {
       toast.error("Google sign-in failed");
       setBusy(false);
       return;
     }
     if (result.redirected) return;
-    navigate("/");
+    navigate(redirect);
   };
 
   return (
