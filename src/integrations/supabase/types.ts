@@ -20,18 +20,21 @@ export type Database = {
           id: string
           practice_date: string
           session_id: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
           id?: string
           practice_date?: string
           session_id?: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           practice_date?: string
           session_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -47,6 +50,7 @@ export type Database = {
           session_id: string
           test_id: string
           total: number
+          user_id: string | null
         }
         Insert: {
           ai_explanation?: string | null
@@ -59,6 +63,7 @@ export type Database = {
           session_id: string
           test_id: string
           total?: number
+          user_id?: string | null
         }
         Update: {
           ai_explanation?: string | null
@@ -71,6 +76,7 @@ export type Database = {
           session_id?: string
           test_id?: string
           total?: number
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -84,6 +90,7 @@ export type Database = {
           report: Json | null
           session_id: string
           speaking_band: number | null
+          user_id: string | null
           writing_band: number | null
         }
         Insert: {
@@ -95,6 +102,7 @@ export type Database = {
           report?: Json | null
           session_id: string
           speaking_band?: number | null
+          user_id?: string | null
           writing_band?: number | null
         }
         Update: {
@@ -106,6 +114,7 @@ export type Database = {
           report?: Json | null
           session_id?: string
           speaking_band?: number | null
+          user_id?: string | null
           writing_band?: number | null
         }
         Relationships: []
@@ -115,6 +124,8 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          is_premium: boolean
+          premium_until: string | null
           target_band: number | null
           updated_at: string
           user_id: string
@@ -123,6 +134,8 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          is_premium?: boolean
+          premium_until?: string | null
           target_band?: number | null
           updated_at?: string
           user_id: string
@@ -131,6 +144,8 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          is_premium?: boolean
+          premium_until?: string | null
           target_band?: number | null
           updated_at?: string
           user_id?: string
@@ -149,6 +164,7 @@ export type Database = {
           score: number
           session_id: string
           total: number
+          user_id: string | null
         }
         Insert: {
           ai_explanation?: string | null
@@ -161,6 +177,7 @@ export type Database = {
           score?: number
           session_id: string
           total?: number
+          user_id?: string | null
         }
         Update: {
           ai_explanation?: string | null
@@ -173,6 +190,7 @@ export type Database = {
           score?: number
           session_id?: string
           total?: number
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -190,6 +208,7 @@ export type Database = {
           session_id: string
           suggestions: string[] | null
           transcript: string | null
+          user_id: string | null
           vocabulary_feedback: string | null
         }
         Insert: {
@@ -205,6 +224,7 @@ export type Database = {
           session_id?: string
           suggestions?: string[] | null
           transcript?: string | null
+          user_id?: string | null
           vocabulary_feedback?: string | null
         }
         Update: {
@@ -220,6 +240,7 @@ export type Database = {
           session_id?: string
           suggestions?: string[] | null
           transcript?: string | null
+          user_id?: string | null
           vocabulary_feedback?: string | null
         }
         Relationships: []
@@ -266,6 +287,7 @@ export type Database = {
           session_id: string
           task: number
           task_response: number | null
+          user_id: string | null
           word_count: number | null
         }
         Insert: {
@@ -282,6 +304,7 @@ export type Database = {
           session_id: string
           task: number
           task_response?: number | null
+          user_id?: string | null
           word_count?: number | null
         }
         Update: {
@@ -298,6 +321,7 @@ export type Database = {
           session_id?: string
           task?: number
           task_response?: number | null
+          user_id?: string | null
           word_count?: number | null
         }
         Relationships: []
