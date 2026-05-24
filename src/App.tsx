@@ -19,6 +19,7 @@ import PricingPage from "./pages/PricingPage.tsx";
 import TermsPage from "./pages/TermsPage.tsx";
 import PrivacyPage from "./pages/PrivacyPage.tsx";
 import RefundsPage from "./pages/RefundsPage.tsx";
+import CheckoutSuccessPage from "./pages/CheckoutSuccessPage.tsx";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/refunds" element={<RefundsPage />} />
+          <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
