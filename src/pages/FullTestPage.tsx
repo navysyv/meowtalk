@@ -104,8 +104,10 @@ const FullTestPage = () => {
         transcript: text,
       };
 
+      const { getOwner } = await import("@/lib/owner");
+      const owner = await getOwner();
       await supabase.from("speaking_attempts").insert({
-        session_id: getSessionId(),
+        session_id: owner.session_id, user_id: owner.user_id,
         part: partNum,
         question_text: questionRef.current?.text || "",
         transcript: text,

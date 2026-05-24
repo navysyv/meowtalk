@@ -53,8 +53,10 @@ const ReadingPage = () => {
       if (error) throw error;
       const r = { score: data.score, total: data.total, band: data.band_score, explanation: data.explanation };
       setResult(r);
+      const { getOwner } = await import("@/lib/owner");
+      const owner = await getOwner();
       await supabase.from("reading_attempts").insert({
-        session_id: getSessionId(),
+        session_id: owner.session_id, user_id: owner.user_id,
         passage_id: passage.id,
         score: r.score, total: r.total, band_score: r.band,
         answers, mistakes: data.mistakes || [], ai_explanation: r.explanation,
