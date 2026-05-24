@@ -101,6 +101,9 @@ const PracticePage = () => {
     setTalkieState("thinking");
 
     try {
+      const { consumeCredits } = await import("@/lib/credits");
+      const ok = await consumeCredits("speaking");
+      if (!ok) { setPhase("intro"); setTalkieState("idle"); return; }
       const { data, error } = await supabase.functions.invoke("evaluate-speech", {
         body: { transcript: spokenText, questionText, part },
       });

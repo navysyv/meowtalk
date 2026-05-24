@@ -39,6 +39,9 @@ const WritingPage = () => {
     if (wordCount < 50) { toast({ title: "Write more first", description: `At least ${prompt.minWords} words recommended` }); return; }
     setSubmitting(true);
     try {
+      const { consumeCredits } = await import("@/lib/credits");
+      const ok = await consumeCredits("writing");
+      if (!ok) { setSubmitting(false); return; }
       const { data, error } = await supabase.functions.invoke("evaluate-writing", {
         body: { task: prompt.task, prompt: prompt.prompt, essay, wordCount },
       });

@@ -12,6 +12,7 @@ import { useStreak, getSessionId } from "@/hooks/useStreak";
 import { useAuth } from "@/hooks/useAuth";
 import { useFreemium } from "@/lib/freemium";
 import { SiteFooter } from "@/components/SiteFooter";
+import { CreditBadge } from "@/components/CreditBadge";
 import { toast } from "sonner";
 
 const Index = () => {
@@ -70,6 +71,7 @@ const Index = () => {
               <Zap size={16} />
               Mock Test
             </motion.button>
+            <CreditBadge />
             <span className={`hidden sm:inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-full ${isPremium ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
               <Sparkles size={10} /> {isPremium ? "Premium" : "Free"}
             </span>

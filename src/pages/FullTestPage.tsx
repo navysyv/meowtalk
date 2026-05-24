@@ -84,6 +84,9 @@ const FullTestPage = () => {
     setTalkieState("thinking");
 
     try {
+      const { consumeCredits } = await import("@/lib/credits");
+      const ok = await consumeCredits("speaking");
+      if (!ok) { setPhase("speaking"); setTalkieState("idle"); return; }
       const partNum = currentPartRef.current;
       const { data, error } = await supabase.functions.invoke("evaluate-speech", {
         body: { transcript: text, questionText: questionRef.current?.text || "", part: partNum },
