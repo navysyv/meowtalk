@@ -249,4 +249,113 @@ export const writingPrompts: WritingPrompt[] = [
     minWords: 250,
     minutes: 40,
   },
+  // ===== Extended pool =====
+  {
+    id: "t1-line-population",
+    task: 1,
+    chart: "line",
+    prompt:
+      "The line graph below shows the population of three cities between 1980 and 2020. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+    minWords: 150,
+    minutes: 20,
+  },
+  {
+    id: "t1-bar-transport",
+    task: 1,
+    chart: "bar",
+    prompt:
+      "The bar chart below compares the percentage of commuters using cars, public transport and bicycles in four European cities in 2022. Summarise the information by selecting and reporting the main features.",
+    minWords: 150,
+    minutes: 20,
+  },
+  {
+    id: "t1-pie-budget",
+    task: 1,
+    chart: "pie",
+    prompt:
+      "The pie chart below shows how a typical household in your country spends its monthly income. Summarise the information by selecting and reporting the main features.",
+    minWords: 150,
+    minutes: 20,
+  },
+  {
+    id: "t1-table-water",
+    task: 1,
+    chart: "table",
+    prompt:
+      "The table below shows the average daily water consumption per person (in litres) across five regions in 2000 and 2020. Summarise the information by selecting and reporting the main features.",
+    minWords: 150,
+    minutes: 20,
+  },
+  {
+    id: "t2-tech-remote",
+    task: 2,
+    category: "technology",
+    prompt:
+      "Remote work has become common in many industries. Do the benefits of working from home outweigh the disadvantages? Give reasons and examples from your own experience.",
+    minWords: 250,
+    minutes: 40,
+  },
+  {
+    id: "t2-env-plastic",
+    task: 2,
+    category: "environment",
+    prompt:
+      "Some people believe individual consumers are responsible for solving the plastic waste crisis, while others argue governments and corporations must lead. Discuss both views and give your own opinion.",
+    minWords: 250,
+    minutes: 40,
+  },
+  {
+    id: "t2-society-cashless",
+    task: 2,
+    category: "society",
+    prompt:
+      "Many countries are moving towards a cashless society. What are the advantages and disadvantages of this trend?",
+    minWords: 250,
+    minutes: 40,
+  },
+  {
+    id: "t2-edu-online",
+    task: 2,
+    category: "education",
+    prompt:
+      "Online learning has become increasingly popular at all levels of education. To what extent do you think it can replace traditional classroom learning?",
+    minWords: 250,
+    minutes: 40,
+  },
+  {
+    id: "t2-health-fastfood",
+    task: 2,
+    category: "health",
+    prompt:
+      "Some governments are considering placing higher taxes on fast food to discourage unhealthy eating. Do you think this is an effective approach? What other measures could be taken?",
+    minWords: 250,
+    minutes: 40,
+  },
+  {
+    id: "t2-general-travel",
+    task: 2,
+    category: "general",
+    prompt:
+      "International tourism has grown rapidly in recent decades. What are the positive and negative effects of mass tourism on local communities, and how can these be managed?",
+    minWords: 250,
+    minutes: 40,
+  },
+  {
+    id: "t2-tech-ai-jobs",
+    task: 2,
+    category: "technology",
+    prompt:
+      "Some people fear that automation and artificial intelligence will eliminate many jobs. Others believe new types of work will emerge. Discuss both views and give your own opinion.",
+    minWords: 250,
+    minutes: 40,
+  },
+  {
+    id: "t2-society-aging",
+    task: 2,
+    category: "society",
+    prompt:
+      "In many countries the proportion of older people is steadily increasing. What problems does this trend cause, and what solutions can you suggest?",
+    minWords: 250,
+    minutes: 40,
+  },
 ];
