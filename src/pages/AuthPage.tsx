@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import TalkieCat from "@/components/TalkieCat";
@@ -14,6 +14,9 @@ export default function AuthPage() {
   const [params] = useSearchParams();
   const redirect = params.get("redirect") || "/";
   const [busy, setBusy] = useState(false);
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -34,6 +37,42 @@ export default function AuthPage() {
     navigate(redirect);
   };
 
+  const submitEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    playClick();
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail || cleanEmail.length > 255) { toast.error("Please enter a valid email"); return; }
+    setBusy(true);
+    try {
+      if (mode === "forgot") {
+        const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+        if (error) throw error;
+        toast.success("Check your email for a reset link");
+        setMode("signin");
+      } else if (mode === "signup") {
+        if (password.length < 8 || password.length > 72) { toast.error("Password must be 8–72 characters"); setBusy(false); return; }
+        const { error } = await supabase.auth.signUp({
+          email: cleanEmail,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}${redirect}` },
+        });
+        if (error) throw error;
+        toast.success("Account created — check your email to verify");
+      } else {
+        if (!password) { toast.error("Enter your password"); setBusy(false); return; }
+        const { error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
+        if (error) throw error;
+        navigate(redirect, { replace: true });
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Something went wrong");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <div className="min-h-screen relative">
       <DecorativeBackground />
@@ -44,7 +83,7 @@ export default function AuthPage() {
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center gap-3 mb-6">
           <TalkieCat state="idle" size={96} />
           <h1 className="text-2xl font-bold font-display text-foreground">Sign in to Talkie IELTS</h1>
-          <p className="text-sm text-muted-foreground text-center">Sign in with Google to save your progress, streaks and mock results across devices.</p>
+          <p className="text-sm text-muted-foreground text-center">Save your progress, streaks and mock results across devices.</p>
         </motion.div>
 
         <div className="bg-card rounded-3xl p-6 shadow-medium flex flex-col gap-4">
@@ -56,6 +95,56 @@ export default function AuthPage() {
             )}
             Continue with Google
           </button>
+
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+            <div className="flex-1 h-px bg-border" /> or email <div className="flex-1 h-px bg-border" />
+          </div>
+
+          <form onSubmit={submitEmail} className="flex flex-col gap-3">
+            <input
+              type="email" required autoComplete="email" placeholder="you@example.com"
+              value={email} onChange={(e) => setEmail(e.target.value)} maxLength={255}
+              className="w-full rounded-2xl bg-background border border-border px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+            />
+            {mode !== "forgot" && (
+              <input
+                type="password" required autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                placeholder={mode === "signup" ? "Create a password (min. 8 chars)" : "Your password"}
+                value={password} onChange={(e) => setPassword(e.target.value)} minLength={8} maxLength={72}
+                className="w-full rounded-2xl bg-background border border-border px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+              />
+            )}
+            <button type="submit" disabled={busy}
+              className="w-full flex items-center justify-center gap-2 bg-foreground text-background rounded-2xl py-3 text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-60">
+              {busy ? <Loader2 size={16} className="animate-spin" /> : <Mail size={16} />}
+              {mode === "signin" && "Sign in"}
+              {mode === "signup" && "Create account"}
+              {mode === "forgot" && "Send reset link"}
+            </button>
+          </form>
+
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            {mode !== "forgot" ? (
+              <button type="button" onClick={() => setMode("forgot")} className="hover:text-foreground underline">
+                Forgot password?
+              </button>
+            ) : (
+              <button type="button" onClick={() => setMode("signin")} className="hover:text-foreground underline">
+                Back to sign in
+              </button>
+            )}
+            {mode === "signin" && (
+              <button type="button" onClick={() => setMode("signup")} className="hover:text-foreground underline">
+                Create account
+              </button>
+            )}
+            {mode === "signup" && (
+              <button type="button" onClick={() => setMode("signin")} className="hover:text-foreground underline">
+                Have an account? Sign in
+              </button>
+            )}
+          </div>
+
           <p className="text-xs text-muted-foreground text-center px-2">
             By continuing, you agree to use Talkie IELTS for personal practice. We only store your name, email and progress.
           </p>
