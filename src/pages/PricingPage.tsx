@@ -94,16 +94,16 @@ export default function PricingPage() {
             className="relative rounded-3xl p-5 bg-gradient-to-br from-lavender-soft via-card to-lavender-soft border border-primary/30 shadow-glow"
           >
             <span className="absolute -top-2 right-4 text-[10px] font-semibold text-primary-foreground bg-primary px-2 py-1 rounded-full">
-              Save 34%
+              Save 35%
             </span>
             <div className="flex items-baseline justify-between mb-1">
               <h2 className="font-display text-lg font-semibold text-foreground">Annual</h2>
               <div>
-                <span className="text-2xl font-bold text-foreground">$79</span>
+                <span className="text-2xl font-bold text-foreground">$39</span>
                 <span className="text-xs text-muted-foreground">/year</span>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground mb-4">≈ $6.58/month. Billed yearly.</p>
+            <p className="text-xs text-muted-foreground mb-4">≈ $3.25/month. Billed yearly.</p>
             <button
               disabled={checkoutLoading}
               onClick={() => handleBuy("talkie_premium_annual")}
