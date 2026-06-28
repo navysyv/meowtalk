@@ -14,6 +14,7 @@ import WritingPage from "./pages/WritingPage.tsx";
 import MockTestPage from "./pages/MockTestPage.tsx";
 import MockSummaryPage from "./pages/MockSummaryPage.tsx";
 import AuthPage from "./pages/AuthPage.tsx";
+import ResetPasswordPage from "./pages/ResetPasswordPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import PricingPage from "./pages/PricingPage.tsx";
 import TermsPage from "./pages/TermsPage.tsx";
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/full-test" element={<FullTestPage />} />
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/terms-of-service" element={<TermsOfServicePage />} />
