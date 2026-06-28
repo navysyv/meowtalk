@@ -117,7 +117,7 @@ const MockTestPage = () => {
                 className="w-full bg-primary text-primary-foreground py-3 rounded-2xl font-semibold shadow-glow text-center"
                 onClick={() => setPaywallOpen(false)}
               >
-                View plans from $9.99/month
+                View plans from $4.99/month
               </Link>
             </DialogFooter>
           </DialogContent>

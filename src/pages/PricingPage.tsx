@@ -71,7 +71,7 @@ export default function PricingPage() {
             <div className="flex items-baseline justify-between mb-1">
               <h2 className="font-display text-lg font-semibold text-foreground">Monthly</h2>
               <div>
-                <span className="text-2xl font-bold text-foreground">$9.99</span>
+                <span className="text-2xl font-bold text-foreground">$4.99</span>
                 <span className="text-xs text-muted-foreground">/month</span>
               </div>
             </div>

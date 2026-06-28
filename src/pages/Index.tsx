@@ -187,7 +187,7 @@ const Index = () => {
                     <p className="text-[11px] text-muted-foreground">Unlock the full IELTS experience</p>
                   </div>
                 </div>
-                <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-1 rounded-full">From $9.99/mo</span>
+                <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-1 rounded-full">From $4.99/mo</span>
               </div>
               <ul className="grid grid-cols-1 gap-1.5 mb-4">
                 {[
